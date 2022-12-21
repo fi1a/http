@@ -1,2 +1,2 @@
-# http
-Абстракция для HTTP-запроса, ответа, session и cookie.
+# Абстракция для HTTP-запроса, ответа, session и cookie.
+
