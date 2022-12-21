@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Collection\DataType\PathAccess;
+use Fi1a\Collection\DataType\PathAccessInterface;
+
 /**
  * Запрос
  */
@@ -16,12 +19,17 @@ class Request implements RequestInterface
     private $uri;
 
     /**
+     * @var PathAccessInterface
+     */
+    private $post;
+
+    /**
      * @inheritDoc
      */
     public function __construct(
         $uri,
-        array $query = [],
-        array $post = [],
+        $query = [],
+        $post = [],
         array $options = [],
         array $cookies = [],
         array $files = [],
@@ -29,11 +37,13 @@ class Request implements RequestInterface
         array $headers = [],
         $content = null
     ) {
+        $this->post = new PathAccess();
         if (!($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
         }
         $uri->withQueryParams($query);
-        $this->setUri($uri);
+        $this->setUri($uri)
+            ->setPost($post);
     }
 
     /**
@@ -52,5 +62,28 @@ class Request implements RequestInterface
         $this->uri = $uri;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPost($post)
+    {
+        if (!($post instanceof PathAccessInterface)) {
+            $this->post->exchangeArray($post);
+
+            return $this;
+        }
+        $this->post = $post;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPost(): PathAccessInterface
+    {
+        return $this->post;
     }
 }
