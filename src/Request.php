@@ -86,4 +86,22 @@ class Request implements RequestInterface
     {
         return $this->post;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function setQuery($query)
+    {
+        $this->uri->withQueryParams($query);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getQuery(): PathAccessInterface
+    {
+        return $this->uri->getQueryParams();
+    }
 }
