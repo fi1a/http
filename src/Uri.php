@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Collection\DataType\PathAccess;
+use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Format\Formatter;
 use InvalidArgumentException;
 
@@ -55,9 +57,9 @@ class Uri implements UriInterface
     private $query;
 
     /**
-     * @var mixed[]
+     * @var PathAccessInterface
      */
-    private $queryParams = [];
+    private $queryParams;
 
     /**
      * @var string
@@ -70,6 +72,7 @@ class Uri implements UriInterface
      */
     public function __construct(string $uri = '', array $variables = [])
     {
+        $this->queryParams = new PathAccess();
         $parsed = parse_url(Formatter::format($uri, $variables));
         $this->withScheme($parsed['scheme'] ?? 'https')
             ->withUserInfo($parsed['user'] ?? '', $parsed['pass'] ?? null)
@@ -212,7 +215,8 @@ class Uri implements UriInterface
     public function withQuery(string $query)
     {
         $this->query = $query;
-        parse_str($query, $this->queryParams);
+        parse_str($query, $queryParams);
+        $this->queryParams->exchangeArray($queryParams);
 
         return $this;
     }
@@ -220,7 +224,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getQueryParams(): array
+    public function getQueryParams(): PathAccessInterface
     {
         return $this->queryParams;
     }
@@ -228,10 +232,15 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function withQueryParams(array $queryParams)
+    public function withQueryParams($queryParams)
     {
-        $this->queryParams = $queryParams;
-        $this->query = http_build_query($queryParams);
+        if (!($queryParams instanceof PathAccessInterface)) {
+            $this->queryParams->exchangeArray($queryParams);
+        } else {
+            $this->queryParams = $queryParams;
+        }
+
+        $this->query = http_build_query($this->queryParams->getArrayCopy());
 
         return $this;
     }

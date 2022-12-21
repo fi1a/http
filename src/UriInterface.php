@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Collection\DataType\PathAccessInterface;
+
 /**
  * URI
  */
@@ -98,19 +100,17 @@ interface UriInterface
 
     /**
      * Массив запроса в URI
-     *
-     * @return mixed[]
      */
-    public function getQueryParams(): array;
+    public function getQueryParams(): PathAccessInterface;
 
     /**
      * Задать массив запроса в URI
      *
-     * @param mixed[] $queryParams
+     * @param mixed[]|PathAccessInterface $queryParams
      *
      * @return $this
      */
-    public function withQueryParams(array $queryParams);
+    public function withQueryParams($queryParams);
 
     /**
      * Фрагмент URI

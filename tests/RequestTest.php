@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use Fi1a\Collection\DataType\PathAccess;
+use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\Uri;
@@ -20,7 +22,19 @@ class RequestTest extends TestCase
      */
     private function getRequest(): RequestInterface
     {
-        return new Request('/path/to/index.html');
+        return new Request(
+            '/path/to/index.html',
+            [
+                'foo' => [
+                    'bar' => 'baz',
+                ],
+            ],
+            [
+                'foo' => [
+                    'bar' => 'baz',
+                ],
+            ]
+        );
     }
 
     /**
@@ -34,5 +48,31 @@ class RequestTest extends TestCase
         $request->setUri(new Uri($path));
         $this->assertInstanceOf(UriInterface::class, $request->getUri());
         $this->assertEquals($path, $request->getUri()->getPath());
+    }
+
+    /**
+     * POST данные
+     */
+    public function testPost(): void
+    {
+        $request = $this->getRequest();
+        $this->assertInstanceOf(PathAccessInterface::class, $request->getPost());
+        $this->assertCount(1, $request->getPost());
+        $this->assertEquals('baz', $request->getPost()->get('foo:bar'));
+        $request->setPost([
+            'foo' => [
+                'bar' => 'qux',
+            ],
+        ]);
+        $this->assertInstanceOf(PathAccessInterface::class, $request->getPost());
+        $this->assertCount(1, $request->getPost());
+        $this->assertEquals('qux', $request->getPost()->get('foo:bar'));
+        $request->setPost(new PathAccess([
+            'foo' => [
+                'bar' => 'baz',
+            ],
+        ]));
+        $this->assertCount(1, $request->getPost());
+        $this->assertEquals('baz', $request->getPost()->get('foo:bar'));
     }
 }

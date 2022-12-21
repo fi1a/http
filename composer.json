@@ -13,7 +13,8 @@
   ],
   "require": {
     "php": "^7.3 || ^8",
-    "fi1a/format": "^2.0"
+    "fi1a/format": "^2.0",
+    "fi1a/collection": "^2.0"
   },
   "suggest": {
   },

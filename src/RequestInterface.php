@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Collection\DataType\PathAccessInterface;
+
 /**
  * Запрос
  */
@@ -11,8 +13,8 @@ interface RequestInterface
 {
     /**
      * @param string|UriInterface $uri
-     * @param mixed[] $query
-     * @param mixed[] $post
+     * @param mixed[]|PathAccessInterface $query
+     * @param mixed[]|PathAccessInterface $post
      * @param mixed[] $options
      * @param mixed[] $cookies
      * @param mixed[] $files
@@ -22,8 +24,8 @@ interface RequestInterface
      */
     public function __construct(
         $uri,
-        array $query = [],
-        array $post = [],
+        $query = [],
+        $post = [],
         array $options = [],
         array $cookies = [],
         array $files = [],
@@ -45,4 +47,18 @@ interface RequestInterface
      * @return $this
      */
     public function setUri(UriInterface $uri);
+
+    /**
+     * Устанавливает POST
+     *
+     * @param mixed[]|PathAccessInterface $post
+     *
+     * @return $this
+     */
+    public function setPost($post);
+
+    /**
+     * Возвращает POST
+     */
+    public function getPost(): PathAccessInterface;
 }

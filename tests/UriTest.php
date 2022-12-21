@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use Fi1a\Collection\DataType\PathAccess;
+use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Http\Uri;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -233,10 +235,27 @@ class UriTest extends TestCase
     /**
      * Массив запроса в URI
      */
+    public function testGetQueryParamsPathAccess(): void
+    {
+        $uri = new Uri('https://host.ru/some/path/?foo=bar&baz[]=qux&baz[]=quz');
+        $this->assertInstanceOf(PathAccessInterface::class, $uri->getQueryParams());
+        $this->assertCount(2, $uri->getQueryParams());
+        $this->assertEquals(['qux', 'quz'], $uri->getQueryParams()->get('baz'));
+        $uri->withQueryParams(new PathAccess(['foo' => 'bar']));
+        $this->assertCount(1, $uri->getQueryParams());
+        $this->assertEquals('bar', $uri->getQueryParams()->get('foo'));
+    }
+
+    /**
+     * Массив запроса в URI
+     */
     public function testGetQueryParams(): void
     {
         $uri = new Uri('https://host.ru/some/path/?foo=bar&baz[]=qux&baz[]=quz');
-        $this->assertEquals(['foo' => 'bar', 'baz' => ['qux', 'quz']], $uri->getQueryParams());
+        $this->assertEquals(
+            ['foo' => 'bar', 'baz' => ['qux', 'quz']],
+            $uri->getQueryParams()->getArrayCopy()
+        );
     }
 
     /**
@@ -245,7 +264,7 @@ class UriTest extends TestCase
     public function testGetQueryParamsEmpty(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals([], $uri->getQueryParams());
+        $this->assertEquals([], $uri->getQueryParams()->getArrayCopy());
     }
 
     /**
@@ -256,7 +275,7 @@ class UriTest extends TestCase
         $queryParams = ['foo' => 'bar', 'baz' => ['qux', 'quz']];
         $uri = new Uri('https://host.ru/some/path/');
         $uri->withQueryParams($queryParams);
-        $this->assertEquals($queryParams, $uri->getQueryParams());
+        $this->assertEquals($queryParams, $uri->getQueryParams()->getArrayCopy());
         $this->assertEquals('foo=bar&baz%5B0%5D=qux&baz%5B1%5D=quz', $uri->getQuery());
     }
 
