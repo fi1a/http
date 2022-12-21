@@ -75,4 +75,30 @@ class RequestTest extends TestCase
         $this->assertCount(1, $request->getPost());
         $this->assertEquals('baz', $request->getPost()->get('foo:bar'));
     }
+
+    /**
+     * GET значения
+     */
+    public function testQuery(): void
+    {
+        $request = $this->getRequest();
+        $this->assertInstanceOf(PathAccessInterface::class, $request->getQuery());
+        $this->assertCount(1, $request->getQuery());
+        $this->assertEquals('baz', $request->getQuery()->get('foo:bar'));
+        $request->setQuery([
+            'foo' => [
+                'bar' => 'qux',
+            ],
+        ]);
+        $this->assertInstanceOf(PathAccessInterface::class, $request->getQuery());
+        $this->assertCount(1, $request->getQuery());
+        $this->assertEquals('qux', $request->getQuery()->get('foo:bar'));
+        $request->setQuery(new PathAccess([
+            'foo' => [
+                'bar' => 'baz',
+            ],
+        ]));
+        $this->assertCount(1, $request->getQuery());
+        $this->assertEquals('baz', $request->getQuery()->get('foo:bar'));
+    }
 }

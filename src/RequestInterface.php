@@ -61,4 +61,18 @@ interface RequestInterface
      * Возвращает POST
      */
     public function getPost(): PathAccessInterface;
+
+    /**
+     * Устанавливает GET значения
+     *
+     * @param PathAccessInterface|mixed[] $query
+     *
+     * @return $this
+     */
+    public function setQuery($query);
+
+    /**
+     * Возвращает GET значения
+     */
+    public function getQuery(): PathAccessInterface;
 }
