@@ -92,7 +92,7 @@ interface RequestInterface
      *
      * @param string|resource|null $content
      *
-     * @return static
+     * @return $this
      */
     public function setContent($content);
 
@@ -102,4 +102,16 @@ interface RequestInterface
      * @return resource
      */
     public function getContent();
+
+    /**
+     * Возвращает экземпляр класса сессии
+     */
+    public function getSession(): SessionStorageInterface;
+
+    /**
+     * Устанавливает экземпляр класса сессии
+     *
+     * @return $this
+     */
+    public function setSession(SessionStorageInterface $session);
 }

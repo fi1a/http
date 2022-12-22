@@ -12,13 +12,38 @@ use const PHP_URL_PATH;
 class Http implements HttpInterface
 {
     /**
+     * @var HttpInterface|null
+     */
+    protected static $instance;
+
+    /**
      * @var RequestInterface
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     private $request;
 
-    public function __construct()
+    /**
+     * @var SessionStorageInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $session;
+
+    /**
+     * @inheritDoc
+     */
+    public static function getInstance(): HttpInterface
     {
-        $this->request = new Request('');
+        if (!static::$instance) {
+            static::$instance = new Http();
+        }
+
+        return static::$instance;
+    }
+
+    protected function __construct()
+    {
+        $this->setRequest(new Request(''))
+            ->setSession(new SessionStorage(new SessionHandler()));
     }
 
     /**
@@ -35,6 +60,24 @@ class Http implements HttpInterface
     public function setRequest(RequestInterface $request)
     {
         $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSession(): SessionStorageInterface
+    {
+        return $this->session;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSession(SessionStorageInterface $session)
+    {
+        $this->session = $session;
 
         return $this;
     }

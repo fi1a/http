@@ -10,6 +10,11 @@ namespace Fi1a\Http;
 interface HttpInterface
 {
     /**
+     * Синглетон
+     */
+    public static function getInstance(): HttpInterface;
+
+    /**
      * Возвращает экземпляр класса текущего запроса
      */
     public function getRequest(): RequestInterface;
@@ -39,4 +44,16 @@ interface HttpInterface
         array $files,
         array $server
     ): RequestInterface;
+
+    /**
+     * Возвращает экземпляр класса сессии
+     */
+    public function getSession(): SessionStorageInterface;
+
+    /**
+     * Устанавливает экземпляр класса сессии
+     *
+     * @return $this
+     */
+    public function setSession(SessionStorageInterface $session);
 }
