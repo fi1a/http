@@ -17,7 +17,6 @@ interface RequestInterface
      * @param mixed[]|PathAccessInterface $post
      * @param mixed[] $options
      * @param mixed[] $cookies
-     * @param mixed[] $files
      * @param mixed[] $server
      * @param mixed[] $headers
      * @param string|resource|null $content
@@ -28,7 +27,7 @@ interface RequestInterface
         $post = [],
         array $options = [],
         array $cookies = [],
-        array $files = [],
+        ?UploadFileCollectionInterface $files = null,
         array $server = [],
         array $headers = [],
         $content = null
@@ -75,4 +74,16 @@ interface RequestInterface
      * Возвращает GET значения
      */
     public function getQuery(): PathAccessInterface;
+
+    /**
+     * Устанавливает файлы
+     *
+     * @return $this
+     */
+    public function setFiles(UploadFileCollectionInterface $files);
+
+    /**
+     * Возвращает файлы
+     */
+    public function getFiles(): UploadFileCollectionInterface;
 }
