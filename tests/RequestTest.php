@@ -39,7 +39,10 @@ class RequestTest extends TestCase
             ],
             [],
             [],
-            null
+            null,
+            [],
+            [],
+            fopen(__DIR__ . '/Resources/content1.txt', 'r')
         );
     }
 
@@ -135,5 +138,27 @@ class RequestTest extends TestCase
         $uploadFile = $request->getFiles()->get('some:file2');
         $this->assertInstanceOf(UploadFileInterface::class, $uploadFile);
         $this->assertEquals('filename2.txt', $uploadFile->getName());
+    }
+
+    /**
+     * Содержание
+     */
+    public function testContent(): void
+    {
+        $request = $this->getRequest();
+        $this->assertEquals('content1', stream_get_contents($request->getContent()));
+        $request->setContent(fopen(__DIR__ . '/Resources/content2.txt', 'r'));
+        $this->assertEquals('content2', stream_get_contents($request->getContent()));
+    }
+
+    /**
+     * Содержание
+     */
+    public function testContentString(): void
+    {
+        $request = $this->getRequest();
+        $this->assertEquals('content1', stream_get_contents($request->getContent()));
+        $request->setContent('content2');
+        $this->assertEquals('content2', stream_get_contents($request->getContent()));
     }
 }
