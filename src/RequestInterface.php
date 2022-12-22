@@ -86,4 +86,20 @@ interface RequestInterface
      * Возвращает файлы
      */
     public function getFiles(): UploadFileCollectionInterface;
+
+    /**
+     * Устанавливает содержание
+     *
+     * @param string|resource|null $content
+     *
+     * @return static
+     */
+    public function setContent($content);
+
+    /**
+     * Возвращает содержание
+     *
+     * @return resource
+     */
+    public function getContent();
 }

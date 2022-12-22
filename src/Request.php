@@ -30,6 +30,11 @@ class Request implements RequestInterface
     private $files;
 
     /**
+     * @var resource|string|null
+     */
+    private $content;
+
+    /**
      * @inheritDoc
      */
     public function __construct(
@@ -53,7 +58,8 @@ class Request implements RequestInterface
         $uri->withQueryParams($query);
         $this->setUri($uri)
             ->setPost($post)
-            ->setFiles($files);
+            ->setFiles($files)
+            ->setContent($content);
     }
 
     /**
@@ -131,5 +137,30 @@ class Request implements RequestInterface
     public function getFiles(): UploadFileCollectionInterface
     {
         return $this->files;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContent()
+    {
+        $content = $this->content;
+        if (!is_resource($content)) {
+            $content = fopen('php://temp', 'r+');
+            fwrite($content, (string) $this->content);
+        }
+        rewind($content);
+
+        return $content;
     }
 }

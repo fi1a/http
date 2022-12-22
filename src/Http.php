@@ -11,15 +11,15 @@ use const PHP_URL_PATH;
  */
 class Http implements HttpInterface
 {
-    public function __construct()
-    {
-        $this->request = new Request('/');
-    }
-
     /**
      * @var RequestInterface
      */
     private $request;
+
+    public function __construct()
+    {
+        $this->request = new Request('');
+    }
 
     /**
      * @inheritDoc
