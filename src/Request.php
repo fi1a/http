@@ -35,6 +35,11 @@ class Request implements RequestInterface
     private $content;
 
     /**
+     * @var SessionStorageInterface|null
+     */
+    private $session;
+
+    /**
      * @inheritDoc
      */
     public function __construct(
@@ -162,5 +167,27 @@ class Request implements RequestInterface
         rewind($content);
 
         return $content;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSession(): SessionStorageInterface
+    {
+        if (!is_null($this->session)) {
+            return $this->session;
+        }
+
+        return Http::getInstance()->getSession();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSession(SessionStorageInterface $session)
+    {
+        $this->session = $session;
+
+        return $this;
     }
 }

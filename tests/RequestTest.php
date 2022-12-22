@@ -8,6 +8,9 @@ use Fi1a\Collection\DataType\PathAccess;
 use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
+use Fi1a\Http\SessionHandler;
+use Fi1a\Http\SessionStorage;
+use Fi1a\Http\SessionStorageInterface;
 use Fi1a\Http\UploadFile;
 use Fi1a\Http\UploadFileCollection;
 use Fi1a\Http\UploadFileInterface;
@@ -160,5 +163,16 @@ class RequestTest extends TestCase
         $this->assertEquals('content1', stream_get_contents($request->getContent()));
         $request->setContent('content2');
         $this->assertEquals('content2', stream_get_contents($request->getContent()));
+    }
+
+    /**
+     * Тестирование сессии
+     */
+    public function testSession(): void
+    {
+        $request = $this->getRequest();
+        $this->assertInstanceOf(SessionStorageInterface::class, $request->getSession());
+        $request->setSession(new SessionStorage(new SessionHandler()));
+        $this->assertInstanceOf(SessionStorageInterface::class, $request->getSession());
     }
 }

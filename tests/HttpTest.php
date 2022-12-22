@@ -128,7 +128,7 @@ class HttpTest extends TestCase
     public function testRequest()
     {
         $request = $this->getRequest();
-        $http = new Http();
+        $http = Http::getInstance();
         $http->setRequest($request);
         $this->assertInstanceOf(RequestInterface::class, $http->getRequest());
     }
