@@ -8,6 +8,9 @@ use Fi1a\Collection\DataType\PathAccess;
 use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
+use Fi1a\Http\UploadFile;
+use Fi1a\Http\UploadFileCollection;
+use Fi1a\Http\UploadFileInterface;
 use Fi1a\Http\Uri;
 use Fi1a\Http\UriInterface;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +36,10 @@ class RequestTest extends TestCase
                 'foo' => [
                     'bar' => 'baz',
                 ],
-            ]
+            ],
+            [],
+            [],
+            null
         );
     }
 
@@ -100,5 +106,34 @@ class RequestTest extends TestCase
         ]));
         $this->assertCount(1, $request->getQuery());
         $this->assertEquals('baz', $request->getQuery()->get('foo:bar'));
+    }
+
+    /**
+     * Файлы
+     */
+    public function testFiles(): void
+    {
+        $request = $this->getRequest();
+        $this->assertCount(0, $request->getFiles());
+        $files = new UploadFileCollection();
+        $files->set('file1', new UploadFile([
+            'error' => 0,
+            'name' => 'filename.txt',
+            'type' => 'txt',
+            'tmp_name' => '/tmp/filename',
+            'size' => 100,
+        ]));
+        $files->set('some:file2', new UploadFile([
+            'error' => 0,
+            'name' => 'filename2.txt',
+            'type' => 'txt',
+            'tmp_name' => '/tmp/filename2',
+            'size' => 120,
+        ]));
+        $request->setFiles($files);
+        $this->assertCount(2, $request->getFiles());
+        $uploadFile = $request->getFiles()->get('some:file2');
+        $this->assertInstanceOf(UploadFileInterface::class, $uploadFile);
+        $this->assertEquals('filename2.txt', $uploadFile->getName());
     }
 }

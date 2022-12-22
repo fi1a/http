@@ -24,6 +24,12 @@ class Request implements RequestInterface
     private $post;
 
     /**
+     * @var UploadFileCollectionInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $files;
+
+    /**
      * @inheritDoc
      */
     public function __construct(
@@ -32,7 +38,7 @@ class Request implements RequestInterface
         $post = [],
         array $options = [],
         array $cookies = [],
-        array $files = [],
+        ?UploadFileCollectionInterface $files = null,
         array $server = [],
         array $headers = [],
         $content = null
@@ -41,9 +47,13 @@ class Request implements RequestInterface
         if (!($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
         }
+        if (is_null($files)) {
+            $files = new UploadFileCollection();
+        }
         $uri->withQueryParams($query);
         $this->setUri($uri)
-            ->setPost($post);
+            ->setPost($post)
+            ->setFiles($files);
     }
 
     /**
@@ -103,5 +113,23 @@ class Request implements RequestInterface
     public function getQuery(): PathAccessInterface
     {
         return $this->uri->getQueryParams();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setFiles(UploadFileCollectionInterface $files)
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFiles(): UploadFileCollectionInterface
+    {
+        return $this->files;
     }
 }
