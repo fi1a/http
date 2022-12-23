@@ -16,7 +16,6 @@ interface RequestInterface
      * @param mixed[]|PathAccessInterface $query
      * @param mixed[]|PathAccessInterface $post
      * @param mixed[] $options
-     * @param mixed[] $cookies
      * @param mixed[] $server
      * @param mixed[] $headers
      * @param string|resource|null $content
@@ -26,7 +25,7 @@ interface RequestInterface
         $query = [],
         $post = [],
         array $options = [],
-        array $cookies = [],
+        ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
         array $server = [],
         array $headers = [],
@@ -104,14 +103,14 @@ interface RequestInterface
     public function getContent();
 
     /**
-     * Возвращает экземпляр класса сессии
-     */
-    public function getSession(): SessionStorageInterface;
-
-    /**
-     * Устанавливает экземпляр класса сессии
+     * Устанавливает cookies
      *
      * @return $this
      */
-    public function setSession(SessionStorageInterface $session);
+    public function setCookies(HttpCookieCollectionInterface $cookies);
+
+    /**
+     * Возвращает cookies
+     */
+    public function getCookies(): HttpCookieCollectionInterface;
 }

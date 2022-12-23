@@ -12,11 +12,6 @@ use const PHP_URL_PATH;
 class Http implements HttpInterface
 {
     /**
-     * @var HttpInterface|null
-     */
-    protected static $instance;
-
-    /**
      * @var RequestInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
@@ -28,22 +23,10 @@ class Http implements HttpInterface
      */
     private $session;
 
-    /**
-     * @inheritDoc
-     */
-    public static function getInstance(): HttpInterface
+    public function __construct(RequestInterface $request, SessionStorageInterface $session)
     {
-        if (!static::$instance) {
-            static::$instance = new Http();
-        }
-
-        return static::$instance;
-    }
-
-    protected function __construct()
-    {
-        $this->setRequest(new Request(''))
-            ->setSession(new SessionStorage(new SessionHandler()));
+        $this->setRequest($request)
+            ->setSession($session);
     }
 
     /**
@@ -122,12 +105,24 @@ class Http implements HttpInterface
             $uploadFiles->set($path, new UploadFile($uploadFileData));
         }
 
+        $cookieCollection = new HttpCookieCollection();
+        /**
+         * @var string|null $value
+         */
+        foreach ($cookies as $name => $value) {
+            $cookieCollection[] = [
+                'Name' => $name,
+                'Value' => $value,
+            ];
+        }
+        $cookieCollection->setNeedSet(false);
+
         return static::requestFactory(
             parse_url($server['REQUEST_URI'] ?? '/', PHP_URL_PATH),
             $query,
             $post,
             $options,
-            $cookies,
+            $cookieCollection,
             $uploadFiles,
             $server,
             [],
@@ -161,7 +156,6 @@ class Http implements HttpInterface
      * @param mixed[]  $query
      * @param mixed[]  $post
      * @param mixed[]  $options
-     * @param mixed[]  $cookies
      * @param mixed[]  $server
      * @param mixed[]  $headers
      * @param resource $content
@@ -171,7 +165,7 @@ class Http implements HttpInterface
         array $query,
         array $post,
         array $options,
-        array $cookies,
+        HttpCookieCollectionInterface $cookies,
         UploadFileCollectionInterface $files,
         array $server,
         array $headers,

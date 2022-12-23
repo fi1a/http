@@ -76,8 +76,8 @@ class CookieTest extends TestCase
     public function testDomain(): void
     {
         $cookie = new Cookie();
-        $cookie->setValue('domain');
-        $this->assertEquals('domain', $cookie->getValue());
+        $cookie->setDomain('domain');
+        $this->assertEquals('domain', $cookie->getDomain());
     }
 
     /**
@@ -156,16 +156,6 @@ class CookieTest extends TestCase
         $cookie = new Cookie();
         $cookie->setHttpOnly(true);
         $this->assertTrue($cookie->getHttpOnly());
-    }
-
-    /**
-     * Действует только на эту сессию
-     */
-    public function testSession(): void
-    {
-        $cookie = new Cookie();
-        $cookie->setSession(true);
-        $this->assertTrue($cookie->getSession());
     }
 
     /**

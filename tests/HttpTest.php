@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace Fi1a\Unit\Http;
 
 use Fi1a\Http\Http;
+use Fi1a\Http\HttpInterface;
+use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
+use Fi1a\Http\SessionHandler;
+use Fi1a\Http\SessionStorage;
+use Fi1a\Http\SessionStorageInterface;
 use Fi1a\Http\UploadFileInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -27,7 +32,10 @@ class HttpTest extends TestCase
                 'foo' => 'bar',
             ],
             [],
-            [],
+            [
+                'cookieName1' => 'value1',
+                'cookieName2' => 'value2',
+            ],
             [
                 'file1' => [
                     'name' => 'file.pdf',
@@ -99,9 +107,17 @@ class HttpTest extends TestCase
     }
 
     /**
+     * Возвращает класс Http
+     */
+    private function getHttp(): HttpInterface
+    {
+        return new Http(new Request('/'), new SessionStorage(new SessionHandler()));
+    }
+
+    /**
      * Создание экземпляра класса Request из глобальных переменных
      */
-    public function testCreateRequestWithGlobals()
+    public function testCreateRequestWithGlobals(): void
     {
         $request = $this->getRequest();
         $this->assertCount(1, $request->getQuery());
@@ -120,16 +136,26 @@ class HttpTest extends TestCase
             $fileUpload
         );
         $this->assertEquals('file 2.pdf', $fileUpload->getName());
+        $this->assertCount(2, $request->getCookies());
     }
 
     /**
      * Экземпляр класса текущего запроса
      */
-    public function testRequest()
+    public function testRequest(): void
     {
         $request = $this->getRequest();
-        $http = Http::getInstance();
+        $http = $this->getHttp();
         $http->setRequest($request);
         $this->assertInstanceOf(RequestInterface::class, $http->getRequest());
+    }
+
+    /**
+     * Сессия
+     */
+    public function testGetSession(): void
+    {
+        $http = $this->getHttp();
+        $this->assertInstanceOf(SessionStorageInterface::class, $http->getSession());
     }
 }

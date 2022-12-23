@@ -35,9 +35,10 @@ class Request implements RequestInterface
     private $content;
 
     /**
-     * @var SessionStorageInterface|null
+     * @var HttpCookieCollectionInterface
+     * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $session;
+    private $cookies;
 
     /**
      * @inheritDoc
@@ -47,7 +48,7 @@ class Request implements RequestInterface
         $query = [],
         $post = [],
         array $options = [],
-        array $cookies = [],
+        ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
         array $server = [],
         array $headers = [],
@@ -60,11 +61,15 @@ class Request implements RequestInterface
         if (is_null($files)) {
             $files = new UploadFileCollection();
         }
+        if (is_null($cookies)) {
+            $cookies = new HttpCookieCollection();
+        }
         $uri->withQueryParams($query);
         $this->setUri($uri)
             ->setPost($post)
             ->setFiles($files)
-            ->setContent($content);
+            ->setContent($content)
+            ->setCookies($cookies);
     }
 
     /**
@@ -172,22 +177,18 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getSession(): SessionStorageInterface
+    public function setCookies(HttpCookieCollectionInterface $cookies)
     {
-        if (!is_null($this->session)) {
-            return $this->session;
-        }
+        $this->cookies = $cookies;
 
-        return Http::getInstance()->getSession();
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function setSession(SessionStorageInterface $session)
+    public function getCookies(): HttpCookieCollectionInterface
     {
-        $this->session = $session;
-
-        return $this;
+        return $this->cookies;
     }
 }

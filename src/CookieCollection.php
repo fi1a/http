@@ -7,7 +7,7 @@ namespace Fi1a\Http;
 use Fi1a\Collection\AbstractInstanceCollection;
 
 /**
- * Коллекция кук
+ * Коллекция cookies
  */
 class CookieCollection extends AbstractInstanceCollection implements CookieCollectionInterface
 {
