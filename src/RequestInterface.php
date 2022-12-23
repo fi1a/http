@@ -17,7 +17,6 @@ interface RequestInterface
      * @param mixed[]|PathAccessInterface $post
      * @param mixed[] $options
      * @param mixed[] $server
-     * @param mixed[] $headers
      * @param string|resource|null $content
      */
     public function __construct(
@@ -28,7 +27,7 @@ interface RequestInterface
         ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
         array $server = [],
-        array $headers = [],
+        ?HeaderCollectionInterface $headers = null,
         $content = null
     );
 
@@ -113,4 +112,16 @@ interface RequestInterface
      * Возвращает cookies
      */
     public function getCookies(): HttpCookieCollectionInterface;
+
+    /**
+     * Установить заголовки
+     *
+     * @return $this
+     */
+    public function setHeaders(HeaderCollectionInterface $headers);
+
+    /**
+     * Вернуть заголовки
+     */
+    public function getHeaders(): HeaderCollectionInterface;
 }

@@ -117,6 +117,11 @@ class Http implements HttpInterface
         }
         $cookieCollection->setNeedSet(false);
 
+        $headers = new HeaderCollection();
+        foreach (static::getHeaders($server) as $name => $value) {
+            $headers[] = [$name, $value,];
+        }
+
         return static::requestFactory(
             parse_url($server['REQUEST_URI'] ?? '/', PHP_URL_PATH),
             $query,
@@ -125,7 +130,7 @@ class Http implements HttpInterface
             $cookieCollection,
             $uploadFiles,
             $server,
-            [],
+            $headers,
             fopen('php://input', 'rb')
         );
     }
@@ -151,13 +156,39 @@ class Http implements HttpInterface
     }
 
     /**
+     * Возвращает заголовки
+     *
+     * @param string[] $server
+     *
+     * @return string[]
+     */
+    private static function getHeaders(array $server): array
+    {
+        $headers = [];
+        foreach ($server as $serverCode => $serverValue) {
+            if (!preg_match('/^HTTP_(.+)$/', (string) $serverCode)) {
+                continue;
+            }
+            $key = preg_replace('/^HTTP_(.+)$/', '$1', (string) $serverCode);
+            $matches = [];
+            foreach (explode('_', $key) as $part) {
+                $matches[] = ucfirst($part);
+            }
+
+            $name = implode('-', $matches);
+            $headers[$name] = $serverValue;
+        }
+
+        return $headers;
+    }
+
+    /**
      * Фабрика экземпляра класса запроса
      *
      * @param mixed[]  $query
      * @param mixed[]  $post
      * @param mixed[]  $options
      * @param mixed[]  $server
-     * @param mixed[]  $headers
      * @param resource $content
      */
     private static function requestFactory(
@@ -168,7 +199,7 @@ class Http implements HttpInterface
         HttpCookieCollectionInterface $cookies,
         UploadFileCollectionInterface $files,
         array $server,
-        array $headers,
+        HeaderCollectionInterface $headers,
         $content
     ): RequestInterface {
         return new Request(

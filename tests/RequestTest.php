@@ -6,6 +6,7 @@ namespace Fi1a\Unit\Http;
 
 use Fi1a\Collection\DataType\PathAccess;
 use Fi1a\Collection\DataType\PathAccessInterface;
+use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\UploadFile;
@@ -40,8 +41,11 @@ class RequestTest extends TestCase
             [],
             null,
             null,
-            [],
-            [],
+            [
+                'HTTP_HOST' => 'domain.ru',
+                'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
+            ],
+            null,
             fopen(__DIR__ . '/Resources/content1.txt', 'r')
         );
     }
@@ -160,5 +164,27 @@ class RequestTest extends TestCase
         $this->assertEquals('content1', stream_get_contents($request->getContent()));
         $request->setContent('content2');
         $this->assertEquals('content2', stream_get_contents($request->getContent()));
+    }
+
+    /**
+     * Заголовки
+     */
+    public function testHeader(): void
+    {
+        $request = $this->getRequest();
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $request->getHeaders());
+        $this->assertCount(0, $request->getHeaders());
+        $headers = $request->getHeaders();
+        $headers[] = [
+            'Content-Type',
+            'Value1',
+        ];
+        $headers[] = [
+            'User-Agent',
+            'Value2',
+        ];
+        $request->setHeaders($headers);
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $request->getHeaders());
+        $this->assertCount(2, $request->getHeaders());
     }
 }
