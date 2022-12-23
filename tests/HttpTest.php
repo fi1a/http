@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Http;
 use Fi1a\Http\HttpInterface;
 use Fi1a\Http\Request;
@@ -102,7 +103,11 @@ class HttpTest extends TestCase
                     ],
                 ],
             ],
-            []
+            [
+                'HTTP_HOST' => 'domain.ru',
+                'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
+                'REQUEST_URI' => '/some/path/',
+            ]
         );
     }
 
@@ -137,6 +142,9 @@ class HttpTest extends TestCase
         );
         $this->assertEquals('file 2.pdf', $fileUpload->getName());
         $this->assertCount(2, $request->getCookies());
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $request->getHeaders());
+        $this->assertCount(2, $request->getHeaders());
+        $this->assertEquals('domain.ru', $request->getHeaders()->getLastHeader('Host')->getValue());
     }
 
     /**

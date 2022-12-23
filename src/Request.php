@@ -41,6 +41,12 @@ class Request implements RequestInterface
     private $cookies;
 
     /**
+     * @var HeaderCollectionInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $headers;
+
+    /**
      * @inheritDoc
      */
     public function __construct(
@@ -51,7 +57,7 @@ class Request implements RequestInterface
         ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
         array $server = [],
-        array $headers = [],
+        ?HeaderCollectionInterface $headers = null,
         $content = null
     ) {
         $this->post = new PathAccess();
@@ -64,12 +70,16 @@ class Request implements RequestInterface
         if (is_null($cookies)) {
             $cookies = new HttpCookieCollection();
         }
+        if (is_null($headers)) {
+            $headers = new HeaderCollection();
+        }
         $uri->withQueryParams($query);
         $this->setUri($uri)
             ->setPost($post)
             ->setFiles($files)
             ->setContent($content)
-            ->setCookies($cookies);
+            ->setCookies($cookies)
+            ->setHeaders($headers);
     }
 
     /**
@@ -190,5 +200,23 @@ class Request implements RequestInterface
     public function getCookies(): HttpCookieCollectionInterface
     {
         return $this->cookies;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setHeaders(HeaderCollectionInterface $headers)
+    {
+        $this->headers = $headers;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHeaders(): HeaderCollectionInterface
+    {
+        return $this->headers;
     }
 }
