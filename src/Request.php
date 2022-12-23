@@ -53,13 +53,18 @@ class Request implements RequestInterface
     private $server;
 
     /**
+     * @var PathAccessInterface
+     */
+    private $options;
+
+    /**
      * @inheritDoc
      */
     public function __construct(
         $uri,
         $query = [],
         $post = [],
-        array $options = [],
+        $options = [],
         ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
         ?ServerCollectionInterface $server = null,
@@ -67,6 +72,7 @@ class Request implements RequestInterface
         $content = null
     ) {
         $this->post = new PathAccess();
+        $this->options = new PathAccess();
         if (!($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
         }
@@ -89,7 +95,8 @@ class Request implements RequestInterface
             ->setContent($content)
             ->setCookies($cookies)
             ->setHeaders($headers)
-            ->setServer($server);
+            ->setServer($server)
+            ->setOptions($options);
     }
 
     /**
@@ -246,5 +253,28 @@ class Request implements RequestInterface
     public function getServer(): ServerCollectionInterface
     {
         return $this->server;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptions(): PathAccessInterface
+    {
+        return $this->options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOptions($options)
+    {
+        if (!($options instanceof PathAccessInterface)) {
+            $this->options->exchangeArray($options);
+
+            return $this;
+        }
+        $this->options = $options;
+
+        return $this;
     }
 }

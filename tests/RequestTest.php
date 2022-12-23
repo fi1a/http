@@ -203,4 +203,20 @@ class RequestTest extends TestCase
         $this->assertCount(2, $request->getServer());
         $this->assertEquals('domain.ru', $request->getServer()['HTTP_HOST']);
     }
+
+    /**
+     * Опции
+     */
+    public function testOptions(): void
+    {
+        $request = $this->getRequest();
+        $this->assertInstanceOf(PathAccessInterface::class, $request->getOptions());
+        $this->assertCount(0, $request->getOptions());
+        $request->setOptions(['foo' => 'bar']);
+        $this->assertCount(1, $request->getOptions());
+        $this->assertEquals('bar', $request->getOptions()->get('foo'));
+        $request->setOptions(new PathAccess(['baz' => 'qux']));
+        $this->assertCount(1, $request->getOptions());
+        $this->assertEquals('qux', $request->getOptions()->get('baz'));
+    }
 }

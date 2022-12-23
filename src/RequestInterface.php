@@ -15,14 +15,14 @@ interface RequestInterface
      * @param string|UriInterface $uri
      * @param mixed[]|PathAccessInterface $query
      * @param mixed[]|PathAccessInterface $post
-     * @param mixed[] $options
+     * @param mixed[]|PathAccessInterface $options
      * @param string|resource|null $content
      */
     public function __construct(
         $uri,
         $query = [],
         $post = [],
-        array $options = [],
+        $options = [],
         ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
         ?ServerCollectionInterface $server = null,
@@ -135,4 +135,18 @@ interface RequestInterface
      * Возвращает значение SERVER
      */
     public function getServer(): ServerCollectionInterface;
+
+    /**
+     * Возвращает настройки
+     */
+    public function getOptions(): PathAccessInterface;
+
+    /**
+     * Задает настройки
+     *
+     * @param mixed[]|PathAccessInterface $options
+     *
+     * @return $this
+     */
+    public function setOptions($options);
 }
