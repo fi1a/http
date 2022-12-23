@@ -16,7 +16,6 @@ interface RequestInterface
      * @param mixed[]|PathAccessInterface $query
      * @param mixed[]|PathAccessInterface $post
      * @param mixed[] $options
-     * @param mixed[] $server
      * @param string|resource|null $content
      */
     public function __construct(
@@ -26,7 +25,7 @@ interface RequestInterface
         array $options = [],
         ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
-        array $server = [],
+        ?ServerCollectionInterface $server = null,
         ?HeaderCollectionInterface $headers = null,
         $content = null
     );
@@ -124,4 +123,16 @@ interface RequestInterface
      * Вернуть заголовки
      */
     public function getHeaders(): HeaderCollectionInterface;
+
+    /**
+     * Устанавливает значение SERVER
+     *
+     * @return $this
+     */
+    public function setServer(ServerCollectionInterface $server);
+
+    /**
+     * Возвращает значение SERVER
+     */
+    public function getServer(): ServerCollectionInterface;
 }

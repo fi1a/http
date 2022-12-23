@@ -9,6 +9,8 @@ use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
+use Fi1a\Http\ServerCollection;
+use Fi1a\Http\ServerCollectionInterface;
 use Fi1a\Http\UploadFile;
 use Fi1a\Http\UploadFileCollection;
 use Fi1a\Http\UploadFileInterface;
@@ -41,10 +43,7 @@ class RequestTest extends TestCase
             [],
             null,
             null,
-            [
-                'HTTP_HOST' => 'domain.ru',
-                'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
-            ],
+            null,
             null,
             fopen(__DIR__ . '/Resources/content1.txt', 'r')
         );
@@ -186,5 +185,22 @@ class RequestTest extends TestCase
         $request->setHeaders($headers);
         $this->assertInstanceOf(HeaderCollectionInterface::class, $request->getHeaders());
         $this->assertCount(2, $request->getHeaders());
+    }
+
+    /**
+     * Значения SERVER
+     */
+    public function testServer(): void
+    {
+        $request = $this->getRequest();
+        $this->assertInstanceOf(ServerCollectionInterface::class, $request->getServer());
+        $this->assertCount(0, $request->getHeaders());
+        $server = new ServerCollection([
+            'HTTP_HOST' => 'domain.ru',
+            'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
+        ]);
+        $request->setServer($server);
+        $this->assertCount(2, $request->getServer());
+        $this->assertEquals('domain.ru', $request->getServer()['HTTP_HOST']);
     }
 }

@@ -117,8 +117,13 @@ class Http implements HttpInterface
         }
         $cookieCollection->setNeedSet(false);
 
+        $serverCollection = new ServerCollection($server);
+
         $headers = new HeaderCollection();
-        foreach (static::getHeaders($server) as $name => $value) {
+        /**
+         * @var string|int $value
+         */
+        foreach ($serverCollection->getHeaders() as $name => $value) {
             $headers[] = [$name, $value,];
         }
 
@@ -129,7 +134,7 @@ class Http implements HttpInterface
             $options,
             $cookieCollection,
             $uploadFiles,
-            $server,
+            $serverCollection,
             $headers,
             fopen('php://input', 'rb')
         );
@@ -156,39 +161,11 @@ class Http implements HttpInterface
     }
 
     /**
-     * Возвращает заголовки
-     *
-     * @param string[] $server
-     *
-     * @return string[]
-     */
-    private static function getHeaders(array $server): array
-    {
-        $headers = [];
-        foreach ($server as $serverCode => $serverValue) {
-            if (!preg_match('/^HTTP_(.+)$/', (string) $serverCode)) {
-                continue;
-            }
-            $key = preg_replace('/^HTTP_(.+)$/', '$1', (string) $serverCode);
-            $matches = [];
-            foreach (explode('_', $key) as $part) {
-                $matches[] = ucfirst($part);
-            }
-
-            $name = implode('-', $matches);
-            $headers[$name] = $serverValue;
-        }
-
-        return $headers;
-    }
-
-    /**
      * Фабрика экземпляра класса запроса
      *
      * @param mixed[]  $query
      * @param mixed[]  $post
      * @param mixed[]  $options
-     * @param mixed[]  $server
      * @param resource $content
      */
     private static function requestFactory(
@@ -198,7 +175,7 @@ class Http implements HttpInterface
         array $options,
         HttpCookieCollectionInterface $cookies,
         UploadFileCollectionInterface $files,
-        array $server,
+        ServerCollectionInterface $server,
         HeaderCollectionInterface $headers,
         $content
     ): RequestInterface {
