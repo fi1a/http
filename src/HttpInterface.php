@@ -10,11 +10,6 @@ namespace Fi1a\Http;
 interface HttpInterface
 {
     /**
-     * Синглетон
-     */
-    public static function getInstance(): HttpInterface;
-
-    /**
      * Возвращает экземпляр класса текущего запроса
      */
     public function getRequest(): RequestInterface;
