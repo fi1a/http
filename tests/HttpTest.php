@@ -9,6 +9,7 @@ use Fi1a\Http\Http;
 use Fi1a\Http\HttpInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
+use Fi1a\Http\ServerCollectionInterface;
 use Fi1a\Http\SessionHandler;
 use Fi1a\Http\SessionStorage;
 use Fi1a\Http\SessionStorageInterface;
@@ -107,6 +108,7 @@ class HttpTest extends TestCase
                 'HTTP_HOST' => 'domain.ru',
                 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
                 'REQUEST_URI' => '/some/path/',
+                'CONTENT_LENGTH' => 100,
             ]
         );
     }
@@ -143,8 +145,10 @@ class HttpTest extends TestCase
         $this->assertEquals('file 2.pdf', $fileUpload->getName());
         $this->assertCount(2, $request->getCookies());
         $this->assertInstanceOf(HeaderCollectionInterface::class, $request->getHeaders());
-        $this->assertCount(2, $request->getHeaders());
+        $this->assertCount(3, $request->getHeaders());
         $this->assertEquals('domain.ru', $request->getHeaders()->getLastHeader('Host')->getValue());
+        $this->assertInstanceOf(ServerCollectionInterface::class, $request->getServer());
+        $this->assertCount(4, $request->getServer());
     }
 
     /**

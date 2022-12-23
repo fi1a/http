@@ -47,6 +47,12 @@ class Request implements RequestInterface
     private $headers;
 
     /**
+     * @var ServerCollectionInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $server;
+
+    /**
      * @inheritDoc
      */
     public function __construct(
@@ -56,7 +62,7 @@ class Request implements RequestInterface
         array $options = [],
         ?HttpCookieCollectionInterface $cookies = null,
         ?UploadFileCollectionInterface $files = null,
-        array $server = [],
+        ?ServerCollectionInterface $server = null,
         ?HeaderCollectionInterface $headers = null,
         $content = null
     ) {
@@ -73,13 +79,17 @@ class Request implements RequestInterface
         if (is_null($headers)) {
             $headers = new HeaderCollection();
         }
+        if (is_null($server)) {
+            $server = new ServerCollection();
+        }
         $uri->withQueryParams($query);
         $this->setUri($uri)
             ->setPost($post)
             ->setFiles($files)
             ->setContent($content)
             ->setCookies($cookies)
-            ->setHeaders($headers);
+            ->setHeaders($headers)
+            ->setServer($server);
     }
 
     /**
@@ -218,5 +228,23 @@ class Request implements RequestInterface
     public function getHeaders(): HeaderCollectionInterface
     {
         return $this->headers;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setServer(ServerCollectionInterface $server)
+    {
+        $this->server = $server;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getServer(): ServerCollectionInterface
+    {
+        return $this->server;
     }
 }
