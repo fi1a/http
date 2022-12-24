@@ -87,9 +87,19 @@ class Response implements ResponseInterface
      */
     private $reasonPhrase = 'OK';
 
+    /**
+     * @var HeaderCollectionInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $headers;
+
     public function __construct(int $status = self::HTTP_OK, ?HeaderCollectionInterface $headers = null)
     {
         $this->setStatus($status);
+        if (is_null($headers)) {
+            $headers = new HeaderCollection();
+        }
+        $this->withHeaders($headers);
     }
 
     /**
@@ -125,5 +135,33 @@ class Response implements ResponseInterface
     public function getReasonPhrase(): ?string
     {
         return $this->reasonPhrase;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withHeaders(HeaderCollectionInterface $headers)
+    {
+        $this->headers = $headers;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHeaders(): HeaderCollectionInterface
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withHeader(string $name, string $value)
+    {
+        $this->headers->add([$name, $value]);
+
+        return $this;
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use Fi1a\Http\HeaderCollection;
+use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
 use InvalidArgumentException;
@@ -74,5 +76,54 @@ class ResponseTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $response = $this->getResponse();
         $response->setStatus(601);
+    }
+
+    /**
+     * Заголоки
+     */
+    public function testGetHeaders(): void
+    {
+        $response = $this->getResponse();
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
+        $this->assertCount(0, $response->getHeaders());
+    }
+
+    /**
+     * Заголоки
+     */
+    public function testWithHeaders(): void
+    {
+        $response = $this->getResponse();
+        $headers = new HeaderCollection();
+        $headers[] = [
+            'X-Header',
+            'Value1',
+        ];
+        $response->withHeaders($headers);
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
+        $this->assertCount(1, $response->getHeaders());
+    }
+
+    /**
+     * Заголоки
+     */
+    public function testWithHeader(): void
+    {
+        $response = $this->getResponse();
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
+        $this->assertCount(0, $response->getHeaders());
+        $response->withHeader('X-Header', 'Value1');
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
+        $this->assertCount(1, $response->getHeaders());
+    }
+
+    /**
+     * Заголоки
+     */
+    public function testWithHeaderException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $response = $this->getResponse();
+        $response->withHeader('', '');
     }
 }
