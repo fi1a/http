@@ -19,16 +19,21 @@ function http(): HttpInterface
     static $http = null;
     if (is_null($http)) {
         /** @psalm-suppress InvalidArgument */
+        $request = Http::createRequestWithGlobals(
+            $_GET,
+            $_POST,
+            $_COOKIE,
+            $_FILES,
+            $_SERVER
+        );
         $http = new Http(
-            Http::createRequestWithGlobals(
-                $_GET,
-                $_POST,
-                $_COOKIE,
-                $_FILES,
-                $_SERVER
-            ),
+            $request,
             new SessionStorage(new SessionHandler()),
-            new Response()
+            new Response(
+                ResponseInterface::HTTP_OK,
+                null,
+                $request
+            )
         );
     }
 

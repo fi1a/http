@@ -255,4 +255,15 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->isRedirection('/path/'));
         $this->assertTrue($response->isRedirection('/redirect/'));
     }
+
+    /**
+     * Кодировка
+     */
+    public function testCharset(): void
+    {
+        $response = $this->getResponse();
+        $this->assertEquals('utf-8', $response->getCharset());
+        $response->setCharset('windows-1251');
+        $this->assertEquals('windows-1251', $response->getCharset());
+    }
 }
