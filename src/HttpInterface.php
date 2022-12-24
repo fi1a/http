@@ -35,6 +35,11 @@ interface HttpInterface
     public function request(?RequestInterface $request = null): RequestInterface;
 
     /**
+     * Возвращает или устанавливает экземпляр класса ответа
+     */
+    public function response(?ResponseInterface $response = null): ResponseInterface;
+
+    /**
      * Создание экземпляра класса Request из глобальных переменных
      *
      * @param mixed[] $query
@@ -42,12 +47,11 @@ interface HttpInterface
      * @param mixed[] $options
      * @param mixed[] $cookies
      * @param mixed[][] $files
-     * @param string[] $server
+     * @param mixed[] $server
      */
     public static function createRequestWithGlobals(
         array $query,
         array $post,
-        array $options,
         array $cookies,
         array $files,
         array $server

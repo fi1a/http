@@ -9,6 +9,8 @@ use Fi1a\Http\Http;
 use Fi1a\Http\HttpInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
+use Fi1a\Http\Response;
+use Fi1a\Http\ResponseInterface;
 use Fi1a\Http\ServerCollectionInterface;
 use Fi1a\Http\SessionHandler;
 use Fi1a\Http\SessionStorage;
@@ -33,7 +35,6 @@ class HttpTest extends TestCase
             [
                 'foo' => 'bar',
             ],
-            [],
             [
                 'cookieName1' => 'value1',
                 'cookieName2' => 'value2',
@@ -118,7 +119,11 @@ class HttpTest extends TestCase
      */
     private function getHttp(): HttpInterface
     {
-        return new Http(new Request('/'), new SessionStorage(new SessionHandler()));
+        return new Http(
+            new Request('/'),
+            new SessionStorage(new SessionHandler()),
+            new Response()
+        );
     }
 
     /**
@@ -165,9 +170,19 @@ class HttpTest extends TestCase
     /**
      * Сессия
      */
-    public function testGetSession(): void
+    public function testSession(): void
     {
         $http = $this->getHttp();
         $this->assertInstanceOf(SessionStorageInterface::class, $http->session());
+    }
+
+    /**
+     * Ответ
+     */
+    public function testResponse(): void
+    {
+        $http = $this->getHttp();
+        $http->response(new Response());
+        $this->assertInstanceOf(ResponseInterface::class, $http->response());
     }
 }

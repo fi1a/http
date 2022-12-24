@@ -23,10 +23,20 @@ class Http implements HttpInterface
      */
     private $session;
 
-    public function __construct(RequestInterface $request, SessionStorageInterface $session)
-    {
+    /**
+     * @var ResponseInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $response;
+
+    public function __construct(
+        RequestInterface $request,
+        SessionStorageInterface $session,
+        ResponseInterface $response
+    ) {
         $this->request($request);
         $this->session($session);
+        $this->response($response);
     }
 
     /**
@@ -56,10 +66,21 @@ class Http implements HttpInterface
     /**
      * @inheritDoc
      */
+    public function response(?ResponseInterface $response = null): ResponseInterface
+    {
+        if (!is_null($response)) {
+            $this->response = $response;
+        }
+
+        return $this->response;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function createRequestWithGlobals(
         array $query,
         array $post,
-        array $options,
         array $cookies,
         array $files,
         array $server
@@ -108,11 +129,15 @@ class Http implements HttpInterface
         $serverCollection = new ServerCollection($server);
         $headers = new HeaderCollection();
 
+        /**
+         * @var string $url
+         */
+        $url = $server['REQUEST_URI'] ?? '/';
+
         return static::requestFactory(
-            parse_url($server['REQUEST_URI'] ?? '/', PHP_URL_PATH),
+            parse_url($url, PHP_URL_PATH),
             $query,
             $post,
-            $options,
             $cookieCollection,
             $uploadFiles,
             $serverCollection,
@@ -153,7 +178,6 @@ class Http implements HttpInterface
         string $url,
         array $query,
         array $post,
-        array $options,
         HttpCookieCollectionInterface $cookies,
         UploadFileCollectionInterface $files,
         ServerCollectionInterface $server,
@@ -164,7 +188,7 @@ class Http implements HttpInterface
             $url,
             $query,
             $post,
-            $options,
+            [],
             $cookies,
             $files,
             $server,

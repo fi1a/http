@@ -35,7 +35,10 @@
   "autoload": {
     "psr-4": {
       "Fi1a\\Http\\": "src"
-    }
+    },
+    "files": [
+      "src/helpers.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
