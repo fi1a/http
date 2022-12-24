@@ -85,7 +85,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(0, $response->getHeaders());
+        $this->assertCount(1, $response->getHeaders());
     }
 
     /**
@@ -111,10 +111,10 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(0, $response->getHeaders());
+        $this->assertCount(1, $response->getHeaders());
         $response->withHeader('X-Header', 'Value1');
         $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(1, $response->getHeaders());
+        $this->assertCount(2, $response->getHeaders());
     }
 
     /**
@@ -136,9 +136,20 @@ class ResponseTest extends TestCase
         $response->withHeader('X-Header', 'Value1');
         $response->withHeader('X-Header', 'Value2');
         $response->withHeader('X-Header-Other', 'Value3');
-        $this->assertCount(3, $response->getHeaders());
+        $this->assertCount(4, $response->getHeaders());
         $response->withoutHeader('X-Header');
-        $this->assertCount(1, $response->getHeaders());
+        $this->assertCount(2, $response->getHeaders());
+    }
+
+    /**
+     * Наличие заголовка
+     */
+    public function testHasHeader(): void
+    {
+        $response = $this->getResponse();
+        $response->withHeader('X-Header', 'Value1');
+        $this->assertTrue($response->hasHeader('X-Header'));
+        $this->assertFalse($response->hasHeader('X-Not-Exists'));
     }
 
     /**
@@ -147,9 +158,9 @@ class ResponseTest extends TestCase
     public function testHttpVersion(): void
     {
         $response = $this->getResponse();
-        $this->assertEquals('1.0', $response->getHttpVersion());
-        $response->setHttpVersion('1.1');
         $this->assertEquals('1.1', $response->getHttpVersion());
+        $response->setHttpVersion('1.0');
+        $this->assertEquals('1.0', $response->getHttpVersion());
     }
 
     /**
@@ -265,5 +276,32 @@ class ResponseTest extends TestCase
         $this->assertEquals('utf-8', $response->getCharset());
         $response->setCharset('windows-1251');
         $this->assertEquals('windows-1251', $response->getCharset());
+    }
+
+    /**
+     * Подготовка информационного запроса
+     */
+    public function testPrepareInformational(): void
+    {
+        $response = $this->getResponse();
+        $response->withHeader('Content-Type', 'application/json');
+        $response->withHeader('Content-Length', '100');
+        $this->assertTrue($response->hasHeader('Content-Type'));
+        $this->assertTrue($response->hasHeader('Content-Length'));
+        $response->setStatus(ResponseInterface::HTTP_CONTINUE);
+        $this->assertFalse($response->hasHeader('Content-Type'));
+        $this->assertFalse($response->hasHeader('Content-Length'));
+    }
+
+    /**
+     * Подготовка запроса
+     */
+    public function testPrepareDefault(): void
+    {
+        $response = $this->getResponse();
+        $response->withHeader('Transfer-Encoding', 'gzip');
+        $response->withHeader('Content-Length', '100');
+        $response->setStatus(ResponseInterface::HTTP_OK);
+        $this->assertFalse($response->hasHeader('Content-Length'));
     }
 }

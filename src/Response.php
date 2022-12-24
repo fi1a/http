@@ -117,11 +117,11 @@ class Response implements ResponseInterface
             $request = request();
         }
         $this->request = $request;
-        $this->setStatus($status);
         if (is_null($headers)) {
             $headers = new HeaderCollection();
         }
         $this->withHeaders($headers);
+        $this->setStatus($status);
     }
 
     /**
@@ -139,6 +139,7 @@ class Response implements ResponseInterface
             $reasonPhrase = static::$reasonPhrases[$status];
         }
         $this->reasonPhrase = $reasonPhrase;
+        $this->prepare();
 
         return $this;
     }
@@ -195,6 +196,14 @@ class Response implements ResponseInterface
         $this->headers->withoutHeader($name);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasHeader(string $name): bool
+    {
+        return $this->headers->hasHeader($name);
     }
 
     /**
@@ -311,6 +320,8 @@ class Response implements ResponseInterface
     public function setCharset(string $charset)
     {
         $this->charset = $charset;
+        $this->withoutHeader('Content-Type');
+        $this->prepare();
 
         return $this;
     }
@@ -321,5 +332,42 @@ class Response implements ResponseInterface
     public function getCharset(): string
     {
         return $this->charset;
+    }
+
+    /**
+     * Подготавливает ответ на основе запроса
+     */
+    private function prepare(): void
+    {
+        $this->isInformational() || $this->isEmpty()
+            ? $this->prepareInformation()
+            : $this->prepareDefault();
+
+        $server = $this->request->getServer();
+        if ($server->get('SERVER_PROTOCOL') !== 'HTTP/1.0') {
+            $this->setHttpVersion('1.1');
+        }
+    }
+
+    /**
+     * Для всех остальных по умолчанию
+     */
+    private function prepareDefault(): void
+    {
+        if (!$this->hasHeader('Content-Type')) {
+            $this->withHeader('Content-Type', 'text/html; charset=' . $this->getCharset());
+        }
+        if ($this->hasHeader('Transfer-Encoding') && $this->hasHeader('Content-Length')) {
+            $this->withoutHeader('Content-Length');
+        }
+    }
+
+    /**
+     * Для пустого или информационного ответа
+     */
+    private function prepareInformation(): void
+    {
+        $this->withoutHeader('Content-Type');
+        $this->withoutHeader('Content-Length');
     }
 }
