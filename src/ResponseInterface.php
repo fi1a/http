@@ -175,4 +175,16 @@ interface ResponseInterface
      * @return $this
      */
     public function withoutHeader(string $name);
+
+    /**
+     * Устанавливает версию HTTP протокола
+     *
+     * @return $this
+     */
+    public function setHttpVersion(string $version);
+
+    /**
+     * Возвращает HTTP версию протокола
+     */
+    public function getHttpVersion(): string;
 }

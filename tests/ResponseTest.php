@@ -140,4 +140,15 @@ class ResponseTest extends TestCase
         $response->withoutHeader('X-Header');
         $this->assertCount(1, $response->getHeaders());
     }
+
+    /**
+     * Версия протокола
+     */
+    public function testHttpVersion(): void
+    {
+        $response = $this->getResponse();
+        $this->assertEquals('1.0', $response->getHttpVersion());
+        $response->setHttpVersion('1.1');
+        $this->assertEquals('1.1', $response->getHttpVersion());
+    }
 }
