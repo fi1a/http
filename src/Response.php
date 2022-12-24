@@ -93,6 +93,11 @@ class Response implements ResponseInterface
      */
     private $headers;
 
+    /**
+     * @var string
+     */
+    private $httpVersion = '1.0';
+
     public function __construct(int $status = self::HTTP_OK, ?HeaderCollectionInterface $headers = null)
     {
         $this->setStatus($status);
@@ -173,5 +178,23 @@ class Response implements ResponseInterface
         $this->headers->withoutHeader($name);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setHttpVersion(string $version)
+    {
+        $this->httpVersion = $version;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHttpVersion(): string
+    {
+        return $this->httpVersion;
     }
 }
