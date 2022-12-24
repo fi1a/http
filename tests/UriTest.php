@@ -62,6 +62,33 @@ class UriTest extends TestCase
     }
 
     /**
+     * Использован https
+     */
+    public function testIsSecure(): void
+    {
+        $uri = new Uri('https://host.ru/');
+        $this->assertTrue($uri->isSecure());
+    }
+
+    /**
+     * Использован https
+     */
+    public function testIsSecureHttp(): void
+    {
+        $uri = new Uri('http://host.ru/');
+        $this->assertFalse($uri->isSecure());
+    }
+
+    /**
+     * Использован https
+     */
+    public function testIsSecureUppercase(): void
+    {
+        $uri = new Uri('HTTPS://host.ru/');
+        $this->assertTrue($uri->isSecure());
+    }
+
+    /**
      * Схема
      */
     public function testGetOnlyScheme(): void
@@ -203,6 +230,64 @@ class UriTest extends TestCase
     {
         $uri = new Uri('https://host.ru');
         $this->assertEquals('', $uri->getPath());
+    }
+
+    /**
+     * Урл без файла
+     */
+    public function testGetBasePathWithFile(): void
+    {
+        $uri = new Uri('https://host.ru/some/path/index.php');
+        $this->assertEquals('/some/path/', $uri->getBasePath());
+    }
+
+    /**
+     * Урл без файла
+     */
+    public function testGetBasePathWithFolder(): void
+    {
+        $uri = new Uri('https://host.ru/some/path/');
+        $this->assertEquals('/some/path/', $uri->getBasePath());
+        $uri = new Uri('https://host.ru/some/path');
+        $this->assertEquals('/some/path', $uri->getBasePath());
+    }
+
+    /**
+     * Урл без файла
+     */
+    public function testGetBasePathRoot(): void
+    {
+        $uri = new Uri('https://host.ru/');
+        $this->assertEquals('/', $uri->getBasePath());
+    }
+
+    /**
+     * Урл без файла
+     */
+    public function testGetBasePathEmpty(): void
+    {
+        $uri = new Uri('https://host.ru');
+        $this->assertEquals('', $uri->getBasePath());
+    }
+
+    /**
+     * Урл без файла со / на конце
+     */
+    public function testGetNormalizedBasePathWithFolder(): void
+    {
+        $uri = new Uri('https://host.ru/some/path/');
+        $this->assertEquals('/some/path/', $uri->getNormalizedBasePath());
+        $uri = new Uri('https://host.ru/some/path');
+        $this->assertEquals('/some/path/', $uri->getNormalizedBasePath());
+    }
+
+    /**
+     * Урл без файла со / на конце
+     */
+    public function testGetNormalizedBasePathEmpty(): void
+    {
+        $uri = new Uri('https://host.ru');
+        $this->assertEquals('/', $uri->getNormalizedBasePath());
     }
 
     /**
@@ -379,6 +464,36 @@ class UriTest extends TestCase
     {
         $uri = new Uri('https');
         $this->assertEquals('', $uri->getUri());
+    }
+
+    /**
+     * Возвращает путь и строку запроса
+     */
+    public function testGetPathAndQuery(): void
+    {
+        $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
+        $this->assertEquals(
+            '/some/path/?foo=bar',
+            $uri->getPathAndQuery()
+        );
+    }
+
+    /**
+     * Возвращает путь и строку запроса
+     */
+    public function testGetPathAndQueryEmpty(): void
+    {
+        $uri = new Uri('https://username:password@host.ru:8080/some/path/?');
+        $this->assertEquals('/some/path/', $uri->getPathAndQuery());
+    }
+
+    /**
+     * Возвращает путь и строку запроса
+     */
+    public function testGetPathAndQueryEmptyUrl(): void
+    {
+        $uri = new Uri('https://username:password@host.ru:8080');
+        $this->assertEquals('', $uri->getPathAndQuery());
     }
 
     /**

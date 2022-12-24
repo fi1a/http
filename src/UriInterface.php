@@ -29,6 +29,11 @@ interface UriInterface
     public function withScheme(string $scheme);
 
     /**
+     * Использован https
+     */
+    public function isSecure(): bool;
+
+    /**
      * Компонент информации о пользователе URI
      */
     public function getUserInfo(): string;
@@ -87,6 +92,20 @@ interface UriInterface
     public function withPath(string $path);
 
     /**
+     * Урл без файла
+     *
+     * Пример: /some/url/index.php => /some/url/
+     */
+    public function getBasePath(): string;
+
+    /**
+     * Урл без файла со / на конце
+     *
+     * Пример: /some/url/index.php => /some/url/
+     */
+    public function getNormalizedBasePath(): string;
+
+    /**
      * Строка запроса в URI
      */
     public function getQuery(): string;
@@ -133,6 +152,13 @@ interface UriInterface
      * Возвращает URI
      */
     public function getUri(): string;
+
+    /**
+     * Возвращает путь и строку запроса
+     *
+     * Пример: /some/url/?q=1&a=b
+     */
+    public function getPathAndQuery(): string;
 
     /**
      * Компонент полномочий URI
