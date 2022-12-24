@@ -158,8 +158,8 @@ class HttpTest extends TestCase
     {
         $request = $this->getRequest();
         $http = $this->getHttp();
-        $http->setRequest($request);
-        $this->assertInstanceOf(RequestInterface::class, $http->getRequest());
+        $http->request($request);
+        $this->assertInstanceOf(RequestInterface::class, $http->request());
     }
 
     /**
@@ -168,6 +168,6 @@ class HttpTest extends TestCase
     public function testGetSession(): void
     {
         $http = $this->getHttp();
-        $this->assertInstanceOf(SessionStorageInterface::class, $http->getSession());
+        $this->assertInstanceOf(SessionStorageInterface::class, $http->session());
     }
 }
