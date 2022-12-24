@@ -316,4 +316,17 @@ class ResponseTest extends TestCase
         $response->setDate(DateTime::createFromFormat('d.m.Y H:i:s', '23.12.2022 09:55:10'));
         $this->assertInstanceOf(DateTime::class, $response->getDate());
     }
+
+    /**
+     * Время последнего изменения
+     */
+    public function testLastModified(): void
+    {
+        $response = $this->getResponse();
+        $this->assertNull($response->getLastModified());
+        $response->setLastModified(new DateTime());
+        $this->assertInstanceOf(DateTime::class, $response->getLastModified());
+        $response->setLastModified(null);
+        $this->assertNull($response->getLastModified());
+    }
 }

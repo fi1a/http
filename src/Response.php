@@ -341,6 +341,7 @@ class Response implements ResponseInterface
      */
     public function setDate(DateTime $date)
     {
+        $date = clone $date;
         $date->setTimezone(new DateTimeZone('UTC'));
         $this->withoutHeader('Date');
         $this->withHeader('Date', $date->format('D, d M Y H:i:s') . ' GMT');
@@ -365,6 +366,42 @@ class Response implements ResponseInterface
             'D, d M Y H:i:s e',
             $this->getHeaders()->getLastHeader('Date')->getValue()
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLastModified(): ?DateTime
+    {
+        if (!$this->hasHeader('Last-Modified')) {
+            return null;
+        }
+
+        /**
+         * @psalm-suppress PossiblyNullArgument
+         * @psalm-suppress PossiblyNullReference
+         */
+        return DateTime::createFromFormat(
+            'D, d M Y H:i:s e',
+            $this->getHeaders()->getLastHeader('Last-Modified')->getValue()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLastModified(?DateTime $date = null)
+    {
+        $this->withoutHeader('Last-Modified');
+        if (is_null($date)) {
+            return $this;
+        }
+
+        $date = clone $date;
+        $date->setTimezone(new DateTimeZone('UTC'));
+        $this->withHeader('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');
+
+        return $this;
     }
 
     /**
