@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use DateTime;
+use DateTimeZone;
 use InvalidArgumentException;
 
 /**
@@ -332,6 +334,37 @@ class Response implements ResponseInterface
     public function getCharset(): string
     {
         return $this->charset;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDate(DateTime $date)
+    {
+        $date->setTimezone(new DateTimeZone('UTC'));
+        $this->withoutHeader('Date');
+        $this->withHeader('Date', $date->format('D, d M Y H:i:s') . ' GMT');
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDate(): DateTime
+    {
+        if (!$this->hasHeader('Date')) {
+            $this->setDate(new DateTime());
+        }
+
+        /**
+         * @psalm-suppress PossiblyNullArgument
+         * @psalm-suppress PossiblyNullReference
+         */
+        return DateTime::createFromFormat(
+            'D, d M Y H:i:s e',
+            $this->getHeaders()->getLastHeader('Date')->getValue()
+        );
     }
 
     /**

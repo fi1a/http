@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use DateTime;
+
 /**
  * Интерфейс ответа
  */
@@ -255,4 +257,16 @@ interface ResponseInterface
      * Возвращает кодировку
      */
     public function getCharset(): string;
+
+    /**
+     * Устанавливает дату
+     *
+     * @return $this
+     */
+    public function setDate(DateTime $date);
+
+    /**
+     * Возвращает дату
+     */
+    public function getDate(): DateTime;
 }
