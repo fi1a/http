@@ -187,4 +187,51 @@ interface ResponseInterface
      * Возвращает HTTP версию протокола
      */
     public function getHttpVersion(): string;
+
+    /**
+     * Если true, то ответ пустой
+     */
+    public function isEmpty(): bool;
+
+    /**
+     * Если true, то ответ информационный
+     */
+    public function isInformational(): bool;
+
+    /**
+     * Если true, то ответ успешный
+     */
+    public function isSuccessful(): bool;
+
+    /**
+     * Если true, то клиентская ошибка
+     */
+    public function isClientError(): bool;
+
+    /**
+     * Если true, то серверная ошибка
+     */
+    public function isServerError(): bool;
+
+    /**
+     * Если true, то ответ 200 OK
+     */
+    public function isOk(): bool;
+
+    /**
+     * Если true, то 403 Forbidden
+     */
+    public function isForbidden(): bool;
+
+    /**
+     * Если true, то 404 Not found
+     */
+    public function isNotFound(): bool;
+
+    /**
+     * Если true, то перенаправление
+     *
+     * Если передать параметр $location, то проверяет происходит ли перенаправление на этот адрес
+     */
+    public function isRedirection(?string $location = null): bool;
 }
