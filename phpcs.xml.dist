@@ -394,7 +394,7 @@
     <rule ref="Squiz.Operators.ValidLogicalOperators"/>
 
     <!-- Forbid global functions -->
-    <rule ref="Squiz.Functions.GlobalFunction"/>
+    <!--<rule ref="Squiz.Functions.GlobalFunction"/>-->
 
     <!-- Forbid 'global' -->
     <rule ref="Squiz.PHP.GlobalKeyword"/>
