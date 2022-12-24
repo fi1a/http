@@ -204,6 +204,9 @@ class Uri implements UriInterface
      */
     public function withPath(string $path)
     {
+        if (!$path) {
+            $path = '/';
+        }
         $this->path = $path;
 
         return $this;

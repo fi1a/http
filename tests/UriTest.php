@@ -229,7 +229,7 @@ class UriTest extends TestCase
     public function testGetPathEmpty(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('', $uri->getPath());
+        $this->assertEquals('/', $uri->getPath());
     }
 
     /**
@@ -267,7 +267,7 @@ class UriTest extends TestCase
     public function testGetBasePathEmpty(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('', $uri->getBasePath());
+        $this->assertEquals('/', $uri->getBasePath());
     }
 
     /**
@@ -424,7 +424,7 @@ class UriTest extends TestCase
     public function testGetUrlWithoutPath(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('https://host.ru', $uri->getUrl());
+        $this->assertEquals('https://host.ru/', $uri->getUrl());
     }
 
     /**
@@ -493,7 +493,7 @@ class UriTest extends TestCase
     public function testGetPathAndQueryEmptyUrl(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080');
-        $this->assertEquals('', $uri->getPathAndQuery());
+        $this->assertEquals('/', $uri->getPathAndQuery());
     }
 
     /**
