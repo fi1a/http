@@ -25,44 +25,32 @@ class Http implements HttpInterface
 
     public function __construct(RequestInterface $request, SessionStorageInterface $session)
     {
-        $this->setRequest($request)
-            ->setSession($session);
+        $this->request($request);
+        $this->session($session);
     }
 
     /**
      * @inheritDoc
      */
-    public function getRequest(): RequestInterface
+    public function request(?RequestInterface $request = null): RequestInterface
     {
+        if (!is_null($request)) {
+            $this->request = $request;
+        }
+
         return $this->request;
     }
 
     /**
      * @inheritDoc
      */
-    public function setRequest(RequestInterface $request)
+    public function session(?SessionStorageInterface $session = null): SessionStorageInterface
     {
-        $this->request = $request;
+        if (!is_null($session)) {
+            $this->session = $session;
+        }
 
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSession(): SessionStorageInterface
-    {
         return $this->session;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setSession(SessionStorageInterface $session)
-    {
-        $this->session = $session;
-
-        return $this;
     }
 
     /**

@@ -30,16 +30,9 @@ interface HttpInterface
     public const CONNECT = 'CONNECT';
 
     /**
-     * Возвращает экземпляр класса текущего запроса
+     * Возвращает или устанавливает экземпляр класса текущего запроса
      */
-    public function getRequest(): RequestInterface;
-
-    /**
-     * Устанавливает экземпляр класса текущего запроса
-     *
-     * @return $this
-     */
-    public function setRequest(RequestInterface $request);
+    public function request(?RequestInterface $request = null): RequestInterface;
 
     /**
      * Создание экземпляра класса Request из глобальных переменных
@@ -61,14 +54,7 @@ interface HttpInterface
     ): RequestInterface;
 
     /**
-     * Возвращает экземпляр класса сессии
+     * Возвращает или устанавливает экземпляр класса сессии
      */
-    public function getSession(): SessionStorageInterface;
-
-    /**
-     * Устанавливает экземпляр класса сессии
-     *
-     * @return $this
-     */
-    public function setSession(SessionStorageInterface $session);
+    public function session(?SessionStorageInterface $session = null): SessionStorageInterface;
 }
