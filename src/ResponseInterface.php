@@ -269,4 +269,16 @@ interface ResponseInterface
      * Возвращает дату
      */
     public function getDate(): DateTime;
+
+    /**
+     * Возвращает время последнего изменения
+     */
+    public function getLastModified(): ?DateTime;
+
+    /**
+     * Устанавливает время последнего изменения
+     *
+     * @return $this
+     */
+    public function setLastModified(?DateTime $date = null);
 }
