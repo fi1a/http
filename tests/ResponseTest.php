@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use DateTime;
 use Fi1a\Http\HeaderCollection;
 use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Response;
@@ -303,5 +304,16 @@ class ResponseTest extends TestCase
         $response->withHeader('Content-Length', '100');
         $response->setStatus(ResponseInterface::HTTP_OK);
         $this->assertFalse($response->hasHeader('Content-Length'));
+    }
+
+    /**
+     * Дата
+     */
+    public function testDate(): void
+    {
+        $response = $this->getResponse();
+        $this->assertInstanceOf(DateTime::class, $response->getDate());
+        $response->setDate(DateTime::createFromFormat('d.m.Y H:i:s', '23.12.2022 09:55:10'));
+        $this->assertInstanceOf(DateTime::class, $response->getDate());
     }
 }
