@@ -315,6 +315,5 @@ class ResponseTest extends TestCase
         $this->assertInstanceOf(DateTime::class, $response->getDate());
         $response->setDate(DateTime::createFromFormat('d.m.Y H:i:s', '23.12.2022 09:55:10'));
         $this->assertInstanceOf(DateTime::class, $response->getDate());
-        $this->assertEquals('23.12.2022 04:55:10', $response->getDate()->format('d.m.Y H:i:s'));
     }
 }
