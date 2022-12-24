@@ -164,4 +164,14 @@ class Response implements ResponseInterface
 
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function withoutHeader(string $name)
+    {
+        $this->headers->withoutHeader($name);
+
+        return $this;
+    }
 }
