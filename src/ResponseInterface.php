@@ -181,6 +181,11 @@ interface ResponseInterface
     public function withoutHeader(string $name);
 
     /**
+     * Проверяет наличие заголовки
+     */
+    public function hasHeader(string $name): bool;
+
+    /**
      * Устанавливает версию HTTP протокола
      *
      * @return $this
