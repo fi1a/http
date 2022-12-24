@@ -197,4 +197,94 @@ class Response implements ResponseInterface
     {
         return $this->httpVersion;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEmpty(): bool
+    {
+        /** @var int[] $statusCodes */
+        static $statusCodes = [
+            self::HTTP_NO_CONTENT,
+            self::HTTP_NOT_MODIFIED,
+        ];
+
+        return in_array($this->getStatus(), $statusCodes);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isInformational(): bool
+    {
+        return $this->getStatus() >= 100 && $this->getStatus() < 200;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isSuccessful(): bool
+    {
+        return $this->getStatus() >= 200 && $this->getStatus() < 300;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isClientError(): bool
+    {
+        return $this->getStatus() >= 300 && $this->getStatus() < 500;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isServerError(): bool
+    {
+        return $this->getStatus() >= 500 && $this->getStatus() < 600;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isOk(): bool
+    {
+        return $this->getStatus() === static::HTTP_OK;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isForbidden(): bool
+    {
+        return $this->getStatus() === static::HTTP_FORBIDDEN;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isNotFound(): bool
+    {
+        return $this->getStatus() === static::HTTP_NOT_FOUND;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isRedirection(?string $location = null): bool
+    {
+        /** @var int[] $statusCodes */
+        static $statusCodes = [
+            self::HTTP_CREATED,
+            self::HTTP_MOVED_PERMANENTLY,
+            self::HTTP_FOUND,
+            self::HTTP_SEE_OTHER,
+            self::HTTP_TEMPORARY_REDIRECT,
+            self::HTTP_PERMANENTLY_REDIRECT,
+        ];
+        $header = $this->getHeaders()->getLastHeader('Location');
+
+        return in_array($this->getStatus(), $statusCodes)
+            && (is_null($location) || !$header || $location === $header->getValue());
+    }
 }
