@@ -94,6 +94,14 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
+    public function isSecure(): bool
+    {
+        return $this->getScheme() === 'https';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function withScheme(string $scheme)
     {
         $scheme = mb_strtolower($scheme);
@@ -204,6 +212,30 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
+    public function getBasePath(): string
+    {
+        $url = $this->getPath();
+        $basename = basename($url);
+        if (!$basename || !preg_match('/^(.+)\.(.+)$/i', $basename)) {
+            return $url;
+        }
+
+        return mb_substr($url, 0, mb_strlen($url) - mb_strlen($basename));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNormalizedBasePath(): string
+    {
+        $basePath = $this->getBasePath();
+
+        return rtrim($basePath, '/') . '/';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getQuery(): string
     {
         return $this->query;
@@ -303,6 +335,16 @@ class Uri implements UriInterface
         $fragment = $this->getFragment();
 
         return $url . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPathAndQuery(): string
+    {
+        $query = $this->getQuery();
+
+        return $this->getPath() . ($query ? '?' . $query : '');
     }
 
     /**

@@ -145,10 +145,10 @@ class HttpTest extends TestCase
         $this->assertEquals('file 2.pdf', $fileUpload->getName());
         $this->assertCount(2, $request->getCookies());
         $this->assertInstanceOf(HeaderCollectionInterface::class, $request->getHeaders());
-        $this->assertCount(3, $request->getHeaders());
+        $this->assertCount(7, $request->getHeaders());
         $this->assertEquals('domain.ru', $request->getHeaders()->getLastHeader('Host')->getValue());
         $this->assertInstanceOf(ServerCollectionInterface::class, $request->getServer());
-        $this->assertCount(4, $request->getServer());
+        $this->assertCount(17, $request->getServer());
     }
 
     /**

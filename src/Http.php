@@ -118,14 +118,7 @@ class Http implements HttpInterface
         $cookieCollection->setNeedSet(false);
 
         $serverCollection = new ServerCollection($server);
-
         $headers = new HeaderCollection();
-        /**
-         * @var string|int $value
-         */
-        foreach ($serverCollection->getHeaders() as $name => $value) {
-            $headers[] = [$name, $value,];
-        }
 
         return static::requestFactory(
             parse_url($server['REQUEST_URI'] ?? '/', PHP_URL_PATH),
