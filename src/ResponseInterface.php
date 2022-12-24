@@ -131,7 +131,11 @@ interface ResponseInterface
 
     public const HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511;
 
-    public function __construct(int $status = self::HTTP_OK, ?HeaderCollectionInterface $headers = null);
+    public function __construct(
+        int $status = self::HTTP_OK,
+        ?HeaderCollectionInterface $headers = null,
+        ?RequestInterface $request = null
+    );
 
     /**
      * Устанавливает код и текст ответа
@@ -234,4 +238,16 @@ interface ResponseInterface
      * Если передать параметр $location, то проверяет происходит ли перенаправление на этот адрес
      */
     public function isRedirection(?string $location = null): bool;
+
+    /**
+     * Устанавливает кодировку
+     *
+     * @return $this
+     */
+    public function setCharset(string $charset);
+
+    /**
+     * Возвращает кодировку
+     */
+    public function getCharset(): string;
 }

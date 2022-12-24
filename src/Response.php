@@ -98,8 +98,25 @@ class Response implements ResponseInterface
      */
     private $httpVersion = '1.0';
 
-    public function __construct(int $status = self::HTTP_OK, ?HeaderCollectionInterface $headers = null)
-    {
+    /**
+     * @var RequestInterface
+     */
+    private $request;
+
+    /**
+     * @var string
+     */
+    private $charset = 'utf-8';
+
+    public function __construct(
+        int $status = self::HTTP_OK,
+        ?HeaderCollectionInterface $headers = null,
+        ?RequestInterface $request = null
+    ) {
+        if (is_null($request)) {
+            $request = request();
+        }
+        $this->request = $request;
         $this->setStatus($status);
         if (is_null($headers)) {
             $headers = new HeaderCollection();
@@ -286,5 +303,23 @@ class Response implements ResponseInterface
 
         return in_array($this->getStatus(), $statusCodes)
             && (is_null($location) || !$header || $location === $header->getValue());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCharset(string $charset)
+    {
+        $this->charset = $charset;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCharset(): string
+    {
+        return $this->charset;
     }
 }
