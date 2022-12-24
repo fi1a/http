@@ -149,4 +149,23 @@ interface ResponseInterface
      * Возвращает текст ответа
      */
     public function getReasonPhrase(): ?string;
+
+    /**
+     * Устанавливает заголовки
+     *
+     * @return $this
+     */
+    public function withHeaders(HeaderCollectionInterface $headers);
+
+    /**
+     * Возвращает заголовки
+     */
+    public function getHeaders(): HeaderCollectionInterface;
+
+    /**
+     * Добавляет заголовок с определенным именем и значением
+     *
+     * @return $this
+     */
+    public function withHeader(string $name, string $value);
 }
