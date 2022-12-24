@@ -168,4 +168,11 @@ interface ResponseInterface
      * @return $this
      */
     public function withHeader(string $name, string $value);
+
+    /**
+     * Удалить заголовки с определенным именем
+     *
+     * @return $this
+     */
+    public function withoutHeader(string $name);
 }

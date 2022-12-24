@@ -126,4 +126,18 @@ class ResponseTest extends TestCase
         $response = $this->getResponse();
         $response->withHeader('', '');
     }
+
+    /**
+     * Заголоки
+     */
+    public function testWithoutHeader(): void
+    {
+        $response = $this->getResponse();
+        $response->withHeader('X-Header', 'Value1');
+        $response->withHeader('X-Header', 'Value2');
+        $response->withHeader('X-Header-Other', 'Value3');
+        $this->assertCount(3, $response->getHeaders());
+        $response->withoutHeader('X-Header');
+        $this->assertCount(1, $response->getHeaders());
+    }
 }
