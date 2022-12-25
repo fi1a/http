@@ -43,6 +43,11 @@ interface HttpInterface
     public function response(?ResponseInterface $response = null): ResponseInterface;
 
     /**
+     * Возвращает объект буферизированного вывода
+     */
+    public function buffer(?BufferOutputInterface $buffer = null): BufferOutputInterface;
+
+    /**
      * Создание экземпляра класса Request из глобальных переменных
      *
      * @param mixed[] $query

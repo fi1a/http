@@ -281,4 +281,16 @@ interface ResponseInterface
      * @return $this
      */
     public function setLastModified(?DateTime $date = null);
+
+    /**
+     * Установить содержимое
+     *
+     * @return $this
+     */
+    public function setContent(string $content);
+
+    /**
+     * Вернуть содержимое
+     */
+    public function getContent(): string;
 }

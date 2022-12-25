@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use Fi1a\Http\BufferOutput;
+use Fi1a\Http\BufferOutputInterface;
 use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Http;
 use Fi1a\Http\HttpInterface;
@@ -14,6 +16,7 @@ use Fi1a\Http\ResponseInterface;
 use Fi1a\Http\ServerCollectionInterface;
 use Fi1a\Http\SessionStorage;
 use Fi1a\Http\SessionStorageInterface;
+use Fi1a\Http\SetCookie;
 use Fi1a\Http\UploadFileInterface;
 use Fi1a\Unit\Http\Fixtures\Middleware;
 use PHPUnit\Framework\TestCase;
@@ -122,7 +125,8 @@ class HttpTest extends TestCase
         return new Http(
             new Request('/'),
             new SessionStorage(),
-            new Response()
+            new Response(),
+            new BufferOutput(new SetCookie())
         );
     }
 
@@ -184,6 +188,16 @@ class HttpTest extends TestCase
         $http = $this->getHttp();
         $http->response(new Response());
         $this->assertInstanceOf(ResponseInterface::class, $http->response());
+    }
+
+    /**
+     * Буфер
+     */
+    public function testBuffer(): void
+    {
+        $http = $this->getHttp();
+        $http->buffer(new BufferOutput(new SetCookie()));
+        $this->assertInstanceOf(BufferOutputInterface::class, $http->buffer());
     }
 
     /**

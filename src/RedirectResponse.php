@@ -30,26 +30,7 @@ class RedirectResponse extends Response implements RedirectResponseInterface
         if ($location instanceof UriInterface) {
             $location = $location->getUri();
         }
-        if (!is_array($headers) && !($headers instanceof HeaderCollectionInterface)) {
-            throw new InvalidArgumentException(
-                'Заголовки должны быть массивом или реализовывать ' . HeaderCollectionInterface::class
-            );
-        }
-        if ($headers instanceof HeaderCollectionInterface) {
-            $this->withHeaders($headers);
-        }
-        if (is_array($headers) && count($headers)) {
-            foreach ($headers as $name => $value) {
-                $header = $value;
-                if (is_string($name) && !is_array($value)) {
-                    $header = [
-                        $name,
-                        $value,
-                    ];
-                }
-                $this->getHeaders()->add($header);
-            }
-        }
+        $this->useHeaders($headers);
         $this->withoutHeader('Location');
         $this->withHeader('Location', $location);
         if (!is_null($status)) {

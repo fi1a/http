@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Fi1a\Http\Middlewares;
 
-use Fi1a\Http\Output;
+use Fi1a\Http\JsonResponseInterface;
+use Fi1a\Http\MimeInterface;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\ResponseInterface;
-use Fi1a\Http\SetCookie;
 
 /**
- * Перенаправления
+ * Поддержка JSON-ответа
  */
-class RedirectMiddleware extends AbstractMiddleware
+class JsonResponseMiddleware extends AbstractMiddleware
 {
     /**
      * @var int
@@ -31,11 +31,14 @@ class RedirectMiddleware extends AbstractMiddleware
      */
     public function handleResponse(RequestInterface $request, ResponseInterface $response): void
     {
-        if (!$response->isRedirection()) {
+        if (!($response instanceof JsonResponseInterface)) {
             return;
         }
-        $output = new Output(new SetCookie());
-        $output->send($request, $response);
+
+        buffer()->clear();
+        $response->withoutHeader('Content-Type');
+        $response->withHeader('Content-Type', MimeInterface::JSON);
+        buffer()->send($request, $response);
         $this->terminate();
     }
 }

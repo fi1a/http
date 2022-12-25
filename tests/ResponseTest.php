@@ -329,4 +329,15 @@ class ResponseTest extends TestCase
         $response->setLastModified(null);
         $this->assertNull($response->getLastModified());
     }
+
+    /**
+     * Содержимое
+     */
+    public function testContent(): void
+    {
+        $response = $this->getResponse();
+        $this->assertEquals('', $response->getContent());
+        $response->setContent('content');
+        $this->assertEquals('content', $response->getContent());
+    }
 }

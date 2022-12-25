@@ -37,4 +37,14 @@ abstract class AbstractMiddleware implements MiddlewareInterface
 
         return $this;
     }
+
+    /**
+     * Выход
+     *
+     * @codeCoverageIgnore
+     */
+    protected function terminate(): void
+    {
+        exit(0);
+    }
 }

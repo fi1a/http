@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
+use Fi1a\Http\BufferOutput;
+use Fi1a\Http\BufferOutputInterface;
 use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Http;
 use Fi1a\Http\HttpInterface;
+use Fi1a\Http\JsonResponse;
+use Fi1a\Http\JsonResponseInterface;
 use Fi1a\Http\RedirectResponse;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
 use Fi1a\Http\SessionStorage;
 use Fi1a\Http\SessionStorageInterface;
+use Fi1a\Http\SetCookie;
 use Fi1a\Http\UriInterface;
 
 /**
@@ -38,7 +43,8 @@ function http(): HttpInterface
                 ResponseInterface::HTTP_OK,
                 null,
                 $request
-            )
+            ),
+            new BufferOutput(new SetCookie())
         );
     }
 
@@ -70,6 +76,14 @@ function session(?SessionStorageInterface $session = null): SessionStorageInterf
 }
 
 /**
+ * Хелпер для сессии
+ */
+function buffer(?BufferOutputInterface $buffer = null): BufferOutputInterface
+{
+    return http()->buffer($buffer);
+}
+
+/**
  * Возвращает перенаправление
  *
  * @param string|UriInterface $location
@@ -83,4 +97,20 @@ function redirect($location = null, ?int $status = null, $headers = []): Redirec
     }
 
     return $redirect;
+}
+
+/**
+ * JSON ответ
+ *
+ * @param mixed $data
+ * @param HeaderCollectionInterface|string[]|string[][] $headers
+ */
+function json($data = null, ?int $status = null, $headers = []): JsonResponseInterface
+{
+    $json = new JsonResponse();
+    if (!is_null($data)) {
+        $json->data($data, $status, $headers);
+    }
+
+    return $json;
 }

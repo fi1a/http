@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use Fi1a\Http\BufferOutputInterface;
 use Fi1a\Http\HttpInterface;
+use Fi1a\Http\JsonResponseInterface;
 use Fi1a\Http\RedirectResponseInterface;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\ResponseInterface;
@@ -42,6 +44,14 @@ class HelpersTest extends TestCase
     public function testResponse(): void
     {
         $this->assertInstanceOf(ResponseInterface::class, response());
+    }
+
+    /**
+     * Хелпер буферизированного вывода
+     */
+    public function testBuffer(): void
+    {
+        $this->assertInstanceOf(BufferOutputInterface::class, buffer());
     }
 
     /**
@@ -90,5 +100,14 @@ class HelpersTest extends TestCase
     public function testSession(): void
     {
         $this->assertInstanceOf(SessionStorageInterface::class, session());
+    }
+
+    /**
+     * Хелпер возвращающий JSON ответ
+     */
+    public function testJson(): void
+    {
+        $json = json(['foo' => 'bar']);
+        $this->assertInstanceOf(JsonResponseInterface::class, $json);
     }
 }

@@ -110,6 +110,11 @@ class Response implements ResponseInterface
      */
     private $charset = 'utf-8';
 
+    /**
+     * @var string
+     */
+    private $content = '';
+
     public function __construct(
         int $status = self::HTTP_OK,
         ?HeaderCollectionInterface $headers = null,
@@ -405,6 +410,24 @@ class Response implements ResponseInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function setContent(string $content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    /**
      * Подготавливает ответ на основе запроса
      */
     private function prepare(): void
@@ -439,5 +462,32 @@ class Response implements ResponseInterface
     {
         $this->withoutHeader('Content-Type');
         $this->withoutHeader('Content-Length');
+    }
+
+    /**
+     * @param HeaderCollectionInterface|string[]|string[][] $headers
+     */
+    protected function useHeaders($headers): void
+    {
+        if (!is_array($headers) && !($headers instanceof HeaderCollectionInterface)) {
+            throw new InvalidArgumentException(
+                'Заголовки должны быть массивом или реализовывать ' . HeaderCollectionInterface::class
+            );
+        }
+        if ($headers instanceof HeaderCollectionInterface) {
+            $this->withHeaders($headers);
+        }
+        if (is_array($headers) && count($headers)) {
+            foreach ($headers as $name => $value) {
+                $header = $value;
+                if (is_string($name) && !is_array($value)) {
+                    $header = [
+                        $name,
+                        $value,
+                    ];
+                }
+                $this->getHeaders()->add($header);
+            }
+        }
     }
 }
