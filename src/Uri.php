@@ -318,11 +318,12 @@ class Uri implements UriInterface
     public function getUrl(): string
     {
         $authority = $this->getAuthority();
-        if (!$authority) {
-            return '';
+        $url = '';
+        if ($authority) {
+            $url = $this->getScheme() . '://' . $authority;
         }
 
-        return $this->getScheme() . '://' . $authority . $this->getPath();
+        return $url . $this->getPath();
     }
 
     /**
@@ -330,14 +331,10 @@ class Uri implements UriInterface
      */
     public function getUri(): string
     {
-        $url = $this->getUrl();
-        if (!$url) {
-            return '';
-        }
         $query = $this->getQuery();
         $fragment = $this->getFragment();
 
-        return $url . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
+        return $this->getUrl() . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
     }
 
     /**
