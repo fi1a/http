@@ -38,15 +38,23 @@ class Http implements HttpInterface
      */
     private $middlewares;
 
+    /**
+     * @var BufferOutputInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $buffer;
+
     public function __construct(
         RequestInterface $request,
         SessionStorageInterface $session,
-        ResponseInterface $response
+        ResponseInterface $response,
+        BufferOutputInterface $buffer
     ) {
         $this->middlewares = new MiddlewareCollection();
         $this->request($request);
         $this->session($session);
         $this->response($response);
+        $this->buffer($buffer);
     }
 
     /**
@@ -85,6 +93,18 @@ class Http implements HttpInterface
         }
 
         return $this->response;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buffer(?BufferOutputInterface $buffer = null): BufferOutputInterface
+    {
+        if (!is_null($buffer)) {
+            $this->buffer = $buffer;
+        }
+
+        return $this->buffer;
     }
 
     /**

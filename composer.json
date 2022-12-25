@@ -14,7 +14,8 @@
   "require": {
     "php": "^7.3 || ^8",
     "fi1a/format": "^2.0",
-    "fi1a/collection": "^2.0"
+    "fi1a/collection": "^2.0",
+    "ext-json": "*"
   },
   "suggest": {
   },
@@ -23,8 +24,7 @@
     "slevomat/coding-standard": "^8.6",
     "squizlabs/php_codesniffer": "^3.7",
     "vimeo/psalm": "^4.3",
-    "captainhook/captainhook": "^5.11",
-    "ext-posix": "*"
+    "captainhook/captainhook": "^5.11"
   },
   "config": {
     "sort-packages": true,

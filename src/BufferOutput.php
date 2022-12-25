@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fi1a\Http;
 
 /**
- * Буфферизированный вывод
+ * Буферизированный вывод
  */
 class BufferOutput extends Output implements BufferOutputInterface
 {
@@ -17,13 +17,7 @@ class BufferOutput extends Output implements BufferOutputInterface
     /**
      * @inheritDoc
      */
-    public function send(RequestInterface $request, ResponseInterface $response): void
-    {
-        parent::send($request, $response);
-        $this->sendContent($response);
-    }
-
-    private function sendContent(ResponseInterface $response): void
+    protected function sendContent(ResponseInterface $response): void
     {
         if ($response->isInformational() || $response->isEmpty() || $response->isRedirection()) {
             $this->buffer = [];
@@ -39,6 +33,7 @@ class BufferOutput extends Output implements BufferOutputInterface
             $out .= $buffer;
         }
         $out .= $content;
+        $out .= $response->getContent();
         echo $out;
         ob_end_flush();
     }

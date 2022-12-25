@@ -28,6 +28,7 @@ class Output implements OutputInterface
     public function send(RequestInterface $request, ResponseInterface $response): void
     {
         $this->sendHeaders($request, $response);
+        $this->sendContent($response);
     }
 
     /**
@@ -74,6 +75,14 @@ class Output implements OutputInterface
             }
             $this->setCookie->set($cookie);
         }
+    }
+
+    /**
+     * Отправляет содержимое
+     */
+    protected function sendContent(ResponseInterface $response): void
+    {
+        echo $response->getContent();
     }
 
     /**
