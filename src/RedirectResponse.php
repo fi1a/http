@@ -77,19 +77,11 @@ class RedirectResponse extends Response implements RedirectResponseInterface
      */
     public function setStatus(int $status, ?string $reasonPhrase = null)
     {
-        /** @var int[] $statusCodes */
-        static $statusCodes = [
-            self::HTTP_CREATED,
-            self::HTTP_MOVED_PERMANENTLY,
-            self::HTTP_FOUND,
-            self::HTTP_SEE_OTHER,
-            self::HTTP_TEMPORARY_REDIRECT,
-            self::HTTP_PERMANENTLY_REDIRECT,
-        ];
-        if (!in_array($status, $statusCodes)) {
+        parent::setStatus($status, $reasonPhrase);
+        if (!$this->isRedirection()) {
             throw new InvalidArgumentException('Ошибка в статусе перенаправления');
         }
 
-        return parent::setStatus($status, $reasonPhrase);
+        return $this;
     }
 }

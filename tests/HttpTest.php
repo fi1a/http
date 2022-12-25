@@ -16,6 +16,7 @@ use Fi1a\Http\SessionHandler;
 use Fi1a\Http\SessionStorage;
 use Fi1a\Http\SessionStorageInterface;
 use Fi1a\Http\UploadFileInterface;
+use Fi1a\Unit\Http\Fixtures\Middleware;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -184,5 +185,16 @@ class HttpTest extends TestCase
         $http = $this->getHttp();
         $http->response(new Response());
         $this->assertInstanceOf(ResponseInterface::class, $http->response());
+    }
+
+    /**
+     * Промежуточное ПО
+     */
+    public function testMiddlewares(): void
+    {
+        $http = $this->getHttp();
+        $this->assertCount(0, $http->getMiddlewares());
+        $http->withMiddleware(new Middleware(), 600);
+        $this->assertCount(1, $http->getMiddlewares());
     }
 }
