@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Http\Middlewares\MiddlewareCollection;
+use Fi1a\Http\Middlewares\MiddlewareCollectionInterface;
+use Fi1a\Http\Middlewares\MiddlewareInterface;
+
 use const PHP_URL_PATH;
 
 /**
@@ -29,11 +33,17 @@ class Http implements HttpInterface
      */
     private $response;
 
+    /**
+     * @var MiddlewareCollectionInterface
+     */
+    private $middlewares;
+
     public function __construct(
         RequestInterface $request,
         SessionStorageInterface $session,
         ResponseInterface $response
     ) {
+        $this->middlewares = new MiddlewareCollection();
         $this->request($request);
         $this->session($session);
         $this->response($response);
@@ -45,6 +55,7 @@ class Http implements HttpInterface
     public function request(?RequestInterface $request = null): RequestInterface
     {
         if (!is_null($request)) {
+            $this->middlewares->sortByField()->handleRequest($request);
             $this->request = $request;
         }
 
@@ -69,10 +80,32 @@ class Http implements HttpInterface
     public function response(?ResponseInterface $response = null): ResponseInterface
     {
         if (!is_null($response)) {
+            $this->middlewares->sortByField()->handleResponse($this->request, $response);
             $this->response = $response;
         }
 
         return $this->response;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withMiddleware(MiddlewareInterface $middleware, ?int $sort = null)
+    {
+        if (!is_null($sort)) {
+            $middleware->setSort($sort);
+        }
+        $this->middlewares[] = $middleware;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMiddlewares(): MiddlewareCollectionInterface
+    {
+        return $this->middlewares;
     }
 
     /**

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Http\Middlewares\MiddlewareCollectionInterface;
+use Fi1a\Http\Middlewares\MiddlewareInterface;
+
 /**
  * Менеджер
  */
@@ -61,4 +64,16 @@ interface HttpInterface
      * Возвращает или устанавливает экземпляр класса сессии
      */
     public function session(?SessionStorageInterface $session = null): SessionStorageInterface;
+
+    /**
+     * Добавить промежуточное ПО
+     *
+     * @return $this
+     */
+    public function withMiddleware(MiddlewareInterface $middleware, ?int $sort = null);
+
+    /**
+     * Возвращает коллекцию промежуточного ПО
+     */
+    public function getMiddlewares(): MiddlewareCollectionInterface;
 }
