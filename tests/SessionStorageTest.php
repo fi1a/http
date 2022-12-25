@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Fi1a\Unit\Http;
 
 use Fi1a\Collection\DataType\PathAccessInterface;
-use Fi1a\Http\SessionHandler;
-use Fi1a\Http\SessionHandlerInterface;
 use Fi1a\Http\SessionStorage;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -24,16 +22,7 @@ class SessionStorageTest extends TestCase
      */
     private function getSession(): SessionStorage
     {
-        return new SessionStorage(new SessionHandler());
-    }
-
-    /**
-     * Тестирование геттеров
-     */
-    public function testGets(): void
-    {
-        $session = $this->getSession();
-        $this->assertInstanceOf(SessionHandlerInterface::class, $session->getHandler());
+        return new SessionStorage();
     }
 
     /**
@@ -54,7 +43,6 @@ class SessionStorageTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $session = $this->getMockBuilder(SessionStorage::class)
-            ->setConstructorArgs([new SessionHandler()])
             ->onlyMethods(['headersSent'])
             ->getMock();
 
@@ -69,7 +57,6 @@ class SessionStorageTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $session = $this->getMockBuilder(SessionStorage::class)
-            ->setConstructorArgs([new SessionHandler()])
             ->onlyMethods(['sessionStart'])
             ->getMock();
 
@@ -125,7 +112,6 @@ class SessionStorageTest extends TestCase
     public function testRegenerateException(): void
     {
         $session = $this->getMockBuilder(SessionStorage::class)
-            ->setConstructorArgs([new SessionHandler()])
             ->onlyMethods(['sessionStatus'])
             ->getMock();
 
