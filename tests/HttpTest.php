@@ -12,7 +12,6 @@ use Fi1a\Http\RequestInterface;
 use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
 use Fi1a\Http\ServerCollectionInterface;
-use Fi1a\Http\SessionHandler;
 use Fi1a\Http\SessionStorage;
 use Fi1a\Http\SessionStorageInterface;
 use Fi1a\Http\UploadFileInterface;
@@ -122,7 +121,7 @@ class HttpTest extends TestCase
     {
         return new Http(
             new Request('/'),
-            new SessionStorage(new SessionHandler()),
+            new SessionStorage(),
             new Response()
         );
     }

@@ -8,6 +8,7 @@ use Fi1a\Http\HttpInterface;
 use Fi1a\Http\RedirectResponseInterface;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\ResponseInterface;
+use Fi1a\Http\SessionStorageInterface;
 use PHPUnit\Framework\TestCase;
 
 use function http;
@@ -81,5 +82,13 @@ class HelpersTest extends TestCase
         $this->assertEquals('/redirect/', $redirect->getLocation()->getUri());
         $this->assertEquals(ResponseInterface::HTTP_MOVED_PERMANENTLY, $redirect->getStatus());
         $this->assertTrue($redirect->getHeaders()->hasHeader('X-Header'));
+    }
+
+    /**
+     * Хелпер сессии
+     */
+    public function testSession(): void
+    {
+        $this->assertInstanceOf(SessionStorageInterface::class, session());
     }
 }

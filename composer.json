@@ -37,7 +37,8 @@
       "Fi1a\\Http\\": "src"
     },
     "files": [
-      "src/helpers.php"
+      "src/helpers.php",
+      "src/configure.php"
     ]
   },
   "autoload-dev": {

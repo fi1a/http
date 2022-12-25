@@ -29,35 +29,10 @@ class SessionStorage extends AbstractSessionStorage
      */
     protected static $close = false;
 
-    /**
-     * @var SessionHandlerInterface
-     * @psalm-suppress PropertyNotSetInConstructor
-     */
-    private $handler;
-
-    public function __construct(SessionHandlerInterface $handler)
+    public function __construct()
     {
         @ini_set('session.use_cookies', '1');
         session_register_shutdown();
-        $this->setHandler($handler);
-    }
-
-    /**
-     * Установить обработчик сохранения сессий
-     */
-    public function setHandler(SessionHandlerInterface $handler): bool
-    {
-        $this->handler = $handler;
-
-        return @session_set_save_handler($this->handler, false);
-    }
-
-    /**
-     * Вернуть обработчик сохранения сессий
-     */
-    public function getHandler(): SessionHandlerInterface
-    {
-        return $this->handler;
     }
 
     /**

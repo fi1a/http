@@ -9,12 +9,14 @@ use Fi1a\Http\RedirectResponse;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
-use Fi1a\Http\SessionHandler;
 use Fi1a\Http\SessionStorage;
+use Fi1a\Http\SessionStorageInterface;
 use Fi1a\Http\UriInterface;
 
 /**
  * Хелпер для HttpInterface
+ *
+ * @codeCoverageIgnore
  */
 function http(): HttpInterface
 {
@@ -31,7 +33,7 @@ function http(): HttpInterface
         );
         $http = new Http(
             $request,
-            new SessionStorage(new SessionHandler()),
+            new SessionStorage(),
             new Response(
                 ResponseInterface::HTTP_OK,
                 null,
@@ -57,6 +59,14 @@ function request(?RequestInterface $request = null): RequestInterface
 function response(?ResponseInterface $response = null): ResponseInterface
 {
     return http()->response($response);
+}
+
+/**
+ * Хелпер для сессии
+ */
+function session(?SessionStorageInterface $session = null): SessionStorageInterface
+{
+    return http()->session($session);
 }
 
 /**
