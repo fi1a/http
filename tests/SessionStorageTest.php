@@ -8,10 +8,7 @@ use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Http\SessionHandler;
 use Fi1a\Http\SessionHandlerInterface;
 use Fi1a\Http\SessionStorage;
-use FilesystemIterator;
 use PHPUnit\Framework\TestCase;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use RuntimeException;
 
 /**
@@ -22,48 +19,6 @@ use RuntimeException;
  */
 class SessionStorageTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    private $path;
-
-    /**
-     * @inheritDoc
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->path = sys_get_temp_dir() . '/http_session_tests';
-        $this->iniSet('session.save_handler', 'files');
-        $this->iniSet('session.save_path', $this->path);
-        if (!is_dir($this->path)) {
-            mkdir($this->path, 0777, true);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        session_write_close();
-        if (is_dir($this->path)) {
-            $it = new RecursiveDirectoryIterator($this->path, FilesystemIterator::SKIP_DOTS);
-            $it = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-            foreach ($it as $file) {
-                if ($file->isDir()) {
-                    rmdir($file->getPathname());
-
-                    continue;
-                }
-                unlink($file->getPathname());
-            }
-            rmdir($this->path);
-        }
-        $this->path = null;
-    }
-
     /**
      * Возвращает экземпляр класса хранения сессии
      */
