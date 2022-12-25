@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
+use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Http;
 use Fi1a\Http\HttpInterface;
+use Fi1a\Http\RedirectResponse;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
 use Fi1a\Http\SessionHandler;
 use Fi1a\Http\SessionStorage;
+use Fi1a\Http\UriInterface;
 
 /**
  * Хелпер для HttpInterface
@@ -54,4 +57,20 @@ function request(?RequestInterface $request = null): RequestInterface
 function response(?ResponseInterface $response = null): ResponseInterface
 {
     return http()->response($response);
+}
+
+/**
+ * Возвращает перенаправление
+ *
+ * @param string|UriInterface $location
+ * @param HeaderCollectionInterface|string[]|string[][] $headers
+ */
+function redirect($location = null, ?int $status = null, $headers = []): RedirectResponse
+{
+    $redirect = new RedirectResponse();
+    if (!is_null($location)) {
+        $redirect->to($location, $status, $headers);
+    }
+
+    return $redirect;
 }

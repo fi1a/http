@@ -433,7 +433,7 @@ class UriTest extends TestCase
     public function testGetUrlEmpty(): void
     {
         $uri = new Uri('https');
-        $this->assertEquals('', $uri->getUrl());
+        $this->assertEquals('https', $uri->getUrl());
     }
 
     /**
@@ -460,10 +460,28 @@ class UriTest extends TestCase
     /**
      * URI
      */
-    public function testGetUriEmptyUrl(): void
+    public function testGetUriPathOtherEmpty(): void
     {
         $uri = new Uri('https');
-        $this->assertEquals('', $uri->getUri());
+        $this->assertEquals('https', $uri->getUri());
+    }
+
+    /**
+     * URI
+     */
+    public function testGetUriRelativePath(): void
+    {
+        $uri = new Uri('relative/path/');
+        $this->assertEquals('relative/path/', $uri->getUri());
+    }
+
+    /**
+     * URI
+     */
+    public function testGetUriEmptyUrl(): void
+    {
+        $uri = new Uri('');
+        $this->assertEquals('/', $uri->getUri());
     }
 
     /**
