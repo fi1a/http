@@ -8,7 +8,7 @@ use DateTime;
 use Symfony\Component\Console\Exception\LogicException;
 
 /**
- * Отправляет заголовки и контент
+ * Отправляет заголовки
  */
 class Output implements OutputInterface
 {
