@@ -28,7 +28,7 @@ class SetCookie implements SetCookieInterface
     /**
      * Устанавливает cookie
      */
-    private function doSetCookie(string $function, HttpCookieInterface $cookie): bool
+    protected function doSetCookie(string $function, HttpCookieInterface $cookie): bool
     {
         $cookie->validate();
 
