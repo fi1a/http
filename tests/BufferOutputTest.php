@@ -47,7 +47,7 @@ class BufferOutputTest extends TestCase
         echo 'after';
         $this->assertTrue($buffer->clear());
         $this->assertTrue($buffer->start());
-        $buffer->send($request, $response);
+        $buffer->send($response);
         ob_start();
     }
 
@@ -73,7 +73,7 @@ class BufferOutputTest extends TestCase
         $request = new Request('/');
         $response = new ContentResponse(ResponseInterface::HTTP_CONTINUE, null, $request);
 
-        $buffer->send($request, $response);
+        $buffer->send($response);
         ob_start();
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fi1a\Http;
 
 use DateTime;
-use Symfony\Component\Console\Exception\LogicException;
+use LogicException;
 
 /**
  * Отправляет заголовки
@@ -25,16 +25,16 @@ class Output implements OutputInterface
     /**
      * @inheritDoc
      */
-    public function send(RequestInterface $request, ResponseInterface $response): void
+    public function send(ResponseInterface $response): void
     {
-        $this->sendHeaders($request, $response);
+        $this->sendHeaders($response);
         $this->sendContent($response);
     }
 
     /**
      * @inheritDoc
      */
-    public function sendHeaders(RequestInterface $request, ResponseInterface $response): void
+    public function sendHeaders(ResponseInterface $response): void
     {
         if ($this->isHeaderSent()) {
             throw new LogicException('Заголовки уже отправлены');
@@ -67,7 +67,7 @@ class Output implements OutputInterface
             );
         }
 
-        $cookies = $request->cookies();
+        $cookies = $response->cookies();
         foreach ($cookies as $cookie) {
             assert($cookie instanceof HttpCookieInterface);
             if (!$cookie->getNeedSet()) {

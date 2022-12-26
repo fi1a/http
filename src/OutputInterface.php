@@ -12,12 +12,12 @@ interface OutputInterface
     /**
      * Отправляет заголовки
      */
-    public function send(RequestInterface $request, ResponseInterface $response): void;
+    public function send(ResponseInterface $response): void;
 
     /**
      * Отправляет заголовки
      */
-    public function sendHeaders(RequestInterface $request, ResponseInterface $response): void;
+    public function sendHeaders(ResponseInterface $response): void;
 
     /**
      * Отправляет содержимое

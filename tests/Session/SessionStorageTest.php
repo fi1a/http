@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Fi1a\Unit\Http;
+namespace Fi1a\Unit\Http\Session;
 
 use Fi1a\Collection\DataType\PathAccessInterface;
-use Fi1a\Http\SessionStorage;
+use Fi1a\Http\Session\SessionStorage;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

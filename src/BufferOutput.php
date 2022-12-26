@@ -21,14 +21,14 @@ class BufferOutput extends Output implements BufferOutputInterface
     {
         if ($response->isInformational() || $response->isEmpty() || $response->isRedirection()) {
             $this->buffer = [];
-            ob_clean();
-            ob_end_flush();
+            @ob_clean();
+            @ob_end_flush();
 
             return;
         }
         $out = '';
         $content = ob_get_contents();
-        ob_clean();
+        @ob_clean();
         foreach ($this->buffer as $buffer) {
             $out .= $buffer;
         }
@@ -37,7 +37,7 @@ class BufferOutput extends Output implements BufferOutputInterface
             $out .= $response->getContent();
         }
         echo $out;
-        ob_end_flush();
+        @ob_end_flush();
     }
 
     /**
@@ -46,7 +46,7 @@ class BufferOutput extends Output implements BufferOutputInterface
     public function start(): bool
     {
         array_push($this->buffer, ob_get_contents());
-        ob_clean();
+        @ob_clean();
 
         return true;
     }
@@ -65,7 +65,7 @@ class BufferOutput extends Output implements BufferOutputInterface
     public function clear(): bool
     {
         $this->buffer = [];
-        ob_clean();
+        @ob_clean();
 
         return true;
     }
@@ -76,7 +76,7 @@ class BufferOutput extends Output implements BufferOutputInterface
     public function end(): string
     {
         $content = $this->get();
-        ob_clean();
+        @ob_clean();
         if (count($this->buffer)) {
             echo array_pop($this->buffer);
         }

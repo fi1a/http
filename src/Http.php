@@ -7,6 +7,7 @@ namespace Fi1a\Http;
 use Fi1a\Http\Middlewares\MiddlewareCollection;
 use Fi1a\Http\Middlewares\MiddlewareCollectionInterface;
 use Fi1a\Http\Middlewares\MiddlewareInterface;
+use Fi1a\Http\Session\SessionStorageInterface;
 
 use const PHP_URL_PATH;
 
@@ -63,7 +64,10 @@ class Http implements HttpInterface
     public function request(?RequestInterface $request = null): RequestInterface
     {
         if (!is_null($request)) {
-            $this->middlewares->sortByField()->handleRequest($request);
+            foreach ($this->middlewares->sortByField() as $middleware) {
+                assert($middleware instanceof MiddlewareInterface);
+                $request = $middleware->handleRequest($request);
+            }
             $this->request = $request;
         }
 
@@ -88,7 +92,10 @@ class Http implements HttpInterface
     public function response(?ResponseInterface $response = null): ResponseInterface
     {
         if (!is_null($response)) {
-            $this->middlewares->sortByField()->handleResponse($this->request, $response);
+            foreach ($this->middlewares->sortByField() as $middleware) {
+                assert($middleware instanceof MiddlewareInterface);
+                $response = $middleware->handleResponse($this->request, $response);
+            }
             $this->response = $response;
         }
 

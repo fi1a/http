@@ -281,4 +281,16 @@ interface ResponseInterface
      * @return $this
      */
     public function setLastModified(?DateTime $date = null);
+
+    /**
+     * Устанавливает cookies
+     *
+     * @return $this
+     */
+    public function setCookies(HttpCookieCollectionInterface $cookies);
+
+    /**
+     * Возвращает cookies
+     */
+    public function cookies(): HttpCookieCollectionInterface;
 }
