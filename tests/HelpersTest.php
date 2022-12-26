@@ -10,7 +10,7 @@ use Fi1a\Http\JsonResponseInterface;
 use Fi1a\Http\RedirectResponseInterface;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\ResponseInterface;
-use Fi1a\Http\SessionStorageInterface;
+use Fi1a\Http\Session\SessionStorageInterface;
 use PHPUnit\Framework\TestCase;
 
 use function http;

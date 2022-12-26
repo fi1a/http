@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Http\Session\SessionStorageInterface;
+
 /**
  * Сохраняет значение в сессии. После получения значения, стирает его
  */

@@ -27,10 +27,10 @@ interface MiddlewareInterface
     /**
      * Обработчик для запроса
      */
-    public function handleRequest(RequestInterface $request): void;
+    public function handleRequest(RequestInterface $request): RequestInterface;
 
     /**
      * Обработчик для ответа
      */
-    public function handleResponse(RequestInterface $request, ResponseInterface $response): void;
+    public function handleResponse(RequestInterface $request, ResponseInterface $response): ResponseInterface;
 }

@@ -110,6 +110,12 @@ class Response implements ResponseInterface
      */
     private $charset = 'utf-8';
 
+    /**
+     * @var HttpCookieCollectionInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $cookies;
+
     public function __construct(
         int $status = self::HTTP_OK,
         ?HeaderCollectionInterface $headers = null,
@@ -124,6 +130,7 @@ class Response implements ResponseInterface
         }
         $this->withHeaders($headers);
         $this->setStatus($status);
+        $this->setCookies($request->cookies());
     }
 
     /**
@@ -402,6 +409,24 @@ class Response implements ResponseInterface
         $this->withHeader('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCookies(HttpCookieCollectionInterface $cookies)
+    {
+        $this->cookies = $cookies;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cookies(): HttpCookieCollectionInterface
+    {
+        return $this->cookies;
     }
 
     /**

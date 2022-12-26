@@ -16,14 +16,16 @@ class Middleware extends AbstractMiddleware
     /**
      * @inheritDoc
      */
-    public function handleRequest(RequestInterface $request): void
+    public function handleRequest(RequestInterface $request): RequestInterface
     {
+        return $request;
     }
 
     /**
      * @inheritDoc
      */
-    public function handleResponse(RequestInterface $request, ResponseInterface $response): void
+    public function handleResponse(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+        return $response;
     }
 }

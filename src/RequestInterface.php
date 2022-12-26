@@ -31,27 +31,9 @@ interface RequestInterface
     );
 
     /**
-     * Устанавливает POST
-     *
-     * @param mixed[]|PathAccessInterface $post
-     *
-     * @return $this
-     */
-    public function setPost($post);
-
-    /**
      * Возвращает POST
      */
     public function post(): PathAccessInterface;
-
-    /**
-     * Устанавливает GET значения
-     *
-     * @param PathAccessInterface|mixed[] $query
-     *
-     * @return $this
-     */
-    public function setQuery($query);
 
     /**
      * Возвращает GET значения
@@ -71,13 +53,6 @@ interface RequestInterface
     public function only(array $keys): PathAccessInterface;
 
     /**
-     * Устанавливает файлы
-     *
-     * @return $this
-     */
-    public function setFiles(UploadFileCollectionInterface $files);
-
-    /**
      * Возвращает файлы
      */
     public function files(): UploadFileCollectionInterface;
@@ -85,25 +60,34 @@ interface RequestInterface
     /**
      * Устанавливает содержание
      *
-     * @param string|resource|null $content
+     * @param string|resource|null $rawBody
      *
      * @return $this
      */
-    public function setContent($content);
+    public function setRawBody($rawBody);
 
     /**
      * Возвращает содержание
      *
      * @return resource
      */
-    public function getContent();
+    public function rawBody();
 
     /**
-     * Устанавливает cookies
+     * Возвращает преобразованное содержание
+     *
+     * @return mixed
+     */
+    public function body();
+
+    /**
+     * Устанавливает преобразованное содержание
+     *
+     * @param mixed $body
      *
      * @return $this
      */
-    public function setCookies(HttpCookieCollectionInterface $cookies);
+    public function setBody($body);
 
     /**
      * Возвращает cookies
@@ -111,23 +95,9 @@ interface RequestInterface
     public function cookies(): HttpCookieCollectionInterface;
 
     /**
-     * Установить заголовки
-     *
-     * @return $this
-     */
-    public function setHeaders(HeaderCollectionInterface $headers);
-
-    /**
      * Вернуть заголовки
      */
     public function headers(): HeaderCollectionInterface;
-
-    /**
-     * Устанавливает значение SERVER
-     *
-     * @return $this
-     */
-    public function setServer(ServerCollectionInterface $server);
 
     /**
      * Возвращает значение SERVER
@@ -135,18 +105,9 @@ interface RequestInterface
     public function server(): ServerCollectionInterface;
 
     /**
-     * Возвращает настройки
+     * Возвращает опции
      */
     public function options(): PathAccessInterface;
-
-    /**
-     * Задает настройки
-     *
-     * @param mixed[]|PathAccessInterface $options
-     *
-     * @return $this
-     */
-    public function setOptions($options);
 
     /**
      * Возвращает IP адрес клиента
@@ -157,13 +118,6 @@ interface RequestInterface
      * Возвращает запрошенный файл скрипта
      */
     public function scriptName(): string;
-
-    /**
-     * Устанавливает путь
-     *
-     * @return $this
-     */
-    public function setPath(string $url);
 
     /**
      * Возвращает путь
@@ -192,15 +146,6 @@ interface RequestInterface
      * Пример: q=1&a=b
      */
     public function queryString(): string;
-
-    /**
-     * Устанавливает строку запроса
-     *
-     * Пример: q=1&a=b
-     *
-     * @return $this
-     */
-    public function setQueryString(string $query);
 
     /**
      * Хост
@@ -266,13 +211,6 @@ interface RequestInterface
      * Пример: http://localhost:8080/some/url/?q=1&a=b
      */
     public function uri(): string;
-
-    /**
-     * Устанавливает метод
-     *
-     * @return $this
-     */
-    public function setMethod(string $method);
 
     /**
      * Возвращает метод

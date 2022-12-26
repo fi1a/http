@@ -36,20 +36,20 @@ class OutputTest extends TestCase
         $output->method('isHeaderSent')->willReturn(false);
         $output->expects($this->atLeastOnce())->method('header');
         $request = new Request('/');
-        $request->cookies()->add([
+        $response = new ContentResponse(ResponseInterface::HTTP_OK, null, $request);
+        $response->cookies()->add([
             'Name' => 'CookieName1',
             'Value' => 'Value1',
             'Domain' => 'domain.ru',
         ]);
-        $request->cookies()->add([
+        $response->cookies()->add([
             'Name' => 'CookieName2',
             'Value' => 'Value2',
             'Domain' => 'domain.ru',
             'NeedSet' => false,
         ]);
-        $response = new ContentResponse(ResponseInterface::HTTP_OK, null, $request);
         $response->withHeader('X-Header', '');
-        $output->send($request, $response);
+        $output->send($response);
     }
 
     /**
@@ -59,6 +59,6 @@ class OutputTest extends TestCase
     {
         $this->expectException(LogicException::class);
         $output = new Output(new SetCookie());
-        $output->send(request(), response());
+        $output->send(response());
     }
 }

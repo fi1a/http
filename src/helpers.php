@@ -13,8 +13,8 @@ use Fi1a\Http\RedirectResponse;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
-use Fi1a\Http\SessionStorage;
-use Fi1a\Http\SessionStorageInterface;
+use Fi1a\Http\Session\SessionStorage;
+use Fi1a\Http\Session\SessionStorageInterface;
 use Fi1a\Http\SetCookie;
 use Fi1a\Http\UriInterface;
 
@@ -76,7 +76,7 @@ function session(?SessionStorageInterface $session = null): SessionStorageInterf
 }
 
 /**
- * Хелпер для сессии
+ * Хелпер для буферизированного вывода
  */
 function buffer(?BufferOutputInterface $buffer = null): BufferOutputInterface
 {

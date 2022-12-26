@@ -6,6 +6,7 @@ namespace Fi1a\Http;
 
 use Fi1a\Http\Middlewares\MiddlewareCollectionInterface;
 use Fi1a\Http\Middlewares\MiddlewareInterface;
+use Fi1a\Http\Session\SessionStorageInterface;
 
 /**
  * Менеджер

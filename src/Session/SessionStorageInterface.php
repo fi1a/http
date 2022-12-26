@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fi1a\Http;
+namespace Fi1a\Http\Session;
 
 use Fi1a\Collection\DataType\PathAccessInterface;
 

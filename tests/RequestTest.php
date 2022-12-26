@@ -6,6 +6,7 @@ namespace Fi1a\Unit\Http;
 
 use Fi1a\Collection\DataType\PathAccess;
 use Fi1a\Collection\DataType\PathAccessInterface;
+use Fi1a\Http\HeaderCollection;
 use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\HttpCookieCollectionInterface;
 use Fi1a\Http\HttpInterface;
@@ -39,6 +40,7 @@ class RequestTest extends TestCase
                 'foo' => [
                     'bar' => 'baz',
                 ],
+                'qux' => 'quz',
             ],
             [],
             null,
@@ -56,22 +58,30 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertInstanceOf(PathAccessInterface::class, $request->post());
-        $this->assertCount(1, $request->post());
+        $this->assertCount(2, $request->post());
         $this->assertEquals('baz', $request->post()->get('foo:bar'));
-        $request->setPost([
-            'foo' => [
-                'bar' => 'qux',
+    }
+
+    /**
+     * POST данные
+     */
+    public function testPostPathAccess(): void
+    {
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [
             ],
-        ]);
+            new PathAccess(
+                [
+                    'foo' => [
+                        'bar' => 'baz',
+                    ],
+                    'qux' => 'quz',
+                ]
+            )
+        );
         $this->assertInstanceOf(PathAccessInterface::class, $request->post());
-        $this->assertCount(1, $request->post());
-        $this->assertEquals('qux', $request->post()->get('foo:bar'));
-        $request->setPost(new PathAccess([
-            'foo' => [
-                'bar' => 'baz',
-            ],
-        ]));
-        $this->assertCount(1, $request->post());
+        $this->assertCount(2, $request->post());
         $this->assertEquals('baz', $request->post()->get('foo:bar'));
     }
 
@@ -84,19 +94,23 @@ class RequestTest extends TestCase
         $this->assertInstanceOf(PathAccessInterface::class, $request->query());
         $this->assertCount(1, $request->query());
         $this->assertEquals('baz', $request->query()->get('foo:bar'));
-        $request->setQuery([
-            'foo' => [
-                'bar' => 'qux',
-            ],
-        ]);
+    }
+
+    /**
+     * GET значения
+     */
+    public function testQueryPathAccess(): void
+    {
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            new PathAccess([
+                'foo' => [
+                    'bar' => 'baz',
+                ],
+            ])
+        );
+
         $this->assertInstanceOf(PathAccessInterface::class, $request->query());
-        $this->assertCount(1, $request->query());
-        $this->assertEquals('qux', $request->query()->get('foo:bar'));
-        $request->setQuery(new PathAccess([
-            'foo' => [
-                'bar' => 'baz',
-            ],
-        ]));
         $this->assertCount(1, $request->query());
         $this->assertEquals('baz', $request->query()->get('foo:bar'));
     }
@@ -108,21 +122,8 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertInstanceOf(PathAccessInterface::class, $request->all());
-        $this->assertCount(1, $request->all());
-        $this->assertEquals('baz', $request->all()->get('foo:bar'));
-        $request->setPost([
-            'foo' => [
-                'bar' => 'qux',
-            ],
-        ]);
-        $this->assertInstanceOf(PathAccessInterface::class, $request->post());
-        $this->assertCount(1, $request->all());
-        $this->assertEquals('qux', $request->all()->get('foo:bar'));
-        $request->setQuery(new PathAccess([
-            'qux' => [1, 2, 3],
-        ]));
         $this->assertCount(2, $request->all());
-        $this->assertEquals([1, 2, 3], $request->all()->get('qux'));
+        $this->assertEquals('baz', $request->all()->get('foo:bar'));
     }
 
     /**
@@ -131,16 +132,10 @@ class RequestTest extends TestCase
     public function testOnly(): void
     {
         $request = $this->getRequest();
-        $request->setPost([
-            'foo' => [
-                'bar' => 'qux',
-            ],
-            'baz' => 'quz',
-        ]);
         $only = $request->only(['foo']);
         $this->assertInstanceOf(PathAccessInterface::class, $only);
         $this->assertCount(1, $only);
-        $this->assertEquals('qux', $only->get('foo:bar'));
+        $this->assertEquals('baz', $only->get('foo:bar'));
     }
 
     /**
@@ -182,8 +177,6 @@ class RequestTest extends TestCase
      */
     public function testFiles(): void
     {
-        $request = $this->getRequest();
-        $this->assertCount(0, $request->files());
         $files = new UploadFileCollection();
         $files->set('file1', new UploadFile([
             'error' => 0,
@@ -199,7 +192,14 @@ class RequestTest extends TestCase
             'tmp_name' => '/tmp/filename2',
             'size' => 120,
         ]));
-        $request->setFiles($files);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            $files
+        );
         $this->assertCount(2, $request->files());
         $uploadFile = $request->files()->get('some:file2');
         $this->assertInstanceOf(UploadFileInterface::class, $uploadFile);
@@ -209,23 +209,32 @@ class RequestTest extends TestCase
     /**
      * Содержание
      */
-    public function testContent(): void
+    public function testRawBody(): void
     {
         $request = $this->getRequest();
-        $this->assertEquals('content1', stream_get_contents($request->getContent()));
-        $request->setContent(fopen(__DIR__ . '/Resources/content2.txt', 'r'));
-        $this->assertEquals('content2', stream_get_contents($request->getContent()));
+        $this->assertEquals('content1', stream_get_contents($request->rawBody()));
+        $request->setRawBody(fopen(__DIR__ . '/Resources/content2.txt', 'r'));
+        $this->assertEquals('content2', stream_get_contents($request->rawBody()));
     }
 
     /**
      * Содержание
      */
-    public function testContentString(): void
+    public function testRawBodyString(): void
     {
         $request = $this->getRequest();
-        $this->assertEquals('content1', stream_get_contents($request->getContent()));
-        $request->setContent('content2');
-        $this->assertEquals('content2', stream_get_contents($request->getContent()));
+        $this->assertEquals('content1', stream_get_contents($request->rawBody()));
+        $request->setRawBody('content2');
+        $this->assertEquals('content2', stream_get_contents($request->rawBody()));
+    }
+
+    /**
+     * Содержание
+     */
+    public function testBody(): void
+    {
+        $request = $this->getRequest();
+        $this->assertEquals('content1', $request->body());
     }
 
     /**
@@ -236,18 +245,6 @@ class RequestTest extends TestCase
         $request = $this->getRequest();
         $this->assertInstanceOf(HeaderCollectionInterface::class, $request->headers());
         $this->assertCount(5, $request->headers());
-        $headers = $request->headers();
-        $headers[] = [
-            'Content-Type',
-            'Value1',
-        ];
-        $headers[] = [
-            'User-Agent',
-            'Value2',
-        ];
-        $request->setHeaders($headers);
-        $this->assertInstanceOf(HeaderCollectionInterface::class, $request->headers());
-        $this->assertCount(7, $request->headers());
     }
 
     /**
@@ -257,14 +254,32 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertInstanceOf(ServerCollectionInterface::class, $request->server());
-        $this->assertCount(5, $request->headers());
+        $this->assertCount(14, $request->server());
         $server = new ServerCollection([
             'HTTP_HOST' => 'domain.ru',
             'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
         ]);
-        $request->setServer($server);
-        $this->assertCount(2, $request->server());
-        $this->assertEquals('domain.ru', $request->server()['HTTP_HOST']);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
+        $this->assertCount(15, $request->server());
+        $this->assertEquals('domain.ru:80', $request->server()->get('HTTP_HOST'));
+    }
+
+    /**
+ * Опции
+ */
+    public function testOptionsEmpty(): void
+    {
+        $request = $this->getRequest();
+        $this->assertInstanceOf(PathAccessInterface::class, $request->options());
+        $this->assertCount(0, $request->options());
     }
 
     /**
@@ -272,13 +287,27 @@ class RequestTest extends TestCase
      */
     public function testOptions(): void
     {
-        $request = $this->getRequest();
-        $this->assertInstanceOf(PathAccessInterface::class, $request->options());
-        $this->assertCount(0, $request->options());
-        $request->setOptions(['foo' => 'bar']);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            ['foo' => 'bar']
+        );
         $this->assertCount(1, $request->options());
         $this->assertEquals('bar', $request->options()->get('foo'));
-        $request->setOptions(new PathAccess(['baz' => 'qux']));
+    }
+
+    /**
+     * Опции
+     */
+    public function testOptionsPathAccess(): void
+    {
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            new PathAccess(['baz' => 'qux'])
+        );
         $this->assertCount(1, $request->options());
         $this->assertEquals('qux', $request->options()->get('baz'));
     }
@@ -290,7 +319,14 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('/path/to/index.html', $request->path());
-        $request->setPath('/new/address/');
+    }
+
+    /**
+     * Адрес
+     */
+    public function testSetPath(): void
+    {
+        $request = new Request('/new/address/');
         $this->assertEquals('/new/address/', $request->path());
     }
 
@@ -301,7 +337,14 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('/path/to/', $request->basePath());
-        $request->setPath('/new/address/');
+    }
+
+    /**
+     * Путь без файла
+     */
+    public function testSetBasePath(): void
+    {
+        $request = new Request('/new/address/');
         $this->assertEquals('/new/address/', $request->path());
     }
 
@@ -312,7 +355,14 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('/path/to/', $request->normalizedBasePath());
-        $request->setPath('/new/address');
+    }
+
+    /**
+     * Путь без файла со / на конце
+     */
+    public function testSetNormalizedBasePath(): void
+    {
+        $request = new Request('/new/address');
         $this->assertEquals('/new/address/', $request->normalizedBasePath());
     }
 
@@ -323,8 +373,6 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('foo%5Bbar%5D=baz', $request->queryString());
-        $request->setQueryString('qux=quz');
-        $this->assertEquals('qux=quz', $request->queryString());
     }
 
     /**
@@ -334,16 +382,6 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('domain.ru', $request->host());
-    }
-
-    /**
-     * Хост
-     */
-    public function testHostEmpty(): void
-    {
-        $request = new Request('/');
-        $request->headers()->withoutHeader('Host');
-        $this->assertEquals('', $request->host());
     }
 
     /**
@@ -389,7 +427,18 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('127.0.0.1', $request->clientIp());
-        $request->server()->set('REMOTE_ADDR', '127.0.0.2');
+        $server = new ServerCollection([
+            'REMOTE_ADDR' => '127.0.0.2',
+        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
         $this->assertEquals('127.0.0.2', $request->clientIp());
     }
 
@@ -400,7 +449,18 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertFalse($request->isSecure());
-        $request->server()->set('HTTPS', 'on');
+        $server = new ServerCollection([
+            'HTTPS' => 'on',
+        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
         $this->assertTrue($request->isSecure());
     }
 
@@ -411,7 +471,18 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('', $request->scriptName());
-        $request->server()->set('SCRIPT_NAME', __FILE__);
+        $server = new ServerCollection([
+            'SCRIPT_NAME' => __FILE__,
+        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
         $this->assertEquals(__FILE__, $request->scriptName());
     }
 
@@ -422,7 +493,18 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('http', $request->scheme());
-        $request->server()->set('HTTPS', 'on');
+        $server = new ServerCollection([
+            'HTTPS' => 'on',
+        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
         $this->assertEquals('https', $request->scheme());
     }
 
@@ -433,8 +515,32 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals(80, $request->port());
-        $request->server()->delete('SERVER_PORT');
-        $request->server()->set('HTTPS', 'on');
+        $server = new ServerCollection([
+            'HTTPS' => 'on',
+            'SERVER_PORT' => 443,
+        ]);
+        $request = new Request(
+            'https://domain.ru/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
+        $this->assertEquals(443, $request->port());
+        $server = new ServerCollection([
+            'HTTPS' => 'on',
+        ]);
+        $request = new Request(
+            '/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
         $this->assertEquals(443, $request->port());
     }
 
@@ -517,11 +623,8 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertTrue($request->isMethod(HttpInterface::GET));
-        $request->setMethod(HttpInterface::POST);
-        $this->assertEquals(HttpInterface::POST, $request->method());
-        $this->assertTrue($request->isMethod(HttpInterface::POST));
-        $request->setMethod(HttpInterface::PUT);
-        $this->assertTrue($request->isMethod('put'));
+        $this->assertTrue($request->isMethod(HttpInterface::GET));
+        $this->assertTrue($request->isMethod('get'));
     }
 
     /**
@@ -531,10 +634,21 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('', $request->contentType());
-        $request->headers()->add([
-            'Content-Type',
-            'application/json',
-        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            new HeaderCollection([
+                [
+                    'Content-Type',
+                    'application/json',
+                ],
+            ])
+        );
         $this->assertEquals('application/json', $request->contentType());
     }
 
@@ -545,10 +659,21 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertFalse($request->isNoCache());
-        $request->headers()->add([
-            'Pragma',
-            'no-cache',
-        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            new HeaderCollection([
+                [
+                    'Pragma',
+                    'no-cache',
+                ],
+            ])
+        );
         $this->assertTrue($request->isNoCache());
     }
 
@@ -559,10 +684,21 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertFalse($request->isXmlHttpRequest());
-        $request->headers()->add([
-            'X-Requested-With',
-            'XMLHttpRequest',
-        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            new HeaderCollection([
+                [
+                    'X-Requested-With',
+                    'XMLHttpRequest',
+                ],
+            ])
+        );
         $this->assertTrue($request->isXmlHttpRequest());
     }
 
@@ -573,16 +709,37 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals([], $request->eTags());
-        $request->headers()->add([
-            'If-None-Match',
-            '1,2,3',
-        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            new HeaderCollection([
+                [
+                    'If-None-Match',
+                    '1,2,3',
+                ],
+            ])
+        );
         $this->assertEquals(['1', '2', '3',], $request->eTags());
-        $request = $this->getRequest();
-        $request->headers()->add([
-            'If-None-Match',
-            '',
-        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            new HeaderCollection([
+                [
+                    'If-None-Match',
+                    '',
+                ],
+            ])
+        );
         $this->assertEquals([], $request->eTags());
     }
 
@@ -593,7 +750,18 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('', $request->script());
-        $request->server()->set('SCRIPT_FILENAME', __FILE__);
+        $server = new ServerCollection([
+            'SCRIPT_FILENAME' => __FILE__,
+        ]);
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [],
+            [],
+            [],
+            null,
+            null,
+            $server
+        );
         $this->assertEquals(__FILE__, $request->script());
     }
 

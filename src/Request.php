@@ -34,7 +34,12 @@ class Request implements RequestInterface
     /**
      * @var resource|string|null
      */
-    private $content;
+    private $rawBody;
+
+    /**
+     * @var mixed
+     */
+    private $body;
 
     /**
      * @var HttpCookieCollectionInterface
@@ -80,7 +85,9 @@ class Request implements RequestInterface
         $server->exchangeArray(
             array_replace([
                 'SERVER_NAME' => 'localhost',
-                'SERVER_PORT' => 80,
+                'SERVER_PORT' => $server->has('HTTPS') && mb_strtolower((string) $server->get('HTTPS')) !== 'off'
+                    ? 443
+                    : 80,
                 'HTTP_HOST' => 'localhost',
                 'HTTP_USER_AGENT' => '',
                 'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -135,7 +142,7 @@ class Request implements RequestInterface
         $this->setUriInstance($uri)
             ->setPost($post)
             ->setFiles($files)
-            ->setContent($content)
+            ->setRawBody($content)
             ->setCookies($cookies)
             ->setHeaders($headers)
             ->setServer($server)
@@ -163,9 +170,13 @@ class Request implements RequestInterface
     }
 
     /**
-     * @inheritDoc
+     * Устанавливает POST
+     *
+     * @param mixed[]|PathAccessInterface $post
+     *
+     * @return $this
      */
-    public function setPost($post)
+    private function setPost($post)
     {
         if (!($post instanceof PathAccessInterface)) {
             $this->post->exchangeArray($post);
@@ -182,17 +193,7 @@ class Request implements RequestInterface
      */
     public function post(): PathAccessInterface
     {
-        return $this->post;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setQuery($query)
-    {
-        $this->getUriInstance()->withQueryParams($query);
-
-        return $this;
+        return clone $this->post;
     }
 
     /**
@@ -200,7 +201,7 @@ class Request implements RequestInterface
      */
     public function query(): PathAccessInterface
     {
-        return $this->getUriInstance()->getQueryParams();
+        return clone $this->getUriInstance()->getQueryParams();
     }
 
     /**
@@ -233,9 +234,11 @@ class Request implements RequestInterface
     }
 
     /**
-     * @inheritDoc
+     * Устанавливает файлы
+     *
+     * @return $this
      */
-    public function setFiles(UploadFileCollectionInterface $files)
+    protected function setFiles(UploadFileCollectionInterface $files)
     {
         $this->files = $files;
 
@@ -247,15 +250,21 @@ class Request implements RequestInterface
      */
     public function files(): UploadFileCollectionInterface
     {
-        return $this->files;
+        return clone $this->files;
     }
 
     /**
      * @inheritDoc
      */
-    public function setContent($content)
+    public function setRawBody($rawBody)
     {
-        $this->content = $content;
+        $this->rawBody = $rawBody;
+        $body = $rawBody;
+        if (is_resource($rawBody)) {
+            $body = stream_get_contents($rawBody);
+            rewind($rawBody);
+        }
+        $this->setBody($body);
 
         return $this;
     }
@@ -263,22 +272,42 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getContent()
+    public function rawBody()
     {
-        $content = $this->content;
-        if (!is_resource($content)) {
-            $content = fopen('php://temp', 'r+');
-            fwrite($content, (string) $this->content);
+        $rawBody = $this->rawBody;
+        if (!is_resource($rawBody)) {
+            $rawBody = fopen('php://temp', 'r+');
+            fwrite($rawBody, (string) $this->rawBody);
         }
-        rewind($content);
+        rewind($rawBody);
 
-        return $content;
+        return $rawBody;
     }
 
     /**
      * @inheritDoc
      */
-    public function setCookies(HttpCookieCollectionInterface $cookies)
+    public function body()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+    /**
+     * Устанавливает cookies
+     *
+     * @return $this
+     */
+    protected function setCookies(HttpCookieCollectionInterface $cookies)
     {
         $this->cookies = $cookies;
 
@@ -290,13 +319,15 @@ class Request implements RequestInterface
      */
     public function cookies(): HttpCookieCollectionInterface
     {
-        return $this->cookies;
+        return clone $this->cookies;
     }
 
     /**
-     * @inheritDoc
+     * Установить заголовки
+     *
+     * @return $this
      */
-    public function setHeaders(HeaderCollectionInterface $headers)
+    protected function setHeaders(HeaderCollectionInterface $headers)
     {
         $this->headers = $headers;
 
@@ -308,13 +339,15 @@ class Request implements RequestInterface
      */
     public function headers(): HeaderCollectionInterface
     {
-        return $this->headers;
+        return clone $this->headers;
     }
 
     /**
-     * @inheritDoc
+     * Устанавливает значение SERVER
+     *
+     * @return $this
      */
-    public function setServer(ServerCollectionInterface $server)
+    protected function setServer(ServerCollectionInterface $server)
     {
         $this->server = $server;
 
@@ -326,7 +359,7 @@ class Request implements RequestInterface
      */
     public function server(): ServerCollectionInterface
     {
-        return $this->server;
+        return clone $this->server;
     }
 
     /**
@@ -338,9 +371,13 @@ class Request implements RequestInterface
     }
 
     /**
-     * @inheritDoc
+     * Задает опции
+     *
+     * @param mixed[]|PathAccessInterface $options
+     *
+     * @return $this
      */
-    public function setOptions($options)
+    protected function setOptions($options)
     {
         if (!($options instanceof PathAccessInterface)) {
             $this->options->exchangeArray($options);
@@ -375,16 +412,6 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function setPath(string $url)
-    {
-        $this->getUriInstance()->withPath($url);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function path(): string
     {
         return $this->getUriInstance()->getPath();
@@ -404,16 +431,6 @@ class Request implements RequestInterface
     public function normalizedBasePath(): string
     {
         return $this->getUriInstance()->getNormalizedBasePath();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setQueryString(string $query)
-    {
-        $this->getUriInstance()->withQuery($query);
-
-        return $this;
     }
 
     /**
@@ -461,12 +478,14 @@ class Request implements RequestInterface
      */
     public function host(): string
     {
-        $header = $this->headers()->getLastHeader('Host');
-        if (!$header) {
-            return '';
-        }
-
-        return mb_strtolower(preg_replace('/:\d+$/', '', trim((string) $header->getValue())));
+        /** @psalm-suppress PossiblyNullReference */
+        return mb_strtolower(
+            preg_replace(
+                '/:\d+$/',
+                '',
+                trim((string) $this->headers()->getLastHeader('Host')->getValue())
+            )
+        );
     }
 
     /**
@@ -523,22 +542,7 @@ class Request implements RequestInterface
      */
     public function port(): int
     {
-        $server = $this->server();
-        if ($server->has('SERVER_PORT')) {
-            return (int) $server->get('SERVER_PORT');
-        }
-
-        return $this->isSecure() ? 443 : 80;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setMethod(string $method)
-    {
-        $this->server()->set('REQUEST_METHOD', mb_strtoupper($method));
-
-        return $this;
+        return (int) $this->server()->get('SERVER_PORT');
     }
 
     /**
