@@ -7,7 +7,7 @@ namespace Fi1a\Http;
 /**
  * JSON ответ
  */
-interface JsonResponseInterface extends ResponseInterface
+interface JsonResponseInterface extends ContentResponseInterface
 {
     /**
      * Опции используемые для кодирования данных в JSON

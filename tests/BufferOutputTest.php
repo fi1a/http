@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Fi1a\Unit\Http;
 
 use Fi1a\Http\BufferOutput;
+use Fi1a\Http\ContentResponse;
 use Fi1a\Http\Request;
-use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
 use Fi1a\Http\SetCookie;
 use PHPUnit\Framework\TestCase;
@@ -39,7 +39,7 @@ class BufferOutputTest extends TestCase
         $buffer->expects($this->atLeastOnce())->method('header');
 
         $request = new Request('/');
-        $response = new Response(ResponseInterface::HTTP_OK, null, $request);
+        $response = new ContentResponse(ResponseInterface::HTTP_OK, null, $request);
 
         $this->assertTrue($buffer->start());
         echo 'buffer';
@@ -71,7 +71,7 @@ class BufferOutputTest extends TestCase
         $buffer->expects($this->atLeastOnce())->method('header');
 
         $request = new Request('/');
-        $response = new Response(ResponseInterface::HTTP_CONTINUE, null, $request);
+        $response = new ContentResponse(ResponseInterface::HTTP_CONTINUE, null, $request);
 
         $buffer->send($request, $response);
         ob_start();

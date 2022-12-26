@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http;
 
+use Fi1a\Http\ContentResponse;
 use Fi1a\Http\Output;
 use Fi1a\Http\Request;
-use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
 use Fi1a\Http\SetCookie;
 use LogicException;
@@ -36,18 +36,18 @@ class OutputTest extends TestCase
         $output->method('isHeaderSent')->willReturn(false);
         $output->expects($this->atLeastOnce())->method('header');
         $request = new Request('/');
-        $request->getCookies()->add([
+        $request->cookies()->add([
             'Name' => 'CookieName1',
             'Value' => 'Value1',
             'Domain' => 'domain.ru',
         ]);
-        $request->getCookies()->add([
+        $request->cookies()->add([
             'Name' => 'CookieName2',
             'Value' => 'Value2',
             'Domain' => 'domain.ru',
             'NeedSet' => false,
         ]);
-        $response = new Response(ResponseInterface::HTTP_OK, null, $request);
+        $response = new ContentResponse(ResponseInterface::HTTP_OK, null, $request);
         $response->withHeader('X-Header', '');
         $output->send($request, $response);
     }
