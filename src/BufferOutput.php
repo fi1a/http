@@ -17,7 +17,7 @@ class BufferOutput extends Output implements BufferOutputInterface
     /**
      * @inheritDoc
      */
-    protected function sendContent(ResponseInterface $response): void
+    public function sendContent(ResponseInterface $response): void
     {
         if ($response->isInformational() || $response->isEmpty() || $response->isRedirection()) {
             $this->buffer = [];
@@ -33,7 +33,9 @@ class BufferOutput extends Output implements BufferOutputInterface
             $out .= $buffer;
         }
         $out .= $content;
-        $out .= $response->getContent();
+        if ($response instanceof ContentResponseInterface) {
+            $out .= $response->getContent();
+        }
         echo $out;
         ob_end_flush();
     }

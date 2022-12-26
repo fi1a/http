@@ -136,28 +136,28 @@ class HttpTest extends TestCase
     public function testCreateRequestWithGlobals(): void
     {
         $request = $this->getRequest();
-        $this->assertCount(1, $request->getQuery());
-        $this->assertCount(1, $request->getPost());
-        $this->assertCount(2, $request->getFiles());
-        $this->assertCount(2, $request->getFiles()->get('some:other:path:file3'));
-        $fileUpload = $request->getFiles()->get('some:other:path:file3:0');
+        $this->assertCount(1, $request->query());
+        $this->assertCount(1, $request->post());
+        $this->assertCount(2, $request->files());
+        $this->assertCount(2, $request->files()->get('some:other:path:file3'));
+        $fileUpload = $request->files()->get('some:other:path:file3:0');
         $this->assertInstanceOf(
             UploadFileInterface::class,
             $fileUpload
         );
         $this->assertEquals('file.pdf', $fileUpload->getName());
-        $fileUpload = $request->getFiles()->get('some:other:path:file3:1');
+        $fileUpload = $request->files()->get('some:other:path:file3:1');
         $this->assertInstanceOf(
             UploadFileInterface::class,
             $fileUpload
         );
         $this->assertEquals('file 2.pdf', $fileUpload->getName());
-        $this->assertCount(2, $request->getCookies());
-        $this->assertInstanceOf(HeaderCollectionInterface::class, $request->getHeaders());
-        $this->assertCount(7, $request->getHeaders());
-        $this->assertEquals('domain.ru', $request->getHeaders()->getLastHeader('Host')->getValue());
-        $this->assertInstanceOf(ServerCollectionInterface::class, $request->getServer());
-        $this->assertCount(17, $request->getServer());
+        $this->assertCount(2, $request->cookies());
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $request->headers());
+        $this->assertCount(7, $request->headers());
+        $this->assertEquals('domain.ru', $request->headers()->getLastHeader('Host')->getValue());
+        $this->assertInstanceOf(ServerCollectionInterface::class, $request->server());
+        $this->assertCount(17, $request->server());
     }
 
     /**

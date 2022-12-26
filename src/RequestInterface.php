@@ -42,7 +42,7 @@ interface RequestInterface
     /**
      * Возвращает POST
      */
-    public function getPost(): PathAccessInterface;
+    public function post(): PathAccessInterface;
 
     /**
      * Устанавливает GET значения
@@ -56,7 +56,19 @@ interface RequestInterface
     /**
      * Возвращает GET значения
      */
-    public function getQuery(): PathAccessInterface;
+    public function query(): PathAccessInterface;
+
+    /**
+     * Все значения из GET и POST
+     */
+    public function all(): PathAccessInterface;
+
+    /**
+     * Только переданные ключи из GET и POST
+     *
+     * @param string[] $keys
+     */
+    public function only(array $keys): PathAccessInterface;
 
     /**
      * Устанавливает файлы
@@ -68,7 +80,7 @@ interface RequestInterface
     /**
      * Возвращает файлы
      */
-    public function getFiles(): UploadFileCollectionInterface;
+    public function files(): UploadFileCollectionInterface;
 
     /**
      * Устанавливает содержание
@@ -96,7 +108,7 @@ interface RequestInterface
     /**
      * Возвращает cookies
      */
-    public function getCookies(): HttpCookieCollectionInterface;
+    public function cookies(): HttpCookieCollectionInterface;
 
     /**
      * Установить заголовки
@@ -108,7 +120,7 @@ interface RequestInterface
     /**
      * Вернуть заголовки
      */
-    public function getHeaders(): HeaderCollectionInterface;
+    public function headers(): HeaderCollectionInterface;
 
     /**
      * Устанавливает значение SERVER
@@ -120,12 +132,12 @@ interface RequestInterface
     /**
      * Возвращает значение SERVER
      */
-    public function getServer(): ServerCollectionInterface;
+    public function server(): ServerCollectionInterface;
 
     /**
      * Возвращает настройки
      */
-    public function getOptions(): PathAccessInterface;
+    public function options(): PathAccessInterface;
 
     /**
      * Задает настройки
@@ -139,12 +151,12 @@ interface RequestInterface
     /**
      * Возвращает IP адрес клиента
      */
-    public function getClientIp(): string;
+    public function clientIp(): string;
 
     /**
      * Возвращает запрошенный файл скрипта
      */
-    public function getScriptName(): string;
+    public function scriptName(): string;
 
     /**
      * Устанавливает путь
@@ -158,28 +170,28 @@ interface RequestInterface
      *
      * Пример: /some/url/index.php
      */
-    public function getPath(): string;
+    public function path(): string;
 
     /**
      * Путь без файла
      *
      * Пример: /some/url/index.php => /some/url/
      */
-    public function getBasePath(): string;
+    public function basePath(): string;
 
     /**
      * Путь без файла со / на конце
      *
      * Пример: /some/url/index.php => /some/url/
      */
-    public function getNormalizedBasePath(): string;
+    public function normalizedBasePath(): string;
 
     /**
      * Возвращает строку запроса
      *
      * Пример: q=1&a=b
      */
-    public function getQueryString(): string;
+    public function queryString(): string;
 
     /**
      * Устанавливает строку запроса
@@ -193,21 +205,21 @@ interface RequestInterface
     /**
      * Хост
      */
-    public function getHost(): string;
+    public function host(): string;
 
     /**
      * Хост и порт, если он не стандартный
      *
      * Пример: localhost:8080
      */
-    public function getHttpHost(): string;
+    public function httpHost(): string;
 
     /**
      * Схема, хост и порт
      *
      * Пример: http://localhost:8080
      */
-    public function getSchemeAndHttpHost(): string;
+    public function schemeAndHttpHost(): string;
 
     /**
      * Использован https
@@ -217,43 +229,43 @@ interface RequestInterface
     /**
      * Возвращает схему запроса
      */
-    public function getScheme(): string;
+    public function scheme(): string;
 
     /**
      * Возвращает порт
      */
-    public function getPort(): int;
+    public function port(): int;
 
     /**
      * Возвращает пользователя
      */
-    public function getUser(): string;
+    public function user(): string;
 
     /**
      * Возвращает пароль
      */
-    public function getPassword(): ?string;
+    public function password(): ?string;
 
     /**
      * Возвращает пользователя и пароль
      *
      * Пример: user:pw, user
      */
-    public function getUserInfo(): string;
+    public function userInfo(): string;
 
     /**
      * Возвращает путь и строку запроса
      *
      * Пример: /some/url/?q=1&a=b
      */
-    public function getPathAndQuery(): string;
+    public function pathAndQuery(): string;
 
     /**
      * Возвращает урл с хостом и строку запроса
      *
      * Пример: http://localhost:8080/some/url/?q=1&a=b
      */
-    public function getUri(): string;
+    public function uri(): string;
 
     /**
      * Устанавливает метод
@@ -265,7 +277,7 @@ interface RequestInterface
     /**
      * Возвращает метод
      */
-    public function getMethod(): string;
+    public function method(): string;
 
     /**
      * Определяет метод
@@ -275,7 +287,7 @@ interface RequestInterface
     /**
      * Возвращает тип содержания
      */
-    public function getContentType(): string;
+    public function contentType(): string;
 
     /**
      * Без кеша
@@ -292,10 +304,10 @@ interface RequestInterface
      *
      * @return string[]
      */
-    public function getETags(): array;
+    public function eTags(): array;
 
     /**
      * Возвращает путь до выполняемого скрипта
      */
-    public function getScript(): string;
+    public function script(): string;
 }

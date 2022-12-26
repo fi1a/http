@@ -32,9 +32,9 @@ class Output implements OutputInterface
     }
 
     /**
-     * Отправляет заголовки
+     * @inheritDoc
      */
-    protected function sendHeaders(RequestInterface $request, ResponseInterface $response): void
+    public function sendHeaders(RequestInterface $request, ResponseInterface $response): void
     {
         if ($this->isHeaderSent()) {
             throw new LogicException('Заголовки уже отправлены');
@@ -67,7 +67,7 @@ class Output implements OutputInterface
             );
         }
 
-        $cookies = $request->getCookies();
+        $cookies = $request->cookies();
         foreach ($cookies as $cookie) {
             assert($cookie instanceof HttpCookieInterface);
             if (!$cookie->getNeedSet()) {
@@ -78,11 +78,13 @@ class Output implements OutputInterface
     }
 
     /**
-     * Отправляет содержимое
+     * @inheritDoc
      */
-    protected function sendContent(ResponseInterface $response): void
+    public function sendContent(ResponseInterface $response): void
     {
-        echo $response->getContent();
+        if ($response instanceof ContentResponseInterface) {
+            echo $response->getContent();
+        }
     }
 
     /**

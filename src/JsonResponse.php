@@ -14,7 +14,7 @@ use const JSON_HEX_TAG;
 /**
  * JSON ответ
  */
-class JsonResponse extends Response implements JsonResponseInterface
+class JsonResponse extends ContentResponse implements JsonResponseInterface
 {
     /**
      * @var int

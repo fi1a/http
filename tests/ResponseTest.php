@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fi1a\Unit\Http;
 
 use DateTime;
+use Fi1a\Http\ContentResponse;
 use Fi1a\Http\HeaderCollection;
 use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\Response;
@@ -335,7 +336,7 @@ class ResponseTest extends TestCase
      */
     public function testContent(): void
     {
-        $response = $this->getResponse();
+        $response = new ContentResponse();
         $this->assertEquals('', $response->getContent());
         $response->setContent('content');
         $this->assertEquals('content', $response->getContent());

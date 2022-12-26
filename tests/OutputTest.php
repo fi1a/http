@@ -36,12 +36,12 @@ class OutputTest extends TestCase
         $output->method('isHeaderSent')->willReturn(false);
         $output->expects($this->atLeastOnce())->method('header');
         $request = new Request('/');
-        $request->getCookies()->add([
+        $request->cookies()->add([
             'Name' => 'CookieName1',
             'Value' => 'Value1',
             'Domain' => 'domain.ru',
         ]);
-        $request->getCookies()->add([
+        $request->cookies()->add([
             'Name' => 'CookieName2',
             'Value' => 'Value2',
             'Domain' => 'domain.ru',

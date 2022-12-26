@@ -180,7 +180,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getPost(): PathAccessInterface
+    public function post(): PathAccessInterface
     {
         return $this->post;
     }
@@ -198,9 +198,38 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getQuery(): PathAccessInterface
+    public function query(): PathAccessInterface
     {
         return $this->getUriInstance()->getQueryParams();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function all(): PathAccessInterface
+    {
+        return new PathAccess(array_replace_recursive(
+            $this->getUriInstance()->getQueryParams()->getArrayCopy(),
+            $this->post->getArrayCopy()
+        ));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function only(array $keys): PathAccessInterface
+    {
+        $all = $this->all();
+        $only = new PathAccess();
+        foreach ($keys as $key) {
+            if (!$all->has($key)) {
+                continue;
+            }
+
+            $only->set($key, $all->get($key));
+        }
+
+        return $only;
     }
 
     /**
@@ -216,7 +245,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getFiles(): UploadFileCollectionInterface
+    public function files(): UploadFileCollectionInterface
     {
         return $this->files;
     }
@@ -259,7 +288,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getCookies(): HttpCookieCollectionInterface
+    public function cookies(): HttpCookieCollectionInterface
     {
         return $this->cookies;
     }
@@ -277,7 +306,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getHeaders(): HeaderCollectionInterface
+    public function headers(): HeaderCollectionInterface
     {
         return $this->headers;
     }
@@ -295,7 +324,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getServer(): ServerCollectionInterface
+    public function server(): ServerCollectionInterface
     {
         return $this->server;
     }
@@ -303,7 +332,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getOptions(): PathAccessInterface
+    public function options(): PathAccessInterface
     {
         return $this->options;
     }
@@ -326,9 +355,9 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getClientIp(): string
+    public function clientIp(): string
     {
-        $server = $this->getServer();
+        $server = $this->server();
 
         return $server->has('REMOTE_ADDR') ? (string) $server->get('REMOTE_ADDR') : '';
     }
@@ -336,9 +365,9 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getScriptName(): string
+    public function scriptName(): string
     {
-        $server = $this->getServer();
+        $server = $this->server();
 
         return $server->has('SCRIPT_NAME') ? (string) $server->get('SCRIPT_NAME') : '';
     }
@@ -356,7 +385,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getPath(): string
+    public function path(): string
     {
         return $this->getUriInstance()->getPath();
     }
@@ -364,7 +393,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getBasePath(): string
+    public function basePath(): string
     {
         return $this->getUriInstance()->getBasePath();
     }
@@ -372,7 +401,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getNormalizedBasePath(): string
+    public function normalizedBasePath(): string
     {
         return $this->getUriInstance()->getNormalizedBasePath();
     }
@@ -390,7 +419,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getQueryString(): string
+    public function queryString(): string
     {
         return $this->getUriInstance()->getQuery();
     }
@@ -398,7 +427,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getUser(): string
+    public function user(): string
     {
         return $this->getUriInstance()->getUser();
     }
@@ -406,7 +435,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getPassword(): ?string
+    public function password(): ?string
     {
         return $this->getUriInstance()->getPassword();
     }
@@ -414,7 +443,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getUserInfo(): string
+    public function userInfo(): string
     {
         return $this->getUriInstance()->getUserInfo();
     }
@@ -422,7 +451,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getPathAndQuery(): string
+    public function pathAndQuery(): string
     {
         return $this->getUriInstance()->getPathAndQuery();
     }
@@ -430,9 +459,9 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getHost(): string
+    public function host(): string
     {
-        $header = $this->getHeaders()->getLastHeader('Host');
+        $header = $this->headers()->getLastHeader('Host');
         if (!$header) {
             return '';
         }
@@ -443,27 +472,27 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getSchemeAndHttpHost(): string
+    public function schemeAndHttpHost(): string
     {
-        return $this->getScheme() . '://' . $this->getHttpHost();
+        return $this->scheme() . '://' . $this->httpHost();
     }
 
     /**
      * @inheritDoc
      */
-    public function getUri(): string
+    public function uri(): string
     {
-        return $this->getSchemeAndHttpHost() . $this->getPathAndQuery();
+        return $this->schemeAndHttpHost() . $this->pathAndQuery();
     }
 
     /**
      * @inheritDoc
      */
-    public function getHttpHost(): string
+    public function httpHost(): string
     {
-        $host = $this->getHost();
-        $port = $this->getPort();
-        $scheme = $this->getScheme();
+        $host = $this->host();
+        $port = $this->port();
+        $scheme = $this->scheme();
         if (($scheme === 'http' && $port !== 80) || ($scheme === 'https' && $port !== 443)) {
             $host .= ':' . $port;
         }
@@ -476,7 +505,7 @@ class Request implements RequestInterface
      */
     public function isSecure(): bool
     {
-        $server = $this->getServer();
+        $server = $this->server();
 
         return $server->has('HTTPS') && mb_strtolower((string) $server->get('HTTPS')) !== 'off';
     }
@@ -484,7 +513,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getScheme(): string
+    public function scheme(): string
     {
         return $this->isSecure() ? 'https' : 'http';
     }
@@ -492,9 +521,9 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getPort(): int
+    public function port(): int
     {
-        $server = $this->getServer();
+        $server = $this->server();
         if ($server->has('SERVER_PORT')) {
             return (int) $server->get('SERVER_PORT');
         }
@@ -507,7 +536,7 @@ class Request implements RequestInterface
      */
     public function setMethod(string $method)
     {
-        $this->getServer()->set('REQUEST_METHOD', mb_strtoupper($method));
+        $this->server()->set('REQUEST_METHOD', mb_strtoupper($method));
 
         return $this;
     }
@@ -515,9 +544,9 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getMethod(): string
+    public function method(): string
     {
-        $server = $this->getServer();
+        $server = $this->server();
 
         return $server->has('REQUEST_METHOD')
             ? mb_strtoupper((string) $server->get('REQUEST_METHOD'))
@@ -529,15 +558,15 @@ class Request implements RequestInterface
      */
     public function isMethod(string $method): bool
     {
-        return $this->getMethod() === mb_strtoupper($method);
+        return $this->method() === mb_strtoupper($method);
     }
 
     /**
      * @inheritDoc
      */
-    public function getContentType(): string
+    public function contentType(): string
     {
-        $header = $this->getHeaders()->getLastHeader('Content-Type');
+        $header = $this->headers()->getLastHeader('Content-Type');
 
         return $header ? (string) $header->getValue() : '';
     }
@@ -547,7 +576,7 @@ class Request implements RequestInterface
      */
     public function isNoCache(): bool
     {
-        $header = $this->getHeaders()->getLastHeader('Pragma');
+        $header = $this->headers()->getLastHeader('Pragma');
 
         return $header && $header->getValue() === 'no-cache';
     }
@@ -557,7 +586,7 @@ class Request implements RequestInterface
      */
     public function isXmlHttpRequest(): bool
     {
-        $header = $this->getHeaders()->getLastHeader('X-Requested-With');
+        $header = $this->headers()->getLastHeader('X-Requested-With');
 
         return $header && $header->getValue() === 'XMLHttpRequest';
     }
@@ -565,9 +594,9 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getETags(): array
+    public function eTags(): array
     {
-        $header = $this->getHeaders()->getLastHeader('If-None-Match');
+        $header = $this->headers()->getLastHeader('If-None-Match');
         if (!$header) {
             return [];
         }
@@ -578,8 +607,8 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function getScript(): string
+    public function script(): string
     {
-        return (string) $this->getServer()->get('SCRIPT_FILENAME');
+        return (string) $this->server()->get('SCRIPT_FILENAME');
     }
 }

@@ -110,11 +110,6 @@ class Response implements ResponseInterface
      */
     private $charset = 'utf-8';
 
-    /**
-     * @var string
-     */
-    private $content = '';
-
     public function __construct(
         int $status = self::HTTP_OK,
         ?HeaderCollectionInterface $headers = null,
@@ -410,24 +405,6 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @inheritDoc
-     */
-    public function setContent(string $content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    /**
      * Подготавливает ответ на основе запроса
      */
     private function prepare(): void
@@ -436,7 +413,7 @@ class Response implements ResponseInterface
             ? $this->prepareInformation()
             : $this->prepareDefault();
 
-        $server = $this->request->getServer();
+        $server = $this->request->server();
         if ($server->get('SERVER_PROTOCOL') !== 'HTTP/1.0') {
             $this->setHttpVersion('1.1');
         }
