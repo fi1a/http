@@ -10,6 +10,7 @@ use Fi1a\Http\HeaderCollection;
 use Fi1a\Http\HeaderCollectionInterface;
 use Fi1a\Http\HttpCookieCollectionInterface;
 use Fi1a\Http\HttpInterface;
+use Fi1a\Http\MimeInterface;
 use Fi1a\Http\Request;
 use Fi1a\Http\RequestInterface;
 use Fi1a\Http\ServerCollection;
@@ -116,14 +117,69 @@ class RequestTest extends TestCase
     }
 
     /**
-     * Все значения из GET и POST
+     * Все значения из GET, POST, FILES, BODY
      */
     public function testAll(): void
     {
-        $request = $this->getRequest();
+        $files = new UploadFileCollection();
+        $files->set('file1', new UploadFile([
+            'error' => 0,
+            'name' => 'filename.txt',
+            'type' => 'txt',
+            'tmp_name' => '/tmp/filename',
+            'size' => 100,
+        ]));
+        $files->set('some:file2', new UploadFile([
+            'error' => 0,
+            'name' => 'filename2.txt',
+            'type' => 'txt',
+            'tmp_name' => '/tmp/filename2',
+            'size' => 120,
+        ]));
+        $request = new Request(
+            'http://domain.ru:80/path/to/index.html',
+            [
+                'foo' => [
+                    'bar' => 'baz',
+                ],
+            ],
+            [
+                'foo' => [
+                    'bar' => 'baz',
+                ],
+                'qux' => 'quz',
+            ],
+            [],
+            null,
+            $files,
+            null,
+            new HeaderCollection([
+                [
+                    'Content-Type',
+                    MimeInterface::JSON,
+                ],
+            ]),
+            '{"json":"value"}'
+        );
+        request($request);
         $this->assertInstanceOf(PathAccessInterface::class, $request->all());
-        $this->assertCount(2, $request->all());
+        $this->assertCount(5, $request->all());
         $this->assertEquals('baz', $request->all()->get('foo:bar'));
+        $this->assertInstanceOf(UploadFileInterface::class, $request->all()->get('some:file2'));
+        $this->assertEquals('value', $request->all()->get('json'));
+    }
+
+    /**
+     * Все значения из GET, POST, FILES, BODY
+     */
+    public function testAllBodyArray(): void
+    {
+        $request = $this->getRequest();
+        $request->setBody(['json' => 'value']);
+        $this->assertInstanceOf(PathAccessInterface::class, $request->all());
+        $this->assertCount(3, $request->all());
+        $this->assertEquals('baz', $request->all()->get('foo:bar'));
+        $this->assertEquals('value', $request->all()->get('json'));
     }
 
     /**
