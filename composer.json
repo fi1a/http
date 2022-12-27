@@ -1,7 +1,7 @@
 {
   "name": "fi1a/http",
   "type": "library",
-  "description": "Абстракция для HTTP-запроса, ответа, session и cookie.",
+  "description": "PHP абстракция для HTTP-запроса (request), ответа (response), сессии (session) и cookies.",
   "keywords": [],
   "homepage": "https://github.com/fi1a/http",
   "license": "MIT",
