@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fi1a\Unit\Http\Middlewares;
 
+use Fi1a\Collection\DataType\PathAccessInterface;
 use Fi1a\Http\BufferOutput;
 use Fi1a\Http\Exception\BadRequestException;
 use Fi1a\Http\HeaderCollection;
@@ -110,7 +111,8 @@ class JsonMiddlewareTest extends TestCase
 
         request($request);
 
-        $this->assertEquals(['foo' => 'bar'], $request->body());
+        $this->assertInstanceOf(PathAccessInterface::class, $request->body());
+        $this->assertEquals(['foo' => 'bar'], $request->body()->getArrayCopy());
     }
 
     /**

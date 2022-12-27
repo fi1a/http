@@ -41,12 +41,12 @@ interface RequestInterface
     public function query(): PathAccessInterface;
 
     /**
-     * Все значения из GET и POST
+     * Все значения из GET, POST, FILES, BODY
      */
     public function all(): PathAccessInterface;
 
     /**
-     * Только переданные ключи из GET и POST
+     * Только переданные ключи из GET, POST, FILES, BODY
      *
      * @param string[] $keys
      */
@@ -76,7 +76,7 @@ interface RequestInterface
     /**
      * Возвращает преобразованное содержание
      *
-     * @return mixed
+     * @return mixed|PathAccessInterface
      */
     public function body();
 

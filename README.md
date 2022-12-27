@@ -48,7 +48,7 @@ request()->query()->get('foo'); // bar
 |------------------------------------------|--------------------------------------------|
 | post(): PathAccessInterface              | Возвращает POST                            |
 | query(): PathAccessInterface             | Возвращает GET значения                    |
-| all(): PathAccessInterface               | Все значения из GET и POST                 |
+| all(): PathAccessInterface               | Все значения из GET, POST, FILES, BODY     |
 | only(array $keys): PathAccessInterface   | Только переданные ключи из GET и POST      |
 | files(): UploadFileCollectionInterface   | Возвращает файлы                           |
 | setRawBody($body)                        | Устанавливает содержание                   |
@@ -124,7 +124,7 @@ request()->post()->get('foo'); // bar
 
 ### all()
 
-Возвращает GET и POST параметры запроса:
+Возвращает GET, POST, FILES, BODY параметры запроса:
 
 ```php
 request()->all()->get('foo'); // bar

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fi1a\Http\Middlewares;
 
+use Fi1a\Collection\DataType\PathAccess;
 use Fi1a\Http\Exception\BadRequestException;
 use Fi1a\Http\JsonResponseInterface;
 use Fi1a\Http\MimeInterface;
@@ -29,17 +30,17 @@ class JsonMiddleware extends AbstractMiddleware
         }
 
         try {
-            $request->setBody(
-                json_decode(
-                    stream_get_contents($request->rawBody()),
-                    true,
-                    512,
-                    JSON_THROW_ON_ERROR
-                )
+            /** @var mixed $body */
+            $body = json_decode(
+                stream_get_contents($request->rawBody()),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
             );
         } catch (JsonException $exception) {
             throw new BadRequestException($exception->getMessage());
         }
+        $request->setBody(is_array($body) ? new PathAccess($body) : $body);
 
         return $request;
     }

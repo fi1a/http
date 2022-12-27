@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Fi1a\Collection\DataType\ArrayObjectInterface;
 use Fi1a\Collection\DataType\PathAccess;
 use Fi1a\Collection\DataType\PathAccessInterface;
 
@@ -209,9 +210,23 @@ class Request implements RequestInterface
      */
     public function all(): PathAccessInterface
     {
+        $body = [];
+        if ($this->body() instanceof ArrayObjectInterface) {
+            /**
+             * @var mixed[] $body
+             * @psalm-suppress MixedMethodCall
+             */
+            $body = $this->body()->getArrayCopy();
+        } elseif (is_array($this->body())) {
+            /** @var mixed[] $body */
+            $body = $this->body();
+        }
+
         return new PathAccess(array_replace_recursive(
             $this->getUriInstance()->getQueryParams()->getArrayCopy(),
-            $this->post->getArrayCopy()
+            $this->post->getArrayCopy(),
+            $this->files->getArrayCopy(),
+            $body
         ));
     }
 
