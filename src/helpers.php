@@ -2,20 +2,16 @@
 
 declare(strict_types=1);
 
-use Fi1a\Http\BufferOutput;
 use Fi1a\Http\BufferOutputInterface;
 use Fi1a\Http\HeaderCollectionInterface;
-use Fi1a\Http\Http;
 use Fi1a\Http\HttpInterface;
 use Fi1a\Http\JsonResponse;
 use Fi1a\Http\JsonResponseInterface;
 use Fi1a\Http\RedirectResponse;
+use Fi1a\Http\RedirectResponseInterface;
 use Fi1a\Http\RequestInterface;
-use Fi1a\Http\Response;
 use Fi1a\Http\ResponseInterface;
-use Fi1a\Http\Session\SessionStorage;
 use Fi1a\Http\Session\SessionStorageInterface;
-use Fi1a\Http\SetCookie;
 use Fi1a\Http\UriInterface;
 
 /**
@@ -25,30 +21,10 @@ use Fi1a\Http\UriInterface;
  */
 function http(): HttpInterface
 {
-    /** @var HttpInterface|null $http */
-    static $http = null;
-    if (is_null($http)) {
-        /** @psalm-suppress InvalidArgument */
-        $request = Http::createRequestWithGlobals(
-            $_GET,
-            $_POST,
-            $_COOKIE,
-            $_FILES,
-            $_SERVER
-        );
-        $http = new Http(
-            $request,
-            new SessionStorage(),
-            new Response(
-                ResponseInterface::HTTP_OK,
-                null,
-                $request
-            ),
-            new BufferOutput(new SetCookie())
-        );
-    }
+    /** @var HttpInterface $instance */
+    $instance = di()->get(HttpInterface::class);
 
-    return $http;
+    return $instance;
 }
 
 /**
@@ -89,7 +65,7 @@ function buffer(?BufferOutputInterface $buffer = null): BufferOutputInterface
  * @param string|UriInterface $location
  * @param HeaderCollectionInterface|string[]|string[][] $headers
  */
-function redirect($location = null, ?int $status = null, $headers = []): RedirectResponse
+function redirect($location = null, ?int $status = null, $headers = []): RedirectResponseInterface
 {
     $redirect = new RedirectResponse();
     if (!is_null($location)) {

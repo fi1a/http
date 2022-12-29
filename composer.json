@@ -13,9 +13,10 @@
   ],
   "require": {
     "php": "^7.3 || ^8",
+    "ext-json": "*",
     "fi1a/format": "^2.0",
     "fi1a/collection": "^2.0",
-    "ext-json": "*"
+    "fi1a/dependency-injection": "dev-main"
   },
   "suggest": {
   },
