@@ -35,7 +35,7 @@ composer require fi1a/http
 
 ## Dependency injection
 
-Контейнер dependency injection доступен из пакета [fi1a/dependency-injection](https://github.com/fi1a/dependency-injection)
+Контейнер dependency injection из пакета [fi1a/dependency-injection](https://github.com/fi1a/dependency-injection)
 
 Для интерфейсов, в контейнере dependency injection, доступны следующие определения:
 
