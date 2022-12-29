@@ -33,6 +33,24 @@ composer require fi1a/http
 - redirect($location = null, ?int $status = null, $headers = []): RedirectResponse - возвращает ответ для реализации перенаправления;
 - json($data = null, ?int $status = null, $headers = []): JsonResponseInterface - возвращает JSON-ответ.
 
+## Dependency injection
+
+Контейнер dependency injection доступен из пакета [fi1a/dependency-injection](https://github.com/fi1a/dependency-injection)
+
+Для интерфейсов, в контейнере dependency injection, доступны следующие определения:
+
+- Fi1a\Http\HttpInterface;
+- Fi1a\Http\RequestInterface;
+- Fi1a\Http\ResponseInterface;
+- Fi1a\Http\Session\SessionStorageInterface;
+- Fi1a\Http\BufferOutputInterface;
+- Fi1a\Http\RedirectResponseInterface;
+- Fi1a\Http\JsonResponseInterface.
+
+```php
+di()->get(Fi1a\Http\RequestInterface::class)->all();
+```
+
 ## HTTP-запрос
 
 HTTP-запрос — это объект реализующий интерфейс `Fi1a\Http\RequestInterface`. HTTP-запрос является не изменяемым, у него нет сеттеров.
