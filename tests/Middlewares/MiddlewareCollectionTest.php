@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fi1a\Unit\HttpClient\Middlewares;
+namespace Fi1a\Unit\Http\Middlewares;
 
 use Fi1a\Http\Middlewares\MiddlewareCollection;
 use Fi1a\Unit\Http\Fixtures\Middleware;
@@ -38,14 +38,28 @@ class MiddlewareCollectionTest extends TestCase
     /**
      * Тестирование сортировки
      */
-    public function testSortByField(): void
+    public function testSortDirect(): void
     {
         $collection = new MiddlewareCollection();
         $collection[] = (new Middleware())->setSort(600);
         $collection[] = (new Middleware())->setSort(200);
-        $newCollection = $collection->sortByField();
+        $newCollection = $collection->sortDirect();
         $this->assertCount(2, $newCollection);
         $this->assertEquals(200, $newCollection[0]->getSort());
         $this->assertEquals(600, $newCollection[1]->getSort());
+    }
+
+    /**
+     * Тестирование сортировки
+     */
+    public function testSortBack(): void
+    {
+        $collection = new MiddlewareCollection();
+        $collection[] = (new Middleware())->setSort(200);
+        $collection[] = (new Middleware())->setSort(600);
+        $newCollection = $collection->sortBack();
+        $this->assertCount(2, $newCollection);
+        $this->assertEquals(600, $newCollection[0]->getSort());
+        $this->assertEquals(200, $newCollection[1]->getSort());
     }
 }
