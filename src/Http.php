@@ -64,7 +64,7 @@ class Http implements HttpInterface
     public function request(?RequestInterface $request = null): RequestInterface
     {
         if (!is_null($request)) {
-            foreach ($this->middlewares->sortByField() as $middleware) {
+            foreach ($this->middlewares->sortDirect() as $middleware) {
                 assert($middleware instanceof MiddlewareInterface);
                 $request = $middleware->handleRequest($request);
             }
@@ -92,7 +92,7 @@ class Http implements HttpInterface
     public function response(?ResponseInterface $response = null): ResponseInterface
     {
         if (!is_null($response)) {
-            foreach ($this->middlewares->sortByField() as $middleware) {
+            foreach ($this->middlewares->sortBack() as $middleware) {
                 assert($middleware instanceof MiddlewareInterface);
                 $response = $middleware->handleResponse($this->request, $response);
             }
