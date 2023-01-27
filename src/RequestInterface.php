@@ -64,7 +64,7 @@ interface RequestInterface
      *
      * @return $this
      */
-    public function setRawBody($rawBody);
+    public function withRawBody($rawBody);
 
     /**
      * Возвращает содержание
@@ -87,7 +87,7 @@ interface RequestInterface
      *
      * @return $this
      */
-    public function setBody($body);
+    public function withBody($body);
 
     /**
      * Возвращает cookies

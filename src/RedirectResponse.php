@@ -36,7 +36,7 @@ class RedirectResponse extends Response implements RedirectResponseInterface
             ->withoutHeader('Location')
             ->withHeader('Location', $location);
         if (!is_null($status)) {
-            $object = $object->setStatus($status);
+            $object = $object->withStatus($status);
         }
 
         return $object;
@@ -58,9 +58,9 @@ class RedirectResponse extends Response implements RedirectResponseInterface
     /**
      * @inheritDoc
      */
-    public function setStatus(int $status, ?string $reasonPhrase = null)
+    public function withStatus(int $status, ?string $reasonPhrase = null)
     {
-        $object = parent::setStatus($status, $reasonPhrase);
+        $object = parent::withStatus($status, $reasonPhrase);
         if (!$object->isRedirection()) {
             throw new InvalidArgumentException('Ошибка в статусе перенаправления');
         }

@@ -134,10 +134,10 @@ class Response implements ResponseInterface
             $headers = new HeaderCollection();
         }
         $this->withHeaders($headers);
-        $this->setStatus($status);
-        $this->setCookies($request->cookies());
+        $this->withStatus($status);
+        $this->withCookies($request->cookies());
         if (!$this->hasHeader('Date')) {
-            $this->setDate(new DateTime());
+            $this->withDate(new DateTime());
         }
 
         $this->mutable = false;
@@ -146,7 +146,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setStatus(int $status, ?string $reasonPhrase = null)
+    public function withStatus(int $status, ?string $reasonPhrase = null)
     {
         $object = $this->getObject();
 
@@ -235,7 +235,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setHttpVersion(string $version)
+    public function withHttpVersion(string $version)
     {
         $object = $this->getObject();
 
@@ -345,7 +345,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setCharset(string $charset)
+    public function withCharset(string $charset)
     {
         $object = $this->getObject();
 
@@ -367,7 +367,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setDate(DateTime $date)
+    public function withDate(DateTime $date)
     {
         $object = $this->getObject();
 
@@ -416,7 +416,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setLastModified(?DateTime $date = null)
+    public function withLastModified(?DateTime $date = null)
     {
         $object = $this->getObject();
 
@@ -435,7 +435,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setCookies(HttpCookieCollectionInterface $cookies)
+    public function withCookies(HttpCookieCollectionInterface $cookies)
     {
         $object = $this->getObject();
 
@@ -467,7 +467,7 @@ class Response implements ResponseInterface
 
         $server = $object->request->server();
         if ($server->get('SERVER_PROTOCOL') !== 'HTTP/1.0') {
-            $object = $object->setHttpVersion('1.1');
+            $object = $object->withHttpVersion('1.1');
         }
 
         return $object;

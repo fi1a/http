@@ -148,7 +148,7 @@ class Request implements RequestInterface
         $this->setUriInstance($uri)
             ->setPost($post)
             ->setFiles($files)
-            ->setRawBody($content)
+            ->withRawBody($content)
             ->setCookies($cookies)
             ->setHeaders($headers)
             ->setServer($server)
@@ -186,16 +186,14 @@ class Request implements RequestInterface
      */
     private function setPost($post)
     {
-        $object = $this->getObject();
-
         if (!($post instanceof PathAccessInterface)) {
-            $object->post->exchangeArray($post);
+            $this->post->exchangeArray($post);
 
-            return $object;
+            return $this;
         }
-        $object->post = $post;
+        $this->post = $post;
 
-        return $object;
+        return $this;
     }
 
     /**
@@ -264,11 +262,9 @@ class Request implements RequestInterface
      */
     protected function setFiles(UploadFileCollectionInterface $files)
     {
-        $object = $this->getObject();
+        $this->files = $files;
 
-        $object->files = $files;
-
-        return $object;
+        return $this;
     }
 
     /**
@@ -282,7 +278,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function setRawBody($rawBody)
+    public function withRawBody($rawBody)
     {
         $object = $this->getObject();
 
@@ -293,7 +289,7 @@ class Request implements RequestInterface
             rewind($rawBody);
         }
 
-        return $object->setBody($body);
+        return $object->withBody($body);
     }
 
     /**
@@ -322,7 +318,7 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function setBody($body)
+    public function withBody($body)
     {
         $object = $this->getObject();
 
@@ -338,11 +334,9 @@ class Request implements RequestInterface
      */
     protected function setCookies(HttpCookieCollectionInterface $cookies)
     {
-        $object = $this->getObject();
+        $this->cookies = $cookies;
 
-        $object->cookies = $cookies;
-
-        return $object;
+        return $this;
     }
 
     /**
@@ -360,11 +354,9 @@ class Request implements RequestInterface
      */
     protected function setHeaders(HeaderCollectionInterface $headers)
     {
-        $object = $this->getObject();
+        $this->headers = $headers;
 
-        $object->headers = $headers;
-
-        return $object;
+        return $this;
     }
 
     /**
@@ -382,11 +374,9 @@ class Request implements RequestInterface
      */
     protected function setServer(ServerCollectionInterface $server)
     {
-        $object = $this->getObject();
+        $this->server = $server;
 
-        $object->server = $server;
-
-        return $object;
+        return $this;
     }
 
     /**
@@ -414,16 +404,14 @@ class Request implements RequestInterface
      */
     protected function setOptions($options)
     {
-        $object = $this->getObject();
-
         if (!($options instanceof PathAccessInterface)) {
-            $object->options->exchangeArray($options);
+            $this->options->exchangeArray($options);
 
-            return $object;
+            return $this;
         }
-        $object->options = $options;
+        $this->options = $options;
 
-        return $object;
+        return $this;
     }
 
     /**
@@ -675,5 +663,8 @@ class Request implements RequestInterface
         $this->headers = clone $this->headers;
         $this->server = clone $this->server;
         $this->options = clone $this->options;
+        if (is_object($this->body)) {
+            $this->body = clone $this->body;
+        }
     }
 }

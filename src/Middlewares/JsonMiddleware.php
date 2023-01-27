@@ -41,7 +41,7 @@ class JsonMiddleware extends AbstractMiddleware
             throw new BadRequestException($exception->getMessage());
         }
 
-        return $request->setBody(is_array($body) ? new PathAccess($body) : $body);
+        return $request->withBody(is_array($body) ? new PathAccess($body) : $body);
     }
 
     /**

@@ -54,7 +54,7 @@ di()->get(Fi1a\Http\RequestInterface::class)->all();
 
 ## HTTP-запрос
 
-HTTP-запрос — это объект реализующий интерфейс `Fi1a\Http\RequestInterface`.
+HTTP-запрос — это объект реализующий интерфейс `Fi1a\Http\RequestInterface`. HTTP-запрос является не изменяемым, у него нет сеттеров.
 Для доступа к текущему запросу можно использовать хелпер `request()`.
 
 ```php
@@ -70,9 +70,9 @@ request()->query()->get('foo'); // bar
 | all(): PathAccessInterface               | Все значения из GET, POST, FILES, BODY     |
 | only(array $keys): PathAccessInterface   | Только переданные ключи из GET и POST      |
 | files(): UploadFileCollectionInterface   | Возвращает файлы                           |
-| setRawBody($body)                        | Устанавливает содержание                   |
+| withRawBody($body)                       | Устанавливает содержание                   |
 | rawBody()                                | Возвращает содержание                      |
-| setBody($body)                           | Устанавливает преобразованное содержание   |
+| withBody($body)                          | Устанавливает преобразованное содержание   |
 | body()                                   | Возвращает преобразованное содержание      |
 | cookies(): HttpCookieCollectionInterface | Возвращает cookies                         |
 | headers(): HeaderCollectionInterface     | Вернуть заголовки                          |
@@ -205,7 +205,7 @@ HTTP-ответ представляет собой объект `Fi1a\Http\Resp
 ```php
 use \Fi1a\Http\ResponseInterface;
 
-$response = response()->setStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
+$response = response()->withStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
 response($response);
 ```
 
@@ -221,38 +221,38 @@ response($response);
 
 Доступные методы `Fi1a\Http\ResponseInterface`:
 
-| Метод                                                | Описание                                              |
-|------------------------------------------------------|-------------------------------------------------------|
-| setStatus(int $status, ?string $reasonPhrase = null) | Устанавливает код и текст ответа                      |
-| getStatus(): int                                     | Возвращает код ответа                                 |
-| getReasonPhrase(): ?string                           | Возвращает текст ответа                               |
-| withHeaders(HeaderCollectionInterface $headers)      | Устанавливает заголовки                               |
-| getHeaders(): HeaderCollectionInterface              | Возвращает заголовки                                  |
-| withHeader(string $name, string $value)              | Добавляет заголовок с определенным именем и значением |
-| withoutHeader(string $name)                          | Удалить заголовки с определенным именем               |
-| hasHeader(string $name): bool                        | Проверяет наличие заголовка                           |
-| cookies(): HttpCookieCollectionInterface             | Возвращает cookies                                    |
-| setCookies(HttpCookieCollectionInterface $cookies)   | Устанавливает cookies                                 |
-| setHttpVersion(string $version)                      | Устанавливает версию HTTP протокола                   |
-| getHttpVersion(): string                             | Возвращает HTTP версию протокола                      |
-| isEmpty(): bool                                      | Если true, то ответ пустой                            |
-| isInformational(): bool                              | Если true, то ответ информационный                    |
-| isSuccessful(): bool                                 | Если true, то ответ успешный                          |
-| isClientError(): bool                                | Если true, то клиентская ошибка                       |
-| isServerError(): bool                                | Если true, то серверная ошибка                        |
-| isOk(): bool                                         | Если true, то ответ 200 OK                            |
-| isForbidden(): bool                                  | Если true, то 403 Forbidden                           |
-| isNotFound(): bool                                   | Если true, то 404 Not found                           |
-| isRedirection(?string $location = null): bool        | Если true, то перенаправление                         |
-| setCharset(string $charset)                          | Устанавливает кодировку                               |
-| getCharset(): string                                 | Возвращает кодировку                                  |
-| setDate(DateTime $date)                              | Устанавливает дату                                    |
-| getDate(): DateTime                                  | Возвращает дату                                       |
-| getLastModified(): ?DateTime                         | Возвращает время последнего изменения                 |
-| setLastModified(?DateTime $date = null)              | Устанавливает время последнего изменения              |
+| Метод                                                 | Описание                                              |
+|-------------------------------------------------------|-------------------------------------------------------|
+| withStatus(int $status, ?string $reasonPhrase = null) | Устанавливает код и текст ответа                      |
+| getStatus(): int                                      | Возвращает код ответа                                 |
+| getReasonPhrase(): ?string                            | Возвращает текст ответа                               |
+| withHeaders(HeaderCollectionInterface $headers)       | Устанавливает заголовки                               |
+| getHeaders(): HeaderCollectionInterface               | Возвращает заголовки                                  |
+| withHeader(string $name, string $value)               | Добавляет заголовок с определенным именем и значением |
+| withoutHeader(string $name)                           | Удалить заголовки с определенным именем               |
+| hasHeader(string $name): bool                         | Проверяет наличие заголовка                           |
+| cookies(): HttpCookieCollectionInterface              | Возвращает cookies                                    |
+| withCookies(HttpCookieCollectionInterface $cookies)   | Устанавливает cookies                                 |
+| withHttpVersion(string $version)                      | Устанавливает версию HTTP протокола                   |
+| getHttpVersion(): string                              | Возвращает HTTP версию протокола                      |
+| isEmpty(): bool                                       | Если true, то ответ пустой                            |
+| isInformational(): bool                               | Если true, то ответ информационный                    |
+| isSuccessful(): bool                                  | Если true, то ответ успешный                          |
+| isClientError(): bool                                 | Если true, то клиентская ошибка                       |
+| isServerError(): bool                                 | Если true, то серверная ошибка                        |
+| isOk(): bool                                          | Если true, то ответ 200 OK                            |
+| isForbidden(): bool                                   | Если true, то 403 Forbidden                           |
+| isNotFound(): bool                                    | Если true, то 404 Not found                           |
+| isRedirection(?string $location = null): bool         | Если true, то перенаправление                         |
+| withCharset(string $charset)                          | Устанавливает кодировку                               |
+| getCharset(): string                                  | Возвращает кодировку                                  |
+| withDate(DateTime $date)                              | Устанавливает дату                                    |
+| getDate(): DateTime                                   | Возвращает дату                                       |
+| getLastModified(): ?DateTime                          | Возвращает время последнего изменения                 |
+| withLastModified(?DateTime $date = null)              | Устанавливает время последнего изменения              |
 
 
-### setStatus(int $status, ?string $reasonPhrase = null)
+### withStatus(int $status, ?string $reasonPhrase = null)
 
 Устанавливает код ответа состояния.
 Рекомендуется использовать предопределенные константы `Fi1a\Http\ResponseInterface::HTTP_OK`, ... вместо реальных чисел.
@@ -260,7 +260,7 @@ response($response);
 ```php
 use Fi1a\Http\ResponseInterface;
 
-$response = response()->setStatus(ResponseInterface::HTTP_OK, 'OK');
+$response = response()->withStatus(ResponseInterface::HTTP_OK, 'OK');
 response($response);
 ```
 

@@ -53,7 +53,7 @@ class JsonResponse extends ContentResponse implements JsonResponseInterface
         }
         $object = $object->useHeaders($headers);
         if (!is_null($status)) {
-            $object = $object->setStatus($status);
+            $object = $object->withStatus($status);
         }
         $object = $object->setContent(json_encode($data, $this->getEncodingOptions()));
 
