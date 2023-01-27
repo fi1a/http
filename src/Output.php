@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
-use DateTime;
 use LogicException;
 
 /**
@@ -51,9 +50,6 @@ class Output implements OutputInterface
             $response->getStatus()
         );
         $headers = $response->getHeaders();
-        if (!$headers->hasHeader('Date')) {
-            $response->setDate(new DateTime());
-        }
         foreach ($headers as $header) {
             assert($header instanceof HeaderInterface);
             $value = $header->getValue();

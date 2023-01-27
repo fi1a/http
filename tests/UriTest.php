@@ -326,7 +326,7 @@ class UriTest extends TestCase
         $this->assertInstanceOf(PathAccessInterface::class, $uri->getQueryParams());
         $this->assertCount(2, $uri->getQueryParams());
         $this->assertEquals(['qux', 'quz'], $uri->getQueryParams()->get('baz'));
-        $uri->withQueryParams(new PathAccess(['foo' => 'bar']));
+        $uri = $uri->withQueryParams(new PathAccess(['foo' => 'bar']));
         $this->assertCount(1, $uri->getQueryParams());
         $this->assertEquals('bar', $uri->getQueryParams()->get('foo'));
     }
@@ -359,7 +359,7 @@ class UriTest extends TestCase
     {
         $queryParams = ['foo' => 'bar', 'baz' => ['qux', 'quz']];
         $uri = new Uri('https://host.ru/some/path/');
-        $uri->withQueryParams($queryParams);
+        $uri = $uri->withQueryParams($queryParams);
         $this->assertEquals($queryParams, $uri->getQueryParams()->getArrayCopy());
         $this->assertEquals('foo=bar&baz%5B0%5D=qux&baz%5B1%5D=quz', $uri->getQuery());
     }
@@ -571,7 +571,7 @@ class UriTest extends TestCase
     public function testReplace(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
-        $uri->replace('/new/path');
+        $uri = $uri->replace('/new/path');
         $this->assertEquals(
             'https://username:password@host.ru:8080/new/path',
             $uri->getUri()
@@ -584,7 +584,7 @@ class UriTest extends TestCase
     public function testReplaceWithQuery(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
-        $uri->replace('/new/path?baz=qux');
+        $uri = $uri->replace('/new/path?baz=qux');
         $this->assertEquals(
             'https://username:password@host.ru:8080/new/path?baz=qux',
             $uri->getUri()
@@ -597,7 +597,7 @@ class UriTest extends TestCase
     public function testReplaceWithFragment(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
-        $uri->replace('/new/path?baz=qux#new-fragment');
+        $uri = $uri->replace('/new/path?baz=qux#new-fragment');
         $this->assertEquals(
             'https://username:password@host.ru:8080/new/path?baz=qux#new-fragment',
             $uri->getUri()
@@ -610,7 +610,7 @@ class UriTest extends TestCase
     public function testReplaceFull(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
-        $uri->replace('https://new-username:new-password@new-host.ru:8181/new/path/?baz=qux#new-fragment');
+        $uri = $uri->replace('https://new-username:new-password@new-host.ru:8181/new/path/?baz=qux#new-fragment');
         $this->assertEquals(
             'https://new-username:new-password@new-host.ru:8181/new/path/?baz=qux#new-fragment',
             $uri->getUri()
@@ -635,7 +635,7 @@ class UriTest extends TestCase
     public function testFormatInReplaceUri(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
-        $uri->replace(
+        $uri = $uri->replace(
             'https://new-username:new-password@new-host.ru:8181/new/path/?baz={{baz}}#new-fragment',
             ['baz' => 'qux']
         );

@@ -40,9 +40,8 @@ class JsonMiddleware extends AbstractMiddleware
         } catch (JsonException $exception) {
             throw new BadRequestException($exception->getMessage());
         }
-        $request->setBody(is_array($body) ? new PathAccess($body) : $body);
 
-        return $request;
+        return $request->setBody(is_array($body) ? new PathAccess($body) : $body);
     }
 
     /**
@@ -55,8 +54,8 @@ class JsonMiddleware extends AbstractMiddleware
         }
 
         buffer()->clear();
-        $response->withoutHeader('Content-Type');
-        $response->withHeader('Content-Type', MimeInterface::JSON);
+        $response = $response->withoutHeader('Content-Type')
+            ->withHeader('Content-Type', MimeInterface::JSON);
         buffer()->send($response);
         $this->terminate();
 

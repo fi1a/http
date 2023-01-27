@@ -109,7 +109,7 @@ class JsonMiddlewareTest extends TestCase
             '{"foo":"bar"}'
         );
 
-        request($request);
+        $request = request($request);
 
         $this->assertInstanceOf(PathAccessInterface::class, $request->body());
         $this->assertEquals(['foo' => 'bar'], $request->body()->getArrayCopy());

@@ -12,16 +12,18 @@ class ContentResponse extends Response implements ContentResponseInterface
     /**
      * @var string
      */
-    private $content = '';
+    protected $content = '';
 
     /**
      * @inheritDoc
      */
     public function setContent(string $content)
     {
-        $this->content = $content;
+        $object = $this->getObject();
 
-        return $this;
+        $object->content = $content;
+
+        return $object;
     }
 
     /**

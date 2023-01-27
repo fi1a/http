@@ -24,20 +24,22 @@ class RedirectResponse extends Response implements RedirectResponseInterface
      */
     public function to($location, ?int $status = null, $headers = [])
     {
+        $object = $this->getObject();
+
         if (!$location) {
             throw new InvalidArgumentException('Адрес перенаправления не может быть пустым');
         }
         if ($location instanceof UriInterface) {
             $location = $location->getUri();
         }
-        $this->useHeaders($headers);
-        $this->withoutHeader('Location');
-        $this->withHeader('Location', $location);
+        $object = $object->useHeaders($headers)
+            ->withoutHeader('Location')
+            ->withHeader('Location', $location);
         if (!is_null($status)) {
-            $this->setStatus($status);
+            $object = $object->setStatus($status);
         }
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -58,11 +60,11 @@ class RedirectResponse extends Response implements RedirectResponseInterface
      */
     public function setStatus(int $status, ?string $reasonPhrase = null)
     {
-        parent::setStatus($status, $reasonPhrase);
-        if (!$this->isRedirection()) {
+        $object = parent::setStatus($status, $reasonPhrase);
+        if (!$object->isRedirection()) {
             throw new InvalidArgumentException('Ошибка в статусе перенаправления');
         }
 
-        return $this;
+        return $object;
     }
 }

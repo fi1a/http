@@ -69,7 +69,7 @@ function redirect($location = null, ?int $status = null, $headers = []): Redirec
 {
     $redirect = new RedirectResponse();
     if (!is_null($location)) {
-        $redirect->to($location, $status, $headers);
+        $redirect = $redirect->to($location, $status, $headers);
     }
 
     return $redirect;

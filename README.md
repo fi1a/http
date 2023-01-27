@@ -54,7 +54,7 @@ di()->get(Fi1a\Http\RequestInterface::class)->all();
 
 ## HTTP-запрос
 
-HTTP-запрос — это объект реализующий интерфейс `Fi1a\Http\RequestInterface`. HTTP-запрос является не изменяемым, у него нет сеттеров.
+HTTP-запрос — это объект реализующий интерфейс `Fi1a\Http\RequestInterface`.
 Для доступа к текущему запросу можно использовать хелпер `request()`.
 
 ```php
@@ -205,7 +205,8 @@ HTTP-ответ представляет собой объект `Fi1a\Http\Resp
 ```php
 use \Fi1a\Http\ResponseInterface;
 
-response()->setStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
+$response = response()->setStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
+response($response);
 ```
 
 Установить новый текущий ответ:
@@ -259,7 +260,8 @@ response($response);
 ```php
 use Fi1a\Http\ResponseInterface;
 
-response()->setStatus(ResponseInterface::HTTP_OK, 'OK');
+$response = response()->setStatus(ResponseInterface::HTTP_OK, 'OK');
+response($response);
 ```
 
 ### withHeader(string $name, string $value)
@@ -267,7 +269,8 @@ response()->setStatus(ResponseInterface::HTTP_OK, 'OK');
 Добавляет заголовок с определенным именем и значением к ответу:
 
 ```php
-response()->withHeader('X-Header', 'Value');
+$response = response()->withHeader('X-Header', 'Value');
+response($response);
 ```
 
 ### withoutHeader(string $name)
@@ -275,7 +278,8 @@ response()->withHeader('X-Header', 'Value');
 Удалить заголовки с определенным именем:
 
 ```php
-response()->withoutHeader('X-Header');
+$response = response()->withoutHeader('X-Header');
+response($response);
 ```
 
 ### cookies
@@ -292,9 +296,10 @@ $cookie->setName('CookieName');
 $cookie->setPath('/');
 $cookie->setValue('Value');
 
-response()->cookies()->add($cookie);
+$response = response();
+$response->cookies()->add($cookie);
 
-buffer()->sendHeaders(response());
+buffer()->sendHeaders($response);
 ```
 
 Cookie будет установлена при вызове метода `sendHeaders` класса `Fi1a\Http\OutputInterface`.
@@ -396,7 +401,7 @@ use Fi1a\Http\Uri;
 
 $uri = new Uri();
 
-$uri->withScheme('https')
+$uri = $uri->withScheme('https')
     ->withHost('domain.ru')
     ->withPath('/path/')
     ->withQueryParams([

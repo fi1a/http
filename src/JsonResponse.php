@@ -19,7 +19,7 @@ class JsonResponse extends ContentResponse implements JsonResponseInterface
     /**
      * @var int
      */
-    private $encodingOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+    protected $encodingOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
 
     /**
      * @inheritDoc
@@ -34,9 +34,11 @@ class JsonResponse extends ContentResponse implements JsonResponseInterface
      */
     public function setEncodingOptions(int $encodingOptions)
     {
-        $this->encodingOptions = $encodingOptions;
+        $object = $this->getObject();
 
-        return $this;
+        $object->encodingOptions = $encodingOptions;
+
+        return $object;
     }
 
     /**
@@ -44,15 +46,17 @@ class JsonResponse extends ContentResponse implements JsonResponseInterface
      */
     public function data($data = [], ?int $status = null, $headers = [])
     {
+        $object = $this->getObject();
+
         if ($data && !is_string($data) && !is_numeric($data) && !is_array($data)) {
             throw new InvalidArgumentException('Ошибка установки значения JSON');
         }
-        $this->useHeaders($headers);
+        $object = $object->useHeaders($headers);
         if (!is_null($status)) {
-            $this->setStatus($status);
+            $object = $object->setStatus($status);
         }
-        $this->setContent(json_encode($data, $this->getEncodingOptions()));
+        $object = $object->setContent(json_encode($data, $this->getEncodingOptions()));
 
-        return $this;
+        return $object;
     }
 }

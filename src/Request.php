@@ -19,51 +19,56 @@ class Request implements RequestInterface
      * @var UriInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $uri;
+    protected $uri;
 
     /**
      * @var PathAccessInterface
      */
-    private $post;
+    protected $post;
 
     /**
      * @var UploadFileCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $files;
+    protected $files;
 
     /**
      * @var resource|string|null
      */
-    private $rawBody;
+    protected $rawBody;
 
     /**
      * @var mixed
      */
-    private $body;
+    protected $body;
 
     /**
      * @var HttpCookieCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $cookies;
+    protected $cookies;
 
     /**
      * @var HeaderCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $headers;
+    protected $headers;
 
     /**
      * @var ServerCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $server;
+    protected $server;
 
     /**
      * @var PathAccessInterface
      */
-    private $options;
+    protected $options;
+
+    /**
+     * @var bool
+     */
+    protected $mutable = true;
 
     /**
      * @inheritDoc
@@ -139,7 +144,7 @@ class Request implements RequestInterface
         }
         $headers = new HeaderCollection($rawHeader);
 
-        $uri->withQueryParams($query);
+        $uri = $uri->withQueryParams($query);
         $this->setUriInstance($uri)
             ->setPost($post)
             ->setFiles($files)
@@ -148,6 +153,8 @@ class Request implements RequestInterface
             ->setHeaders($headers)
             ->setServer($server)
             ->setOptions($options);
+
+        $this->mutable = false;
     }
 
     /**
@@ -179,14 +186,16 @@ class Request implements RequestInterface
      */
     private function setPost($post)
     {
+        $object = $this->getObject();
+
         if (!($post instanceof PathAccessInterface)) {
-            $this->post->exchangeArray($post);
+            $object->post->exchangeArray($post);
 
-            return $this;
+            return $object;
         }
-        $this->post = $post;
+        $object->post = $post;
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -255,9 +264,11 @@ class Request implements RequestInterface
      */
     protected function setFiles(UploadFileCollectionInterface $files)
     {
-        $this->files = $files;
+        $object = $this->getObject();
 
-        return $this;
+        $object->files = $files;
+
+        return $object;
     }
 
     /**
@@ -273,15 +284,16 @@ class Request implements RequestInterface
      */
     public function setRawBody($rawBody)
     {
-        $this->rawBody = $rawBody;
+        $object = $this->getObject();
+
+        $object->rawBody = $rawBody;
         $body = $rawBody;
         if (is_resource($rawBody)) {
             $body = stream_get_contents($rawBody);
             rewind($rawBody);
         }
-        $this->setBody($body);
 
-        return $this;
+        return $object->setBody($body);
     }
 
     /**
@@ -312,9 +324,11 @@ class Request implements RequestInterface
      */
     public function setBody($body)
     {
-        $this->body = $body;
+        $object = $this->getObject();
 
-        return $this;
+        $object->body = $body;
+
+        return $object;
     }
 
     /**
@@ -324,9 +338,11 @@ class Request implements RequestInterface
      */
     protected function setCookies(HttpCookieCollectionInterface $cookies)
     {
-        $this->cookies = $cookies;
+        $object = $this->getObject();
 
-        return $this;
+        $object->cookies = $cookies;
+
+        return $object;
     }
 
     /**
@@ -344,9 +360,11 @@ class Request implements RequestInterface
      */
     protected function setHeaders(HeaderCollectionInterface $headers)
     {
-        $this->headers = $headers;
+        $object = $this->getObject();
 
-        return $this;
+        $object->headers = $headers;
+
+        return $object;
     }
 
     /**
@@ -364,9 +382,11 @@ class Request implements RequestInterface
      */
     protected function setServer(ServerCollectionInterface $server)
     {
-        $this->server = $server;
+        $object = $this->getObject();
 
-        return $this;
+        $object->server = $server;
+
+        return $object;
     }
 
     /**
@@ -394,14 +414,16 @@ class Request implements RequestInterface
      */
     protected function setOptions($options)
     {
+        $object = $this->getObject();
+
         if (!($options instanceof PathAccessInterface)) {
-            $this->options->exchangeArray($options);
+            $object->options->exchangeArray($options);
 
-            return $this;
+            return $object;
         }
-        $this->options = $options;
+        $object->options = $options;
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -629,5 +651,29 @@ class Request implements RequestInterface
     public function script(): string
     {
         return (string) $this->server()->get('SCRIPT_FILENAME');
+    }
+
+    /**
+     * Возвращает объет для установки значений
+     *
+     * @return $this
+     */
+    protected function getObject()
+    {
+        return $this->mutable ? $this : clone $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __clone()
+    {
+        $this->uri = clone $this->uri;
+        $this->post = clone $this->post;
+        $this->files = clone $this->files;
+        $this->cookies = clone $this->cookies;
+        $this->headers = clone $this->headers;
+        $this->server = clone $this->server;
+        $this->options = clone $this->options;
     }
 }

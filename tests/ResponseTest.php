@@ -34,7 +34,7 @@ class ResponseTest extends TestCase
         $response = $this->getResponse();
         $this->assertEquals(ResponseInterface::HTTP_OK, $response->getStatus());
         $this->assertEquals('OK', $response->getReasonPhrase());
-        $response->setStatus(ResponseInterface::HTTP_ACCEPTED);
+        $response = $response->setStatus(ResponseInterface::HTTP_ACCEPTED);
         $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->getStatus());
         $this->assertEquals('Accepted', $response->getReasonPhrase());
     }
@@ -45,7 +45,7 @@ class ResponseTest extends TestCase
     public function testReasonPhrase(): void
     {
         $response = $this->getResponse();
-        $response->setStatus(ResponseInterface::HTTP_ACCEPTED, 'New Accepted');
+        $response = $response->setStatus(ResponseInterface::HTTP_ACCEPTED, 'New Accepted');
         $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->getStatus());
         $this->assertEquals('New Accepted', $response->getReasonPhrase());
     }
@@ -56,7 +56,7 @@ class ResponseTest extends TestCase
     public function testReasonPhraseNull(): void
     {
         $response = $this->getResponse();
-        $response->setStatus(105);
+        $response = $response->setStatus(105);
         $this->assertNull($response->getReasonPhrase());
     }
 
@@ -87,7 +87,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(1, $response->getHeaders());
+        $this->assertCount(2, $response->getHeaders());
     }
 
     /**
@@ -101,7 +101,7 @@ class ResponseTest extends TestCase
             'X-Header',
             'Value1',
         ];
-        $response->withHeaders($headers);
+        $response = $response->withHeaders($headers);
         $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
         $this->assertCount(1, $response->getHeaders());
     }
@@ -113,10 +113,10 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(1, $response->getHeaders());
-        $response->withHeader('X-Header', 'Value1');
-        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
         $this->assertCount(2, $response->getHeaders());
+        $response = $response->withHeader('X-Header', 'Value1');
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
+        $this->assertCount(3, $response->getHeaders());
     }
 
     /**
@@ -135,12 +135,12 @@ class ResponseTest extends TestCase
     public function testWithoutHeader(): void
     {
         $response = $this->getResponse();
-        $response->withHeader('X-Header', 'Value1');
-        $response->withHeader('X-Header', 'Value2');
-        $response->withHeader('X-Header-Other', 'Value3');
-        $this->assertCount(4, $response->getHeaders());
-        $response->withoutHeader('X-Header');
-        $this->assertCount(2, $response->getHeaders());
+        $response = $response->withHeader('X-Header', 'Value1');
+        $response = $response->withHeader('X-Header', 'Value2');
+        $response = $response->withHeader('X-Header-Other', 'Value3');
+        $this->assertCount(5, $response->getHeaders());
+        $response = $response->withoutHeader('X-Header');
+        $this->assertCount(3, $response->getHeaders());
     }
 
     /**
@@ -149,7 +149,7 @@ class ResponseTest extends TestCase
     public function testHasHeader(): void
     {
         $response = $this->getResponse();
-        $response->withHeader('X-Header', 'Value1');
+        $response = $response->withHeader('X-Header', 'Value1');
         $this->assertTrue($response->hasHeader('X-Header'));
         $this->assertFalse($response->hasHeader('X-Not-Exists'));
     }
@@ -161,7 +161,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertEquals('1.1', $response->getHttpVersion());
-        $response->setHttpVersion('1.0');
+        $response = $response->setHttpVersion('1.0');
         $this->assertEquals('1.0', $response->getHttpVersion());
     }
 
@@ -172,9 +172,9 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertFalse($response->isEmpty());
-        $response->setStatus(ResponseInterface::HTTP_NO_CONTENT);
+        $response = $response->setStatus(ResponseInterface::HTTP_NO_CONTENT);
         $this->assertTrue($response->isEmpty());
-        $response->setStatus(ResponseInterface::HTTP_NOT_MODIFIED);
+        $response = $response->setStatus(ResponseInterface::HTTP_NOT_MODIFIED);
         $this->assertTrue($response->isEmpty());
     }
 
@@ -185,7 +185,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertFalse($response->isInformational());
-        $response->setStatus(ResponseInterface::HTTP_CONTINUE);
+        $response = $response->setStatus(ResponseInterface::HTTP_CONTINUE);
         $this->assertTrue($response->isInformational());
     }
 
@@ -196,7 +196,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertTrue($response->isSuccessful());
-        $response->setStatus(ResponseInterface::HTTP_CONTINUE);
+        $response = $response->setStatus(ResponseInterface::HTTP_CONTINUE);
         $this->assertFalse($response->isSuccessful());
     }
 
@@ -207,7 +207,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertFalse($response->isClientError());
-        $response->setStatus(ResponseInterface::HTTP_BAD_REQUEST);
+        $response = $response->setStatus(ResponseInterface::HTTP_BAD_REQUEST);
         $this->assertTrue($response->isClientError());
     }
 
@@ -218,7 +218,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertFalse($response->isServerError());
-        $response->setStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
+        $response = $response->setStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
         $this->assertTrue($response->isServerError());
     }
 
@@ -229,7 +229,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertTrue($response->isOk());
-        $response->setStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
+        $response = $response->setStatus(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
         $this->assertFalse($response->isOk());
     }
 
@@ -240,7 +240,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertFalse($response->isForbidden());
-        $response->setStatus(ResponseInterface::HTTP_FORBIDDEN);
+        $response = $response->setStatus(ResponseInterface::HTTP_FORBIDDEN);
         $this->assertTrue($response->isForbidden());
     }
 
@@ -251,7 +251,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertFalse($response->isNotFound());
-        $response->setStatus(ResponseInterface::HTTP_NOT_FOUND);
+        $response = $response->setStatus(ResponseInterface::HTTP_NOT_FOUND);
         $this->assertTrue($response->isNotFound());
     }
 
@@ -262,8 +262,8 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertFalse($response->isRedirection());
-        $response->setStatus(ResponseInterface::HTTP_PERMANENTLY_REDIRECT);
-        $response->withHeader('Location', '/redirect/');
+        $response = $response->setStatus(ResponseInterface::HTTP_PERMANENTLY_REDIRECT);
+        $response = $response->withHeader('Location', '/redirect/');
         $this->assertTrue($response->isRedirection());
         $this->assertFalse($response->isRedirection('/path/'));
         $this->assertTrue($response->isRedirection('/redirect/'));
@@ -276,7 +276,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertEquals('utf-8', $response->getCharset());
-        $response->setCharset('windows-1251');
+        $response = $response->setCharset('windows-1251');
         $this->assertEquals('windows-1251', $response->getCharset());
     }
 
@@ -286,11 +286,11 @@ class ResponseTest extends TestCase
     public function testPrepareInformational(): void
     {
         $response = $this->getResponse();
-        $response->withHeader('Content-Type', 'application/json');
-        $response->withHeader('Content-Length', '100');
+        $response = $response->withHeader('Content-Type', 'application/json');
+        $response = $response->withHeader('Content-Length', '100');
         $this->assertTrue($response->hasHeader('Content-Type'));
         $this->assertTrue($response->hasHeader('Content-Length'));
-        $response->setStatus(ResponseInterface::HTTP_CONTINUE);
+        $response = $response->setStatus(ResponseInterface::HTTP_CONTINUE);
         $this->assertFalse($response->hasHeader('Content-Type'));
         $this->assertFalse($response->hasHeader('Content-Length'));
     }
@@ -301,9 +301,9 @@ class ResponseTest extends TestCase
     public function testPrepareDefault(): void
     {
         $response = $this->getResponse();
-        $response->withHeader('Transfer-Encoding', 'gzip');
-        $response->withHeader('Content-Length', '100');
-        $response->setStatus(ResponseInterface::HTTP_OK);
+        $response = $response->withHeader('Transfer-Encoding', 'gzip');
+        $response = $response->withHeader('Content-Length', '100');
+        $response = $response->setStatus(ResponseInterface::HTTP_OK);
         $this->assertFalse($response->hasHeader('Content-Length'));
     }
 
@@ -314,7 +314,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertInstanceOf(DateTime::class, $response->getDate());
-        $response->setDate(DateTime::createFromFormat('d.m.Y H:i:s', '23.12.2022 09:55:10'));
+        $response = $response->setDate(DateTime::createFromFormat('d.m.Y H:i:s', '23.12.2022 09:55:10'));
         $this->assertInstanceOf(DateTime::class, $response->getDate());
     }
 
@@ -325,9 +325,9 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $this->assertNull($response->getLastModified());
-        $response->setLastModified(new DateTime());
+        $response = $response->setLastModified(new DateTime());
         $this->assertInstanceOf(DateTime::class, $response->getLastModified());
-        $response->setLastModified(null);
+        $response = $response->setLastModified(null);
         $this->assertNull($response->getLastModified());
     }
 
@@ -338,7 +338,7 @@ class ResponseTest extends TestCase
     {
         $response = new ContentResponse();
         $this->assertEquals('', $response->getContent());
-        $response->setContent('content');
+        $response = $response->setContent('content');
         $this->assertEquals('content', $response->getContent());
     }
 }
