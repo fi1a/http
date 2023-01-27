@@ -161,7 +161,7 @@ class RequestTest extends TestCase
             ]),
             '{"json":"value"}'
         );
-        request($request);
+        $request = request($request);
         $this->assertInstanceOf(PathAccessInterface::class, $request->all());
         $this->assertCount(5, $request->all());
         $this->assertEquals('baz', $request->all()->get('foo:bar'));
@@ -175,7 +175,7 @@ class RequestTest extends TestCase
     public function testAllBodyArray(): void
     {
         $request = $this->getRequest();
-        $request->setBody(['json' => 'value']);
+        $request = $request->withBody(['json' => 'value']);
         $this->assertInstanceOf(PathAccessInterface::class, $request->all());
         $this->assertCount(3, $request->all());
         $this->assertEquals('baz', $request->all()->get('foo:bar'));
@@ -269,7 +269,7 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('content1', stream_get_contents($request->rawBody()));
-        $request->setRawBody(fopen(__DIR__ . '/Resources/content2.txt', 'r'));
+        $request = $request->withRawBody(fopen(__DIR__ . '/Resources/content2.txt', 'r'));
         $this->assertEquals('content2', stream_get_contents($request->rawBody()));
     }
 
@@ -280,7 +280,7 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertEquals('content1', stream_get_contents($request->rawBody()));
-        $request->setRawBody('content2');
+        $request = $request->withRawBody('content2');
         $this->assertEquals('content2', stream_get_contents($request->rawBody()));
     }
 

@@ -48,7 +48,7 @@ class OutputTest extends TestCase
             'Domain' => 'domain.ru',
             'NeedSet' => false,
         ]);
-        $response->withHeader('X-Header', '');
+        $response = $response->withHeader('X-Header', '');
         $output->send($response);
     }
 

@@ -16,7 +16,7 @@ class Response implements ResponseInterface
     /**
      * @var string[]
      */
-    private static $reasonPhrases = [
+    protected static $reasonPhrases = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -82,39 +82,44 @@ class Response implements ResponseInterface
     /**
      * @var int
      */
-    private $status = self::HTTP_OK;
+    protected $status = self::HTTP_OK;
 
     /**
      * @var string|null
      */
-    private $reasonPhrase = 'OK';
+    protected $reasonPhrase = 'OK';
 
     /**
      * @var HeaderCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $headers;
+    protected $headers;
 
     /**
      * @var string
      */
-    private $httpVersion = '1.0';
+    protected $httpVersion = '1.0';
 
     /**
      * @var RequestInterface
      */
-    private $request;
+    protected $request;
 
     /**
      * @var string
      */
-    private $charset = 'utf-8';
+    protected $charset = 'utf-8';
 
     /**
      * @var HttpCookieCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $cookies;
+    protected $cookies;
+
+    /**
+     * @var bool
+     */
+    protected $mutable = true;
 
     public function __construct(
         int $status = self::HTTP_OK,
@@ -129,28 +134,34 @@ class Response implements ResponseInterface
             $headers = new HeaderCollection();
         }
         $this->withHeaders($headers);
-        $this->setStatus($status);
-        $this->setCookies($request->cookies());
+        $this->withStatus($status);
+        $this->withCookies($request->cookies());
+        if (!$this->hasHeader('Date')) {
+            $this->withDate(new DateTime());
+        }
+
+        $this->mutable = false;
     }
 
     /**
      * @inheritDoc
      */
-    public function setStatus(int $status, ?string $reasonPhrase = null)
+    public function withStatus(int $status, ?string $reasonPhrase = null)
     {
+        $object = $this->getObject();
+
         if ($status < 100 || $status >= 600) {
             throw new InvalidArgumentException(
                 sprintf('Ошибка в коде статуса HTTP ответа "%d"', $status)
             );
         }
-        $this->status = $status;
+        $object->status = $status;
         if (is_null($reasonPhrase) && isset(static::$reasonPhrases[$status])) {
             $reasonPhrase = static::$reasonPhrases[$status];
         }
-        $this->reasonPhrase = $reasonPhrase;
-        $this->prepare();
+        $object->reasonPhrase = $reasonPhrase;
 
-        return $this;
+        return $object->prepare();
     }
 
     /**
@@ -174,9 +185,11 @@ class Response implements ResponseInterface
      */
     public function withHeaders(HeaderCollectionInterface $headers)
     {
-        $this->headers = $headers;
+        $object = $this->getObject();
 
-        return $this;
+        $object->headers = $headers;
+
+        return $object;
     }
 
     /**
@@ -192,9 +205,11 @@ class Response implements ResponseInterface
      */
     public function withHeader(string $name, string $value)
     {
-        $this->headers->add([$name, $value]);
+        $object = $this->getObject();
 
-        return $this;
+        $object->headers->add([$name, $value]);
+
+        return $object;
     }
 
     /**
@@ -202,9 +217,11 @@ class Response implements ResponseInterface
      */
     public function withoutHeader(string $name)
     {
-        $this->headers->withoutHeader($name);
+        $object = $this->getObject();
 
-        return $this;
+        $object->headers->withoutHeader($name);
+
+        return $object;
     }
 
     /**
@@ -218,11 +235,13 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setHttpVersion(string $version)
+    public function withHttpVersion(string $version)
     {
-        $this->httpVersion = $version;
+        $object = $this->getObject();
 
-        return $this;
+        $object->httpVersion = $version;
+
+        return $object;
     }
 
     /**
@@ -326,13 +345,15 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setCharset(string $charset)
+    public function withCharset(string $charset)
     {
-        $this->charset = $charset;
-        $this->withoutHeader('Content-Type');
-        $this->prepare();
+        $object = $this->getObject();
 
-        return $this;
+        $object->charset = $charset;
+        $object = $object->withoutHeader('Content-Type')
+            ->prepare();
+
+        return $object;
     }
 
     /**
@@ -346,14 +367,16 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setDate(DateTime $date)
+    public function withDate(DateTime $date)
     {
+        $object = $this->getObject();
+
         $date = clone $date;
         $date->setTimezone(new DateTimeZone('UTC'));
-        $this->withoutHeader('Date');
-        $this->withHeader('Date', $date->format('D, d M Y H:i:s') . ' GMT');
+        $object = $object->withoutHeader('Date');
+        $object = $object->withHeader('Date', $date->format('D, d M Y H:i:s') . ' GMT');
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -361,10 +384,6 @@ class Response implements ResponseInterface
      */
     public function getDate(): DateTime
     {
-        if (!$this->hasHeader('Date')) {
-            $this->setDate(new DateTime());
-        }
-
         /**
          * @psalm-suppress PossiblyNullArgument
          * @psalm-suppress PossiblyNullReference
@@ -397,28 +416,32 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function setLastModified(?DateTime $date = null)
+    public function withLastModified(?DateTime $date = null)
     {
-        $this->withoutHeader('Last-Modified');
+        $object = $this->getObject();
+
+        $object = $object->withoutHeader('Last-Modified');
         if (is_null($date)) {
-            return $this;
+            return $object;
         }
 
         $date = clone $date;
         $date->setTimezone(new DateTimeZone('UTC'));
-        $this->withHeader('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');
+        $object = $object->withHeader('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');
 
-        return $this;
+        return $object;
     }
 
     /**
      * @inheritDoc
      */
-    public function setCookies(HttpCookieCollectionInterface $cookies)
+    public function withCookies(HttpCookieCollectionInterface $cookies)
     {
-        $this->cookies = $cookies;
+        $object = $this->getObject();
 
-        return $this;
+        $object->cookies = $cookies;
+
+        return $object;
     }
 
     /**
@@ -431,53 +454,72 @@ class Response implements ResponseInterface
 
     /**
      * Подготавливает ответ на основе запроса
+     *
+     * @return $this
      */
-    private function prepare(): void
+    protected function prepare()
     {
-        $this->isInformational() || $this->isEmpty()
-            ? $this->prepareInformation()
-            : $this->prepareDefault();
+        $object = $this->getObject();
 
-        $server = $this->request->server();
+        $object = $object->isInformational() || $object->isEmpty()
+            ? $object->prepareInformation()
+            : $object->prepareDefault();
+
+        $server = $object->request->server();
         if ($server->get('SERVER_PROTOCOL') !== 'HTTP/1.0') {
-            $this->setHttpVersion('1.1');
+            $object = $object->withHttpVersion('1.1');
         }
+
+        return $object;
     }
 
     /**
      * Для всех остальных по умолчанию
+     *
+     * @return $this
      */
-    private function prepareDefault(): void
+    protected function prepareDefault()
     {
-        if (!$this->hasHeader('Content-Type')) {
-            $this->withHeader('Content-Type', 'text/html; charset=' . $this->getCharset());
+        $object = $this->getObject();
+
+        if (!$object->hasHeader('Content-Type')) {
+            $object = $object->withHeader('Content-Type', 'text/html; charset=' . $this->getCharset());
         }
-        if ($this->hasHeader('Transfer-Encoding') && $this->hasHeader('Content-Length')) {
-            $this->withoutHeader('Content-Length');
+        if ($object->hasHeader('Transfer-Encoding') && $this->hasHeader('Content-Length')) {
+            $object = $object->withoutHeader('Content-Length');
         }
+
+        return $object;
     }
 
     /**
      * Для пустого или информационного ответа
+     *
+     * @return $this
      */
-    private function prepareInformation(): void
+    protected function prepareInformation()
     {
-        $this->withoutHeader('Content-Type');
-        $this->withoutHeader('Content-Length');
+        return $this->getObject()
+            ->withoutHeader('Content-Type')
+            ->withoutHeader('Content-Length');
     }
 
     /**
      * @param HeaderCollectionInterface|string[]|string[][] $headers
+     *
+     * @return $this
      */
-    protected function useHeaders($headers): void
+    protected function useHeaders($headers)
     {
+        $object = $this->getObject();
+
         if (!is_array($headers) && !($headers instanceof HeaderCollectionInterface)) {
             throw new InvalidArgumentException(
                 'Заголовки должны быть массивом или реализовывать ' . HeaderCollectionInterface::class
             );
         }
         if ($headers instanceof HeaderCollectionInterface) {
-            $this->withHeaders($headers);
+            $object = $object->withHeaders($headers);
         }
         if (is_array($headers) && count($headers)) {
             foreach ($headers as $name => $value) {
@@ -488,8 +530,29 @@ class Response implements ResponseInterface
                         $value,
                     ];
                 }
-                $this->getHeaders()->add($header);
+                $object->getHeaders()->add($header);
             }
         }
+
+        return $object;
+    }
+
+    /**
+     * Возвращает объет для установки значений
+     *
+     * @return $this
+     */
+    protected function getObject()
+    {
+        return $this->mutable ? $this : clone $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __clone()
+    {
+        $this->headers = clone $this->headers;
+        $this->cookies = clone $this->cookies;
     }
 }

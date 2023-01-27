@@ -19,51 +19,56 @@ class Request implements RequestInterface
      * @var UriInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $uri;
+    protected $uri;
 
     /**
      * @var PathAccessInterface
      */
-    private $post;
+    protected $post;
 
     /**
      * @var UploadFileCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $files;
+    protected $files;
 
     /**
      * @var resource|string|null
      */
-    private $rawBody;
+    protected $rawBody;
 
     /**
      * @var mixed
      */
-    private $body;
+    protected $body;
 
     /**
      * @var HttpCookieCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $cookies;
+    protected $cookies;
 
     /**
      * @var HeaderCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $headers;
+    protected $headers;
 
     /**
      * @var ServerCollectionInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $server;
+    protected $server;
 
     /**
      * @var PathAccessInterface
      */
-    private $options;
+    protected $options;
+
+    /**
+     * @var bool
+     */
+    protected $mutable = true;
 
     /**
      * @inheritDoc
@@ -139,15 +144,17 @@ class Request implements RequestInterface
         }
         $headers = new HeaderCollection($rawHeader);
 
-        $uri->withQueryParams($query);
+        $uri = $uri->withQueryParams($query);
         $this->setUriInstance($uri)
             ->setPost($post)
             ->setFiles($files)
-            ->setRawBody($content)
+            ->withRawBody($content)
             ->setCookies($cookies)
             ->setHeaders($headers)
             ->setServer($server)
             ->setOptions($options);
+
+        $this->mutable = false;
     }
 
     /**
@@ -271,17 +278,18 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function setRawBody($rawBody)
+    public function withRawBody($rawBody)
     {
-        $this->rawBody = $rawBody;
+        $object = $this->getObject();
+
+        $object->rawBody = $rawBody;
         $body = $rawBody;
         if (is_resource($rawBody)) {
             $body = stream_get_contents($rawBody);
             rewind($rawBody);
         }
-        $this->setBody($body);
 
-        return $this;
+        return $object->withBody($body);
     }
 
     /**
@@ -310,11 +318,13 @@ class Request implements RequestInterface
     /**
      * @inheritDoc
      */
-    public function setBody($body)
+    public function withBody($body)
     {
-        $this->body = $body;
+        $object = $this->getObject();
 
-        return $this;
+        $object->body = $body;
+
+        return $object;
     }
 
     /**
@@ -629,5 +639,32 @@ class Request implements RequestInterface
     public function script(): string
     {
         return (string) $this->server()->get('SCRIPT_FILENAME');
+    }
+
+    /**
+     * Возвращает объет для установки значений
+     *
+     * @return $this
+     */
+    protected function getObject()
+    {
+        return $this->mutable ? $this : clone $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __clone()
+    {
+        $this->uri = clone $this->uri;
+        $this->post = clone $this->post;
+        $this->files = clone $this->files;
+        $this->cookies = clone $this->cookies;
+        $this->headers = clone $this->headers;
+        $this->server = clone $this->server;
+        $this->options = clone $this->options;
+        if (is_object($this->body)) {
+            $this->body = clone $this->body;
+        }
     }
 }

@@ -18,54 +18,59 @@ class Uri implements UriInterface
      * @var string
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $scheme;
+    protected $scheme;
 
     /**
      * @var string
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $user;
+    protected $user;
 
     /**
      * @var string|null
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $password;
+    protected $password;
 
     /**
      * @var string
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $host;
+    protected $host;
 
     /**
      * @var int|null
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $port;
+    protected $port;
 
     /**
      * @var string
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $path;
+    protected $path;
 
     /**
      * @var string
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $query;
+    protected $query;
 
     /**
      * @var PathAccessInterface
      */
-    private $queryParams;
+    protected $queryParams;
 
     /**
      * @var string
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $fragment;
+    protected $fragment;
+
+    /**
+     * @var bool
+     */
+    protected $mutable = true;
 
     /**
      * @inheritDoc
@@ -74,6 +79,7 @@ class Uri implements UriInterface
     {
         $this->queryParams = new PathAccess();
         $parsed = parse_url(Formatter::format($uri, $variables));
+
         $this->withScheme($parsed['scheme'] ?? 'https')
             ->withUserInfo($parsed['user'] ?? '', $parsed['pass'] ?? null)
             ->withHost($parsed['host'] ?? '')
@@ -81,6 +87,8 @@ class Uri implements UriInterface
             ->withPath($parsed['path'] ?? '')
             ->withQuery($parsed['query'] ?? '')
             ->withFragment($parsed['fragment'] ?? '');
+
+        $this->mutable = false;
     }
 
     /**
@@ -104,14 +112,16 @@ class Uri implements UriInterface
      */
     public function withScheme(string $scheme)
     {
+        $object = $this->getObject();
+
         $scheme = mb_strtolower($scheme);
         if (!in_array($scheme, ['http', 'https'])) {
             throw new InvalidArgumentException(sprintf('Неизвестная схема "%s"', htmlspecialchars($scheme)));
         }
 
-        $this->scheme = $scheme;
+        $object->scheme = $scheme;
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -149,10 +159,12 @@ class Uri implements UriInterface
      */
     public function withUserInfo(string $user, ?string $password = null)
     {
-        $this->user = $user;
-        $this->password = $password;
+        $object = $this->getObject();
 
-        return $this;
+        $object->user = $user;
+        $object->password = $password;
+
+        return $object;
     }
 
     /**
@@ -168,9 +180,11 @@ class Uri implements UriInterface
      */
     public function withHost(string $host)
     {
-        $this->host = $host;
+        $object = $this->getObject();
 
-        return $this;
+        $object->host = $host;
+
+        return $object;
     }
 
     /**
@@ -186,9 +200,11 @@ class Uri implements UriInterface
      */
     public function withPort(?int $port)
     {
-        $this->port = $port;
+        $object = $this->getObject();
 
-        return $this;
+        $object->port = $port;
+
+        return $object;
     }
 
     /**
@@ -204,12 +220,14 @@ class Uri implements UriInterface
      */
     public function withPath(string $path)
     {
+        $object = $this->getObject();
+
         if (!$path) {
             $path = '/';
         }
-        $this->path = $path;
+        $object->path = $path;
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -249,11 +267,13 @@ class Uri implements UriInterface
      */
     public function withQuery(string $query)
     {
-        $this->query = $query;
-        parse_str($query, $queryParams);
-        $this->queryParams->exchangeArray($queryParams);
+        $object = $this->getObject();
 
-        return $this;
+        $object->query = $query;
+        parse_str($query, $queryParams);
+        $object->queryParams->exchangeArray($queryParams);
+
+        return $object;
     }
 
     /**
@@ -269,15 +289,17 @@ class Uri implements UriInterface
      */
     public function withQueryParams($queryParams)
     {
+        $object = $this->getObject();
+
         if (!($queryParams instanceof PathAccessInterface)) {
-            $this->queryParams->exchangeArray($queryParams);
+            $object->queryParams->exchangeArray($queryParams);
         } else {
-            $this->queryParams = $queryParams;
+            $object->queryParams = $queryParams;
         }
 
-        $this->query = http_build_query($this->queryParams->getArrayCopy());
+        $object->query = http_build_query($object->queryParams->getArrayCopy());
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -293,9 +315,11 @@ class Uri implements UriInterface
      */
     public function withFragment(string $fragment)
     {
-        $this->fragment = $fragment;
+        $object = $this->getObject();
 
-        return $this;
+        $object->fragment = $fragment;
+
+        return $object;
     }
 
     /**
@@ -370,23 +394,43 @@ class Uri implements UriInterface
      */
     public function replace(string $uri = '', array $variables = [])
     {
+        $object = $this->getObject();
+
         $parsed = parse_url(Formatter::format($uri, $variables));
         if (isset($parsed['scheme'])) {
-            $this->withScheme($parsed['scheme']);
+            $object = $object->withScheme($parsed['scheme']);
         }
         if (isset($parsed['user']) && isset($parsed['pass'])) {
-            $this->withUserInfo($parsed['user'], $parsed['pass']);
+            $object = $object->withUserInfo($parsed['user'], $parsed['pass']);
         }
         if (isset($parsed['host'])) {
-            $this->withHost($parsed['host']);
+            $object = $object->withHost($parsed['host']);
         }
         if (isset($parsed['port'])) {
-            $this->withPort($parsed['port']);
+            $object = $object->withPort($parsed['port']);
         }
-        $this->withPath($parsed['path'] ?? '')
+        $object = $object->withPath($parsed['path'] ?? '')
             ->withQuery($parsed['query'] ?? '')
             ->withFragment($parsed['fragment'] ?? '');
 
-        return $this;
+        return $object;
+    }
+
+    /**
+     * Возвращает объет для установки значений
+     *
+     * @return $this
+     */
+    protected function getObject()
+    {
+        return $this->mutable ? $this : clone $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __clone()
+    {
+        $this->queryParams = clone $this->queryParams;
     }
 }

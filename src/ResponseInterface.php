@@ -144,7 +144,7 @@ interface ResponseInterface
      *
      * @return $this
      */
-    public function setStatus(int $status, ?string $reasonPhrase = null);
+    public function withStatus(int $status, ?string $reasonPhrase = null);
 
     /**
      * Возвращает код ответа
@@ -192,7 +192,7 @@ interface ResponseInterface
      *
      * @return $this
      */
-    public function setHttpVersion(string $version);
+    public function withHttpVersion(string $version);
 
     /**
      * Возвращает HTTP версию протокола
@@ -251,7 +251,7 @@ interface ResponseInterface
      *
      * @return $this
      */
-    public function setCharset(string $charset);
+    public function withCharset(string $charset);
 
     /**
      * Возвращает кодировку
@@ -263,7 +263,7 @@ interface ResponseInterface
      *
      * @return $this
      */
-    public function setDate(DateTime $date);
+    public function withDate(DateTime $date);
 
     /**
      * Возвращает дату
@@ -280,14 +280,14 @@ interface ResponseInterface
      *
      * @return $this
      */
-    public function setLastModified(?DateTime $date = null);
+    public function withLastModified(?DateTime $date = null);
 
     /**
      * Устанавливает cookies
      *
      * @return $this
      */
-    public function setCookies(HttpCookieCollectionInterface $cookies);
+    public function withCookies(HttpCookieCollectionInterface $cookies);
 
     /**
      * Возвращает cookies

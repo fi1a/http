@@ -37,7 +37,7 @@ class JsonResponseTest extends TestCase
             JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT,
             $response->getEncodingOptions()
         );
-        $response->setEncodingOptions(JSON_HEX_TAG);
+        $response = $response->setEncodingOptions(JSON_HEX_TAG);
         $this->assertEquals(JSON_HEX_TAG, $response->getEncodingOptions());
     }
 
@@ -47,7 +47,7 @@ class JsonResponseTest extends TestCase
     public function testSetData(): void
     {
         $response = $this->getJsonResponse();
-        $response->data(['foo' => 'bar']);
+        $response = $response->data(['foo' => 'bar']);
         $this->assertEquals('{"foo":"bar"}', $response->getContent());
     }
 
@@ -57,7 +57,7 @@ class JsonResponseTest extends TestCase
     public function testSetDataWithStatus(): void
     {
         $response = $this->getJsonResponse();
-        $response->data(['foo' => 'bar'], ResponseInterface::HTTP_ACCEPTED);
+        $response = $response->data(['foo' => 'bar'], ResponseInterface::HTTP_ACCEPTED);
         $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->getStatus());
         $this->assertEquals('{"foo":"bar"}', $response->getContent());
     }
