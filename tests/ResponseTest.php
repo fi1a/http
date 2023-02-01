@@ -32,11 +32,11 @@ class ResponseTest extends TestCase
     public function testStatus(): void
     {
         $response = $this->getResponse();
-        $this->assertEquals(ResponseInterface::HTTP_OK, $response->getStatus());
-        $this->assertEquals('OK', $response->getReasonPhrase());
+        $this->assertEquals(ResponseInterface::HTTP_OK, $response->status());
+        $this->assertEquals('OK', $response->reasonPhrase());
         $response = $response->withStatus(ResponseInterface::HTTP_ACCEPTED);
-        $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->getStatus());
-        $this->assertEquals('Accepted', $response->getReasonPhrase());
+        $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->status());
+        $this->assertEquals('Accepted', $response->reasonPhrase());
     }
 
     /**
@@ -46,8 +46,8 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $response = $response->withStatus(ResponseInterface::HTTP_ACCEPTED, 'New Accepted');
-        $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->getStatus());
-        $this->assertEquals('New Accepted', $response->getReasonPhrase());
+        $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->status());
+        $this->assertEquals('New Accepted', $response->reasonPhrase());
     }
 
     /**
@@ -57,7 +57,7 @@ class ResponseTest extends TestCase
     {
         $response = $this->getResponse();
         $response = $response->withStatus(105);
-        $this->assertNull($response->getReasonPhrase());
+        $this->assertNull($response->reasonPhrase());
     }
 
     /**
@@ -86,8 +86,8 @@ class ResponseTest extends TestCase
     public function testGetHeaders(): void
     {
         $response = $this->getResponse();
-        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(2, $response->getHeaders());
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->headers());
+        $this->assertCount(2, $response->headers());
     }
 
     /**
@@ -102,8 +102,8 @@ class ResponseTest extends TestCase
             'Value1',
         ];
         $response = $response->withHeaders($headers);
-        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(1, $response->getHeaders());
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->headers());
+        $this->assertCount(1, $response->headers());
     }
 
     /**
@@ -112,11 +112,11 @@ class ResponseTest extends TestCase
     public function testWithHeader(): void
     {
         $response = $this->getResponse();
-        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(2, $response->getHeaders());
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->headers());
+        $this->assertCount(2, $response->headers());
         $response = $response->withHeader('X-Header', 'Value1');
-        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->getHeaders());
-        $this->assertCount(3, $response->getHeaders());
+        $this->assertInstanceOf(HeaderCollectionInterface::class, $response->headers());
+        $this->assertCount(3, $response->headers());
     }
 
     /**
@@ -138,9 +138,9 @@ class ResponseTest extends TestCase
         $response = $response->withHeader('X-Header', 'Value1');
         $response = $response->withHeader('X-Header', 'Value2');
         $response = $response->withHeader('X-Header-Other', 'Value3');
-        $this->assertCount(5, $response->getHeaders());
+        $this->assertCount(5, $response->headers());
         $response = $response->withoutHeader('X-Header');
-        $this->assertCount(3, $response->getHeaders());
+        $this->assertCount(3, $response->headers());
     }
 
     /**
@@ -160,9 +160,9 @@ class ResponseTest extends TestCase
     public function testHttpVersion(): void
     {
         $response = $this->getResponse();
-        $this->assertEquals('1.1', $response->getHttpVersion());
+        $this->assertEquals('1.1', $response->httpVersion());
         $response = $response->withHttpVersion('1.0');
-        $this->assertEquals('1.0', $response->getHttpVersion());
+        $this->assertEquals('1.0', $response->httpVersion());
     }
 
     /**
@@ -275,9 +275,9 @@ class ResponseTest extends TestCase
     public function testCharset(): void
     {
         $response = $this->getResponse();
-        $this->assertEquals('utf-8', $response->getCharset());
+        $this->assertEquals('utf-8', $response->charset());
         $response = $response->withCharset('windows-1251');
-        $this->assertEquals('windows-1251', $response->getCharset());
+        $this->assertEquals('windows-1251', $response->charset());
     }
 
     /**
@@ -313,9 +313,9 @@ class ResponseTest extends TestCase
     public function testDate(): void
     {
         $response = $this->getResponse();
-        $this->assertInstanceOf(DateTime::class, $response->getDate());
+        $this->assertInstanceOf(DateTime::class, $response->date());
         $response = $response->withDate(DateTime::createFromFormat('d.m.Y H:i:s', '23.12.2022 09:55:10'));
-        $this->assertInstanceOf(DateTime::class, $response->getDate());
+        $this->assertInstanceOf(DateTime::class, $response->date());
     }
 
     /**
@@ -324,11 +324,11 @@ class ResponseTest extends TestCase
     public function testLastModified(): void
     {
         $response = $this->getResponse();
-        $this->assertNull($response->getLastModified());
+        $this->assertNull($response->lastModified());
         $response = $response->withLastModified(new DateTime());
-        $this->assertInstanceOf(DateTime::class, $response->getLastModified());
+        $this->assertInstanceOf(DateTime::class, $response->lastModified());
         $response = $response->withLastModified(null);
-        $this->assertNull($response->getLastModified());
+        $this->assertNull($response->lastModified());
     }
 
     /**
@@ -340,5 +340,18 @@ class ResponseTest extends TestCase
         $this->assertEquals('', $response->getContent());
         $response = $response->setContent('content');
         $this->assertEquals('content', $response->getContent());
+    }
+
+    /**
+     * Тестирование клонирования
+     */
+    public function testClone(): void
+    {
+        $response = $this->getResponse();
+        $clone = clone $response;
+
+        $this->assertTrue($clone !== $response);
+        $this->assertTrue($response->headers() !== $clone->headers());
+        $this->assertTrue($response->cookies() !== $clone->cookies());
     }
 }

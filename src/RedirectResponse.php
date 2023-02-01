@@ -47,7 +47,7 @@ class RedirectResponse extends Response implements RedirectResponseInterface
      */
     public function getLocation(): ?UriInterface
     {
-        $header = $this->getHeaders()->getLastHeader('Location');
+        $header = $this->headers()->getLastHeader('Location');
         if (!$header || !$header->getValue()) {
             return null;
         }

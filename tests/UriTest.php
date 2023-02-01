@@ -296,7 +296,20 @@ class UriTest extends TestCase
     public function testGetQuery(): void
     {
         $uri = new Uri('https://host.ru/some/path/?foo=bar&baz[]=qux&baz[]=quz');
-        $this->assertEquals('foo=bar&baz[]=qux&baz[]=quz', $uri->getQuery());
+        $this->assertEquals('foo=bar&baz%5B0%5D=qux&baz%5B1%5D=quz', $uri->getQuery());
+    }
+
+    /**
+     * Строка запроса в URI (кодирование)
+     */
+    public function testWithQueryParamsEncode(): void
+    {
+        $uri = new Uri('https://host.ru/some/path/?foo=Один два&baz[]=три&baz[]=четыре');
+        $this->assertEquals(
+            'foo=%D0%9E%D0%B4%D0%B8%D0%BD+%D0%B4%D0%B2%D0%B0&baz%5B0%5D=%D1%82%D1%80%D0%B8&baz'
+            . '%5B1%5D=%D1%87%D0%B5%D1%82%D1%8B%D1%80%D0%B5',
+            $uri->getQuery()
+        );
     }
 
     /**
@@ -643,5 +656,17 @@ class UriTest extends TestCase
             'https://new-username:new-password@new-host.ru:8181/new/path/?baz=qux#new-fragment',
             $uri->getUri()
         );
+    }
+
+    /**
+     * Тестирование клонирования
+     */
+    public function testClone(): void
+    {
+        $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
+        $clone = clone $uri;
+
+        $this->assertTrue($clone !== $uri);
+        $this->assertTrue($uri->getQueryParams() !== $clone->getQueryParams());
     }
 }

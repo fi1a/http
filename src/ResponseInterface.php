@@ -149,12 +149,12 @@ interface ResponseInterface
     /**
      * Возвращает код ответа
      */
-    public function getStatus(): int;
+    public function status(): int;
 
     /**
      * Возвращает текст ответа
      */
-    public function getReasonPhrase(): ?string;
+    public function reasonPhrase(): ?string;
 
     /**
      * Устанавливает заголовки
@@ -166,7 +166,7 @@ interface ResponseInterface
     /**
      * Возвращает заголовки
      */
-    public function getHeaders(): HeaderCollectionInterface;
+    public function headers(): HeaderCollectionInterface;
 
     /**
      * Добавляет заголовок с определенным именем и значением
@@ -197,7 +197,7 @@ interface ResponseInterface
     /**
      * Возвращает HTTP версию протокола
      */
-    public function getHttpVersion(): string;
+    public function httpVersion(): string;
 
     /**
      * Если true, то ответ пустой
@@ -256,7 +256,7 @@ interface ResponseInterface
     /**
      * Возвращает кодировку
      */
-    public function getCharset(): string;
+    public function charset(): string;
 
     /**
      * Устанавливает дату
@@ -268,12 +268,12 @@ interface ResponseInterface
     /**
      * Возвращает дату
      */
-    public function getDate(): DateTime;
+    public function date(): DateTime;
 
     /**
      * Возвращает время последнего изменения
      */
-    public function getLastModified(): ?DateTime;
+    public function lastModified(): ?DateTime;
 
     /**
      * Устанавливает время последнего изменения

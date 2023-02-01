@@ -58,7 +58,7 @@ class JsonResponseTest extends TestCase
     {
         $response = $this->getJsonResponse();
         $response = $response->data(['foo' => 'bar'], ResponseInterface::HTTP_ACCEPTED);
-        $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->getStatus());
+        $this->assertEquals(ResponseInterface::HTTP_ACCEPTED, $response->status());
         $this->assertEquals('{"foo":"bar"}', $response->getContent());
     }
 

@@ -167,7 +167,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getStatus(): int
+    public function status(): int
     {
         return $this->status;
     }
@@ -175,7 +175,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getReasonPhrase(): ?string
+    public function reasonPhrase(): ?string
     {
         return $this->reasonPhrase;
     }
@@ -195,7 +195,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getHeaders(): HeaderCollectionInterface
+    public function headers(): HeaderCollectionInterface
     {
         return $this->headers;
     }
@@ -247,7 +247,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getHttpVersion(): string
+    public function httpVersion(): string
     {
         return $this->httpVersion;
     }
@@ -263,7 +263,7 @@ class Response implements ResponseInterface
             self::HTTP_NOT_MODIFIED,
         ];
 
-        return in_array($this->getStatus(), $statusCodes);
+        return in_array($this->status(), $statusCodes);
     }
 
     /**
@@ -271,7 +271,7 @@ class Response implements ResponseInterface
      */
     public function isInformational(): bool
     {
-        return $this->getStatus() >= 100 && $this->getStatus() < 200;
+        return $this->status() >= 100 && $this->status() < 200;
     }
 
     /**
@@ -279,7 +279,7 @@ class Response implements ResponseInterface
      */
     public function isSuccessful(): bool
     {
-        return $this->getStatus() >= 200 && $this->getStatus() < 300;
+        return $this->status() >= 200 && $this->status() < 300;
     }
 
     /**
@@ -287,7 +287,7 @@ class Response implements ResponseInterface
      */
     public function isClientError(): bool
     {
-        return $this->getStatus() >= 300 && $this->getStatus() < 500;
+        return $this->status() >= 300 && $this->status() < 500;
     }
 
     /**
@@ -295,7 +295,7 @@ class Response implements ResponseInterface
      */
     public function isServerError(): bool
     {
-        return $this->getStatus() >= 500 && $this->getStatus() < 600;
+        return $this->status() >= 500 && $this->status() < 600;
     }
 
     /**
@@ -303,7 +303,7 @@ class Response implements ResponseInterface
      */
     public function isOk(): bool
     {
-        return $this->getStatus() === static::HTTP_OK;
+        return $this->status() === static::HTTP_OK;
     }
 
     /**
@@ -311,7 +311,7 @@ class Response implements ResponseInterface
      */
     public function isForbidden(): bool
     {
-        return $this->getStatus() === static::HTTP_FORBIDDEN;
+        return $this->status() === static::HTTP_FORBIDDEN;
     }
 
     /**
@@ -319,7 +319,7 @@ class Response implements ResponseInterface
      */
     public function isNotFound(): bool
     {
-        return $this->getStatus() === static::HTTP_NOT_FOUND;
+        return $this->status() === static::HTTP_NOT_FOUND;
     }
 
     /**
@@ -336,9 +336,9 @@ class Response implements ResponseInterface
             self::HTTP_TEMPORARY_REDIRECT,
             self::HTTP_PERMANENTLY_REDIRECT,
         ];
-        $header = $this->getHeaders()->getLastHeader('Location');
+        $header = $this->headers()->getLastHeader('Location');
 
-        return in_array($this->getStatus(), $statusCodes)
+        return in_array($this->status(), $statusCodes)
             && (is_null($location) || !$header || $location === $header->getValue());
     }
 
@@ -359,7 +359,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getCharset(): string
+    public function charset(): string
     {
         return $this->charset;
     }
@@ -382,7 +382,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getDate(): DateTime
+    public function date(): DateTime
     {
         /**
          * @psalm-suppress PossiblyNullArgument
@@ -390,14 +390,14 @@ class Response implements ResponseInterface
          */
         return DateTime::createFromFormat(
             'D, d M Y H:i:s e',
-            $this->getHeaders()->getLastHeader('Date')->getValue()
+            $this->headers()->getLastHeader('Date')->getValue()
         );
     }
 
     /**
      * @inheritDoc
      */
-    public function getLastModified(): ?DateTime
+    public function lastModified(): ?DateTime
     {
         if (!$this->hasHeader('Last-Modified')) {
             return null;
@@ -409,7 +409,7 @@ class Response implements ResponseInterface
          */
         return DateTime::createFromFormat(
             'D, d M Y H:i:s e',
-            $this->getHeaders()->getLastHeader('Last-Modified')->getValue()
+            $this->headers()->getLastHeader('Last-Modified')->getValue()
         );
     }
 
@@ -483,7 +483,7 @@ class Response implements ResponseInterface
         $object = $this->getObject();
 
         if (!$object->hasHeader('Content-Type')) {
-            $object = $object->withHeader('Content-Type', 'text/html; charset=' . $this->getCharset());
+            $object = $object->withHeader('Content-Type', 'text/html; charset=' . $this->charset());
         }
         if ($object->hasHeader('Transfer-Encoding') && $this->hasHeader('Content-Length')) {
             $object = $object->withoutHeader('Content-Length');
@@ -530,7 +530,7 @@ class Response implements ResponseInterface
                         $value,
                     ];
                 }
-                $object->getHeaders()->add($header);
+                $object->headers()->add($header);
             }
         }
 
