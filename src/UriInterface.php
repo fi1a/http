@@ -12,11 +12,6 @@ use Fi1a\Collection\DataType\PathAccessInterface;
 interface UriInterface
 {
     /**
-     * @param mixed[] $variables
-     */
-    public function __construct(string $uri = '', array $variables = []);
-
-    /**
      * Схема
      */
     public function getScheme(): string;
