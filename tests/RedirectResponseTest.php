@@ -25,7 +25,7 @@ class RedirectResponseTest extends TestCase
         $this->assertNull($redirect->getLocation());
         $redirect = $redirect->to('/redirect/');
         $this->assertEquals('/redirect/', $redirect->getLocation()->getUri());
-        $this->assertTrue($redirect->getHeaders()->hasHeader('Location'));
+        $this->assertTrue($redirect->headers()->hasHeader('Location'));
     }
 
     /**
@@ -37,7 +37,7 @@ class RedirectResponseTest extends TestCase
         $this->assertNull($redirect->getLocation());
         $redirect = $redirect->to(new Uri('/redirect/'));
         $this->assertEquals('/redirect/', $redirect->getLocation()->getUri());
-        $this->assertTrue($redirect->getHeaders()->hasHeader('Location'));
+        $this->assertTrue($redirect->headers()->hasHeader('Location'));
     }
 
     /**
@@ -48,7 +48,7 @@ class RedirectResponseTest extends TestCase
         $redirect = new RedirectResponse();
         $redirect = $redirect->to('http://domain.ru/redirect/?foo=bar');
         $this->assertEquals('http://domain.ru/redirect/?foo=bar', $redirect->getLocation()->getUri());
-        $this->assertTrue($redirect->getHeaders()->hasHeader('Location'));
+        $this->assertTrue($redirect->headers()->hasHeader('Location'));
     }
 
     /**
@@ -87,8 +87,8 @@ class RedirectResponseTest extends TestCase
     {
         $redirect = new RedirectResponse();
         $redirect = $redirect->to('/redirect/', null, new HeaderCollection([['X-Header', 'Value']]));
-        $this->assertTrue($redirect->getHeaders()->hasHeader('Location'));
-        $this->assertTrue($redirect->getHeaders()->hasHeader('X-Header'));
+        $this->assertTrue($redirect->headers()->hasHeader('Location'));
+        $this->assertTrue($redirect->headers()->hasHeader('X-Header'));
     }
 
     /**
@@ -98,8 +98,8 @@ class RedirectResponseTest extends TestCase
     {
         $redirect = new RedirectResponse();
         $redirect = $redirect->to('/redirect/', null, ['X-Header' => 'Value']);
-        $this->assertTrue($redirect->getHeaders()->hasHeader('Location'));
-        $this->assertTrue($redirect->getHeaders()->hasHeader('X-Header'));
+        $this->assertTrue($redirect->headers()->hasHeader('Location'));
+        $this->assertTrue($redirect->headers()->hasHeader('X-Header'));
     }
 
     /**
@@ -109,7 +109,7 @@ class RedirectResponseTest extends TestCase
     {
         $redirect = new RedirectResponse();
         $redirect = $redirect->to('/redirect/', ResponseInterface::HTTP_MOVED_PERMANENTLY);
-        $this->assertEquals(ResponseInterface::HTTP_MOVED_PERMANENTLY, $redirect->getStatus());
-        $this->assertTrue($redirect->getHeaders()->hasHeader('Location'));
+        $this->assertEquals(ResponseInterface::HTTP_MOVED_PERMANENTLY, $redirect->status());
+        $this->assertTrue($redirect->headers()->hasHeader('Location'));
     }
 }

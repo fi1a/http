@@ -19,6 +19,7 @@ use Fi1a\Http\UploadFile;
 use Fi1a\Http\UploadFileCollection;
 use Fi1a\Http\UploadFileInterface;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * Запрос
@@ -828,5 +829,23 @@ class RequestTest extends TestCase
     {
         $request = $this->getRequest();
         $this->assertInstanceOf(HttpCookieCollectionInterface::class, $request->cookies());
+    }
+
+    /**
+     * Тестирование клонирования
+     */
+    public function testClone(): void
+    {
+        $request = $this->getRequest()->withBody(new stdClass());
+        $clone = clone $request;
+
+        $this->assertTrue($clone !== $request);
+        $this->assertTrue($request->post() !== $clone->post());
+        $this->assertTrue($request->files() !== $clone->files());
+        $this->assertTrue($request->cookies() !== $clone->cookies());
+        $this->assertTrue($request->headers() !== $clone->headers());
+        $this->assertTrue($request->server() !== $clone->server());
+        $this->assertTrue($request->options() !== $clone->options());
+        $this->assertTrue($request->body() !== $clone->body());
     }
 }

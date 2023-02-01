@@ -42,14 +42,14 @@ class Output implements OutputInterface
         $this->header(
             sprintf(
                 'HTTP/%s %s %s',
-                $response->getHttpVersion(),
-                $response->getStatus(),
-                (string) $response->getReasonPhrase()
+                $response->httpVersion(),
+                $response->status(),
+                (string) $response->reasonPhrase()
             ),
             true,
-            $response->getStatus()
+            $response->status()
         );
-        $headers = $response->getHeaders();
+        $headers = $response->headers();
         foreach ($headers as $header) {
             assert($header instanceof HeaderInterface);
             $value = $header->getValue();
@@ -59,7 +59,7 @@ class Output implements OutputInterface
             $this->header(
                 $header->getName() . ': ' . $value,
                 false,
-                $response->getStatus()
+                $response->status()
             );
         }
 

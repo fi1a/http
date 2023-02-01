@@ -269,9 +269,9 @@ class Uri implements UriInterface
     {
         $object = $this->getObject();
 
-        $object->query = $query;
         parse_str($query, $queryParams);
         $object->queryParams->exchangeArray($queryParams);
+        $object->query = http_build_query($queryParams);
 
         return $object;
     }

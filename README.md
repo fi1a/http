@@ -224,17 +224,17 @@ response($response);
 | Метод                                                 | Описание                                              |
 |-------------------------------------------------------|-------------------------------------------------------|
 | withStatus(int $status, ?string $reasonPhrase = null) | Устанавливает код и текст ответа                      |
-| getStatus(): int                                      | Возвращает код ответа                                 |
-| getReasonPhrase(): ?string                            | Возвращает текст ответа                               |
+| status(): int                                         | Возвращает код ответа                                 |
+| reasonPhrase(): ?string                               | Возвращает текст ответа                               |
 | withHeaders(HeaderCollectionInterface $headers)       | Устанавливает заголовки                               |
-| getHeaders(): HeaderCollectionInterface               | Возвращает заголовки                                  |
+| headers(): HeaderCollectionInterface                  | Возвращает заголовки                                  |
 | withHeader(string $name, string $value)               | Добавляет заголовок с определенным именем и значением |
 | withoutHeader(string $name)                           | Удалить заголовки с определенным именем               |
 | hasHeader(string $name): bool                         | Проверяет наличие заголовка                           |
 | cookies(): HttpCookieCollectionInterface              | Возвращает cookies                                    |
 | withCookies(HttpCookieCollectionInterface $cookies)   | Устанавливает cookies                                 |
 | withHttpVersion(string $version)                      | Устанавливает версию HTTP протокола                   |
-| getHttpVersion(): string                              | Возвращает HTTP версию протокола                      |
+| httpVersion(): string                                 | Возвращает HTTP версию протокола                      |
 | isEmpty(): bool                                       | Если true, то ответ пустой                            |
 | isInformational(): bool                               | Если true, то ответ информационный                    |
 | isSuccessful(): bool                                  | Если true, то ответ успешный                          |
@@ -245,10 +245,10 @@ response($response);
 | isNotFound(): bool                                    | Если true, то 404 Not found                           |
 | isRedirection(?string $location = null): bool         | Если true, то перенаправление                         |
 | withCharset(string $charset)                          | Устанавливает кодировку                               |
-| getCharset(): string                                  | Возвращает кодировку                                  |
+| charset(): string                                     | Возвращает кодировку                                  |
 | withDate(DateTime $date)                              | Устанавливает дату                                    |
-| getDate(): DateTime                                   | Возвращает дату                                       |
-| getLastModified(): ?DateTime                          | Возвращает время последнего изменения                 |
+| date(): DateTime                                      | Возвращает дату                                       |
+| lastModified(): ?DateTime                             | Возвращает время последнего изменения                 |
 | withLastModified(?DateTime $date = null)              | Устанавливает время последнего изменения              |
 
 
