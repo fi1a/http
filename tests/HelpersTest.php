@@ -73,7 +73,7 @@ class HelpersTest extends TestCase
             ['X-Header' => 'Value']
         );
         $this->assertInstanceOf(RedirectResponseInterface::class, $redirect);
-        $this->assertEquals('/redirect/', $redirect->getLocation()->getUri());
+        $this->assertEquals('/redirect/', $redirect->getLocation()->uri());
         $this->assertEquals(ResponseInterface::HTTP_MOVED_PERMANENTLY, $redirect->status());
         $this->assertTrue($redirect->headers()->hasHeader('X-Header'));
     }
@@ -89,7 +89,7 @@ class HelpersTest extends TestCase
             ['X-Header' => 'Value']
         );
         $this->assertInstanceOf(RedirectResponseInterface::class, $redirect);
-        $this->assertEquals('/redirect/', $redirect->getLocation()->getUri());
+        $this->assertEquals('/redirect/', $redirect->getLocation()->uri());
         $this->assertEquals(ResponseInterface::HTTP_MOVED_PERMANENTLY, $redirect->status());
         $this->assertTrue($redirect->headers()->hasHeader('X-Header'));
     }

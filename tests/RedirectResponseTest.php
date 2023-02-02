@@ -24,7 +24,7 @@ class RedirectResponseTest extends TestCase
         $redirect = new RedirectResponse();
         $this->assertNull($redirect->getLocation());
         $redirect = $redirect->to('/redirect/');
-        $this->assertEquals('/redirect/', $redirect->getLocation()->getUri());
+        $this->assertEquals('/redirect/', $redirect->getLocation()->uri());
         $this->assertTrue($redirect->headers()->hasHeader('Location'));
     }
 
@@ -36,7 +36,7 @@ class RedirectResponseTest extends TestCase
         $redirect = new RedirectResponse();
         $this->assertNull($redirect->getLocation());
         $redirect = $redirect->to(new Uri('/redirect/'));
-        $this->assertEquals('/redirect/', $redirect->getLocation()->getUri());
+        $this->assertEquals('/redirect/', $redirect->getLocation()->uri());
         $this->assertTrue($redirect->headers()->hasHeader('Location'));
     }
 
@@ -47,7 +47,7 @@ class RedirectResponseTest extends TestCase
     {
         $redirect = new RedirectResponse();
         $redirect = $redirect->to('http://domain.ru/redirect/?foo=bar');
-        $this->assertEquals('http://domain.ru/redirect/?foo=bar', $redirect->getLocation()->getUri());
+        $this->assertEquals('http://domain.ru/redirect/?foo=bar', $redirect->getLocation()->uri());
         $this->assertTrue($redirect->headers()->hasHeader('Location'));
     }
 

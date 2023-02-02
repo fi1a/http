@@ -110,11 +110,11 @@ class Request implements RequestInterface
         if (!($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
         }
-        if ($uri->getHost()) {
-            $server->set('SERVER_NAME', $uri->getHost());
-            $server->set('HTTP_HOST', $uri->getHost());
+        if ($uri->host()) {
+            $server->set('SERVER_NAME', $uri->host());
+            $server->set('HTTP_HOST', $uri->host());
         }
-        $port = $uri->getPort();
+        $port = $uri->port();
         if ($port) {
             $server->set('SERVER_PORT', $port);
             $server->set('HTTP_HOST', (string) $server->get('HTTP_HOST') . ':' . $port);
@@ -209,7 +209,7 @@ class Request implements RequestInterface
      */
     public function query(): PathAccessInterface
     {
-        return clone $this->getUriInstance()->getQueryParams();
+        return clone $this->getUriInstance()->queryParams();
     }
 
     /**
@@ -230,7 +230,7 @@ class Request implements RequestInterface
         }
 
         return new PathAccess(array_replace_recursive(
-            $this->getUriInstance()->getQueryParams()->getArrayCopy(),
+            $this->getUriInstance()->queryParams()->getArrayCopy(),
             $this->post->getArrayCopy(),
             $this->files->getArrayCopy(),
             $body
@@ -439,7 +439,7 @@ class Request implements RequestInterface
      */
     public function path(): string
     {
-        return $this->getUriInstance()->getPath();
+        return $this->getUriInstance()->path();
     }
 
     /**
@@ -447,7 +447,7 @@ class Request implements RequestInterface
      */
     public function basePath(): string
     {
-        return $this->getUriInstance()->getBasePath();
+        return $this->getUriInstance()->basePath();
     }
 
     /**
@@ -455,7 +455,7 @@ class Request implements RequestInterface
      */
     public function normalizedBasePath(): string
     {
-        return $this->getUriInstance()->getNormalizedBasePath();
+        return $this->getUriInstance()->normalizedBasePath();
     }
 
     /**
@@ -463,7 +463,7 @@ class Request implements RequestInterface
      */
     public function queryString(): string
     {
-        return $this->getUriInstance()->getQuery();
+        return $this->getUriInstance()->query();
     }
 
     /**
@@ -471,7 +471,7 @@ class Request implements RequestInterface
      */
     public function user(): string
     {
-        return $this->getUriInstance()->getUser();
+        return $this->getUriInstance()->user();
     }
 
     /**
@@ -479,7 +479,7 @@ class Request implements RequestInterface
      */
     public function password(): ?string
     {
-        return $this->getUriInstance()->getPassword();
+        return $this->getUriInstance()->password();
     }
 
     /**
@@ -487,7 +487,7 @@ class Request implements RequestInterface
      */
     public function userInfo(): string
     {
-        return $this->getUriInstance()->getUserInfo();
+        return $this->getUriInstance()->userInfo();
     }
 
     /**
@@ -495,7 +495,7 @@ class Request implements RequestInterface
      */
     public function pathAndQuery(): string
     {
-        return $this->getUriInstance()->getPathAndQuery();
+        return $this->getUriInstance()->pathAndQuery();
     }
 
     /**

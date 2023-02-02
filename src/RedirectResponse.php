@@ -30,7 +30,7 @@ class RedirectResponse extends Response implements RedirectResponseInterface
             throw new InvalidArgumentException('Адрес перенаправления не может быть пустым');
         }
         if ($location instanceof UriInterface) {
-            $location = $location->getUri();
+            $location = $location->uri();
         }
         $object = $object->useHeaders($headers)
             ->withoutHeader('Location')
