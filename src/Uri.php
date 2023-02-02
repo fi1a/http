@@ -376,8 +376,8 @@ class Uri implements UriInterface
      */
     public function maskedUri(): string
     {
-        if (!$this->host()) {
-            return '';
+        if (!$this->userInfo()) {
+            return $this->uri();
         }
         $userInfo = $this->userInfo();
         $port = $this->port();
