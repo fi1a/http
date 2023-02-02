@@ -94,7 +94,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getScheme(): string
+    public function scheme(): string
     {
         return $this->scheme;
     }
@@ -104,7 +104,7 @@ class Uri implements UriInterface
      */
     public function isSecure(): bool
     {
-        return $this->getScheme() === 'https';
+        return $this->scheme() === 'https';
     }
 
     /**
@@ -127,10 +127,10 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getUserInfo(): string
+    public function userInfo(): string
     {
-        $userInfo = $this->getUser();
-        $password = $this->getPassword();
+        $userInfo = $this->user();
+        $password = $this->password();
         if (!is_null($password)) {
             $userInfo .= ':' . $password;
         }
@@ -141,7 +141,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getUser(): string
+    public function user(): string
     {
         return $this->user;
     }
@@ -149,7 +149,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getPassword(): ?string
+    public function password(): ?string
     {
         return $this->password;
     }
@@ -170,7 +170,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getHost(): string
+    public function host(): string
     {
         return $this->host;
     }
@@ -190,7 +190,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getPort(): ?int
+    public function port(): ?int
     {
         return $this->port;
     }
@@ -210,7 +210,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getPath(): string
+    public function path(): string
     {
         return $this->path;
     }
@@ -233,9 +233,9 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getBasePath(): string
+    public function basePath(): string
     {
-        $url = $this->getPath();
+        $url = $this->path();
         $basename = basename($url);
         if (!$basename || !preg_match('/^(.+)\.(.+)$/i', $basename)) {
             return $url;
@@ -247,9 +247,9 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getNormalizedBasePath(): string
+    public function normalizedBasePath(): string
     {
-        $basePath = $this->getBasePath();
+        $basePath = $this->basePath();
 
         return rtrim($basePath, '/') . '/';
     }
@@ -257,7 +257,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getQuery(): string
+    public function query(): string
     {
         return $this->query;
     }
@@ -279,7 +279,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getQueryParams(): PathAccessInterface
+    public function queryParams(): PathAccessInterface
     {
         return $this->queryParams;
     }
@@ -305,7 +305,7 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getFragment(): string
+    public function fragment(): string
     {
         return $this->fragment;
     }
@@ -325,67 +325,67 @@ class Uri implements UriInterface
     /**
      * @inheritDoc
      */
-    public function getAuthority(): string
+    public function authority(): string
     {
-        if (!$this->getHost()) {
+        if (!$this->host()) {
             return '';
         }
-        $userInfo = $this->getUserInfo();
-        $port = $this->getPort();
+        $userInfo = $this->userInfo();
+        $port = $this->port();
 
-        return ($userInfo ? $userInfo . '@' : '') . $this->getHost() . ($port ? ':' . $port : '');
+        return ($userInfo ? $userInfo . '@' : '') . $this->host() . ($port ? ':' . $port : '');
     }
 
     /**
      * @inheritDoc
      */
-    public function getUrl(): string
+    public function url(): string
     {
-        $authority = $this->getAuthority();
+        $authority = $this->authority();
         $url = '';
         if ($authority) {
-            $url = $this->getScheme() . '://' . $authority;
+            $url = $this->scheme() . '://' . $authority;
         }
 
-        return $url . $this->getPath();
+        return $url . $this->path();
     }
 
     /**
      * @inheritDoc
      */
-    public function getUri(): string
+    public function uri(): string
     {
-        $query = $this->getQuery();
-        $fragment = $this->getFragment();
+        $query = $this->query();
+        $fragment = $this->fragment();
 
-        return $this->getUrl() . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
+        return $this->url() . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
     }
 
     /**
      * @inheritDoc
      */
-    public function getPathAndQuery(): string
+    public function pathAndQuery(): string
     {
-        $query = $this->getQuery();
+        $query = $this->query();
 
-        return $this->getPath() . ($query ? '?' . $query : '');
+        return $this->path() . ($query ? '?' . $query : '');
     }
 
     /**
      * @inheritDoc
      */
-    public function getMaskedUri(): string
+    public function maskedUri(): string
     {
-        if (!$this->getHost()) {
+        if (!$this->host()) {
             return '';
         }
-        $userInfo = $this->getUserInfo();
-        $port = $this->getPort();
-        $query = $this->getQuery();
-        $fragment = $this->getFragment();
+        $userInfo = $this->userInfo();
+        $port = $this->port();
+        $query = $this->query();
+        $fragment = $this->fragment();
 
-        return $this->getScheme() . '://' . ($userInfo ? '######:######@' : '')
-            . $this->getHost() . ($port ? ':' . $port : '') . $this->getPath()
+        return $this->scheme() . '://' . ($userInfo ? '######:######@' : '')
+            . $this->host() . ($port ? ':' . $port : '') . $this->path()
             . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
     }
 

@@ -14,7 +14,7 @@ interface UriInterface
     /**
      * Схема
      */
-    public function getScheme(): string;
+    public function scheme(): string;
 
     /**
      * Задать схему
@@ -31,17 +31,17 @@ interface UriInterface
     /**
      * Компонент информации о пользователе URI
      */
-    public function getUserInfo(): string;
+    public function userInfo(): string;
 
     /**
      * Возвращает имя пользователя
      */
-    public function getUser(): string;
+    public function user(): string;
 
     /**
      * Возвращает пароль
      */
-    public function getPassword(): ?string;
+    public function password(): ?string;
 
     /**
      * Задать информацию о пользователе
@@ -53,7 +53,7 @@ interface UriInterface
     /**
      * Хост
      */
-    public function getHost(): string;
+    public function host(): string;
 
     /**
      * Задать хост
@@ -65,7 +65,7 @@ interface UriInterface
     /**
      * Порт
      */
-    public function getPort(): ?int;
+    public function port(): ?int;
 
     /**
      * Задать порт
@@ -77,7 +77,7 @@ interface UriInterface
     /**
      * Часть пути URI
      */
-    public function getPath(): string;
+    public function path(): string;
 
     /**
      * Установить часть пути URI
@@ -91,19 +91,19 @@ interface UriInterface
      *
      * Пример: /some/url/index.php => /some/url/
      */
-    public function getBasePath(): string;
+    public function basePath(): string;
 
     /**
      * Урл без файла со / на конце
      *
      * Пример: /some/url/index.php => /some/url/
      */
-    public function getNormalizedBasePath(): string;
+    public function normalizedBasePath(): string;
 
     /**
      * Строка запроса в URI
      */
-    public function getQuery(): string;
+    public function query(): string;
 
     /**
      * Задать строку запроса URI
@@ -115,7 +115,7 @@ interface UriInterface
     /**
      * Массив запроса в URI
      */
-    public function getQueryParams(): PathAccessInterface;
+    public function queryParams(): PathAccessInterface;
 
     /**
      * Задать массив запроса в URI
@@ -129,7 +129,7 @@ interface UriInterface
     /**
      * Фрагмент URI
      */
-    public function getFragment(): string;
+    public function fragment(): string;
 
     /**
      * Задать фрагмент URI
@@ -141,29 +141,29 @@ interface UriInterface
     /**
      * Возвращает URL
      */
-    public function getUrl(): string;
+    public function url(): string;
 
     /**
      * Возвращает URI
      */
-    public function getUri(): string;
+    public function uri(): string;
 
     /**
      * Возвращает путь и строку запроса
      *
      * Пример: /some/url/?q=1&a=b
      */
-    public function getPathAndQuery(): string;
+    public function pathAndQuery(): string;
 
     /**
      * Компонент полномочий URI
      */
-    public function getAuthority(): string;
+    public function authority(): string;
 
     /**
      * Возвращает URI с маской на данных авторизации
      */
-    public function getMaskedUri(): string;
+    public function maskedUri(): string;
 
     /**
      * Заменить адрес переданным значением

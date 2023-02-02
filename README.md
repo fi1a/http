@@ -408,7 +408,7 @@ $uri = $uri->withScheme('https')
         'foo' => 'bar',
     ]);
 
-$uri->getUri(); // "https://domain.ru/path/?foo=bar"
+$uri->uri(); // "https://domain.ru/path/?foo=bar"
 ```
 
 Вы также можете задать URL-адрес строкой, а затем использовать его компоненты:
@@ -418,40 +418,40 @@ use Fi1a\Http\Uri;
 
 $uri = new Uri('https://domain.ru/path/?foo=bar');
 
-$uri->getHost(); // "domain.ru"
-$uri->getPath(); // "/path/"
+$uri->host(); // "domain.ru"
+$uri->path(); // "/path/"
 ```
 
 Доступные методы `Fi1a\Http\UriInterface`:
 
 | Метод                                                | Описание                                      |
 |------------------------------------------------------|-----------------------------------------------|
-| getScheme(): string                                  | Схема                                         |
+| scheme(): string                                     | Схема                                         |
 | withScheme(string $scheme)                           | Задать схему                                  |
 | isSecure(): bool                                     | Использован https                             |
-| getUserInfo(): string                                | Компонент информации о пользователе URI       |
-| getUser(): string                                    | Возвращает имя пользователя                   |
-| getPassword(): ?string                               | Возвращает пароль                             |
+| userInfo(): string                                   | Компонент информации о пользователе URI       |
+| user(): string                                       | Возвращает имя пользователя                   |
+| password(): ?string                                  | Возвращает пароль                             |
 | withUserInfo(string $user, ?string $password = null) | Задать информацию о пользователе              |
-| getHost(): string                                    | Хост                                          |
+| host(): string                                       | Хост                                          |
 | withHost(string $host)                               | Задать хост                                   |
-| getPort(): ?int                                      | Порт                                          |
+| port(): ?int                                         | Порт                                          |
 | withPort(?int $port)                                 | Задать порт                                   |
-| getPath(): string                                    | Часть пути URI                                |
+| path(): string                                       | Часть пути URI                                |
 | withPath(string $path)                               | Установить часть пути URI                     |
-| getBasePath(): string                                | Урл без файла                                 |
-| getNormalizedBasePath(): string                      | Урл без файла с / на конце                    |
-| getQuery(): string                                   | Строка запроса в URI                          |
+| basePath(): string                                   | Урл без файла                                 |
+| normalizedBasePath(): string                         | Урл без файла с / на конце                    |
+| query(): string                                      | Строка запроса в URI                          |
 | withQuery(string $query)                             | Задать строку запроса URI                     |
-| getQueryParams(): PathAccessInterface                | Массив запроса в URI                          |
+| queryParams(): PathAccessInterface                   | Массив запроса в URI                          |
 | withQueryParams($queryParams)                        | Задать массив запроса в URI                   |
-| getFragment(): string                                | Фрагмент URI                                  |
+| fragment(): string                                   | Фрагмент URI                                  |
 | withFragment(string $fragment)                       | Задать фрагмент URI                           |
-| getUrl(): string                                     | Возвращает URL                                |
-| getUri(): string                                     | Возвращает URI                                |
-| getPathAndQuery(): string                            | Возвращает путь и строку запроса              |
-| getAuthority(): string                               | Компонент полномочий URI                      |
-| getMaskedUri(): string                               | Возвращает URI с маской на данных авторизации |
+| url(): string                                        | Возвращает URL                                |
+| uri(): string                                        | Возвращает URI                                |
+| pathAndQuery(): string                               | Возвращает путь и строку запроса              |
+| authority(): string                                  | Компонент полномочий URI                      |
+| maskedUri(): string                                  | Возвращает URI с маской на данных авторизации |
 | replace(string $uri = '', array $variables = [])     | Заменить адрес переданным значением           |
 
 [badge-release]: https://img.shields.io/packagist/v/fi1a/http?label=release

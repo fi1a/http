@@ -21,44 +21,44 @@ class UriTest extends TestCase
     public function testEmptyUri(): void
     {
         $uri = new Uri();
-        $this->assertEquals('https', $uri->getScheme());
-        $this->assertEquals('', $uri->getHost());
+        $this->assertEquals('https', $uri->scheme());
+        $this->assertEquals('', $uri->host());
     }
 
     /**
      * Схема
      */
-    public function testGetEmptyScheme(): void
+    public function testEmptyScheme(): void
     {
         $uri = new Uri('host.ru');
-        $this->assertEquals('https', $uri->getScheme());
+        $this->assertEquals('https', $uri->scheme());
     }
 
     /**
      * Схема
      */
-    public function testGetHttpsScheme(): void
+    public function testHttpsScheme(): void
     {
         $uri = new Uri('https://host.ru/');
-        $this->assertEquals('https', $uri->getScheme());
+        $this->assertEquals('https', $uri->scheme());
     }
 
     /**
      * Схема
      */
-    public function testGetHttpScheme(): void
+    public function testHttpScheme(): void
     {
         $uri = new Uri('http://host.ru/');
-        $this->assertEquals('http', $uri->getScheme());
+        $this->assertEquals('http', $uri->scheme());
     }
 
     /**
      * Схема
      */
-    public function testGetSchemeInUppercase(): void
+    public function testSchemeInUppercase(): void
     {
         $uri = new Uri('HTTP://host.ru/');
-        $this->assertEquals('http', $uri->getScheme());
+        $this->assertEquals('http', $uri->scheme());
     }
 
     /**
@@ -91,16 +91,16 @@ class UriTest extends TestCase
     /**
      * Схема
      */
-    public function testGetOnlyScheme(): void
+    public function testOnlyScheme(): void
     {
         $uri = new Uri('http');
-        $this->assertEquals('https', $uri->getScheme());
+        $this->assertEquals('https', $uri->scheme());
     }
 
     /**
      * Схема
      */
-    public function testGetUnknownScheme(): void
+    public function testUnknownScheme(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Uri('unknown://host.ru/');
@@ -109,194 +109,194 @@ class UriTest extends TestCase
     /**
      * Компонент информации о пользователе URI
      */
-    public function testGetUserInfo(): void
+    public function testUserInfo(): void
     {
         $uri = new Uri('https://username:password@host.ru/');
-        $this->assertEquals('username:password', $uri->getUserInfo());
+        $this->assertEquals('username:password', $uri->userInfo());
     }
 
     /**
      * Компонент информации о пользователе URI
      */
-    public function testGetUser(): void
+    public function testUser(): void
     {
         $uri = new Uri('https://username:password@host.ru/');
-        $this->assertEquals('username', $uri->getUser());
+        $this->assertEquals('username', $uri->user());
     }
 
     /**
      * Компонент информации о пользователе URI
      */
-    public function testGetPassword(): void
+    public function testPassword(): void
     {
         $uri = new Uri('https://username:password@host.ru/');
-        $this->assertEquals('password', $uri->getPassword());
+        $this->assertEquals('password', $uri->password());
     }
 
     /**
      * Компонент информации о пользователе URI
      */
-    public function testGetUserInfoWithoutPassword(): void
+    public function testUserInfoWithoutPassword(): void
     {
         $uri = new Uri('https://username@host.ru/');
-        $this->assertEquals('username', $uri->getUserInfo());
+        $this->assertEquals('username', $uri->userInfo());
     }
 
     /**
      * Компонент информации о пользователе URI
      */
-    public function testGetUserInfoEmptyPassword(): void
+    public function testUserInfoEmptyPassword(): void
     {
         $uri = new Uri('https://username:@host.ru/');
-        $this->assertEquals('username:', $uri->getUserInfo());
+        $this->assertEquals('username:', $uri->userInfo());
     }
 
     /**
      * Компонент информации о пользователе URI
      */
-    public function testGetUserInfoEmpty(): void
+    public function testUserInfoEmpty(): void
     {
         $uri = new Uri('https://host.ru/');
-        $this->assertEquals('', $uri->getUserInfo());
+        $this->assertEquals('', $uri->userInfo());
     }
 
     /**
      * Хост
      */
-    public function testGetHost(): void
+    public function testHost(): void
     {
         $uri = new Uri('https://host.ru/');
-        $this->assertEquals('host.ru', $uri->getHost());
+        $this->assertEquals('host.ru', $uri->host());
     }
 
     /**
      * Хост
      */
-    public function testGetHostEmptyScheme(): void
+    public function testHostEmptyScheme(): void
     {
         $uri = new Uri('host.ru');
-        $this->assertEquals('', $uri->getHost());
+        $this->assertEquals('', $uri->host());
     }
 
     /**
      * Хост
      */
-    public function testGetHostEmpty(): void
+    public function testHostEmpty(): void
     {
         $uri = new Uri('https');
-        $this->assertEquals('', $uri->getHost());
+        $this->assertEquals('', $uri->host());
     }
 
     /**
      * Порт
      */
-    public function testGetPort(): void
+    public function testPort(): void
     {
         $uri = new Uri('https://host.ru:8080');
-        $this->assertEquals(8080, $uri->getPort());
+        $this->assertEquals(8080, $uri->port());
     }
 
     /**
      * Порт
      */
-    public function testGetEmptyPort(): void
+    public function testEmptyPort(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertNull($uri->getPort());
+        $this->assertNull($uri->port());
     }
 
     /**
      * Порт
      */
-    public function testGetEmptyPortSyntaxError(): void
+    public function testEmptyPortSyntaxError(): void
     {
         $uri = new Uri('https://host.ru:');
-        $this->assertNull($uri->getPort());
+        $this->assertNull($uri->port());
     }
 
     /**
      * Часть пути URI
      */
-    public function testGetPath(): void
+    public function testPath(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals('/some/path/', $uri->getPath());
+        $this->assertEquals('/some/path/', $uri->path());
     }
 
     /**
      * Часть пути URI
      */
-    public function testGetPathEmpty(): void
+    public function testPathEmpty(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('/', $uri->getPath());
+        $this->assertEquals('/', $uri->path());
     }
 
     /**
      * Урл без файла
      */
-    public function testGetBasePathWithFile(): void
+    public function testBasePathWithFile(): void
     {
         $uri = new Uri('https://host.ru/some/path/index.php');
-        $this->assertEquals('/some/path/', $uri->getBasePath());
+        $this->assertEquals('/some/path/', $uri->basePath());
     }
 
     /**
      * Урл без файла
      */
-    public function testGetBasePathWithFolder(): void
+    public function testBasePathWithFolder(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals('/some/path/', $uri->getBasePath());
+        $this->assertEquals('/some/path/', $uri->basePath());
         $uri = new Uri('https://host.ru/some/path');
-        $this->assertEquals('/some/path', $uri->getBasePath());
+        $this->assertEquals('/some/path', $uri->basePath());
     }
 
     /**
      * Урл без файла
      */
-    public function testGetBasePathRoot(): void
+    public function testBasePathRoot(): void
     {
         $uri = new Uri('https://host.ru/');
-        $this->assertEquals('/', $uri->getBasePath());
+        $this->assertEquals('/', $uri->basePath());
     }
 
     /**
      * Урл без файла
      */
-    public function testGetBasePathEmpty(): void
+    public function testBasePathEmpty(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('/', $uri->getBasePath());
+        $this->assertEquals('/', $uri->basePath());
     }
 
     /**
      * Урл без файла со / на конце
      */
-    public function testGetNormalizedBasePathWithFolder(): void
+    public function testNormalizedBasePathWithFolder(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals('/some/path/', $uri->getNormalizedBasePath());
+        $this->assertEquals('/some/path/', $uri->normalizedBasePath());
         $uri = new Uri('https://host.ru/some/path');
-        $this->assertEquals('/some/path/', $uri->getNormalizedBasePath());
+        $this->assertEquals('/some/path/', $uri->normalizedBasePath());
     }
 
     /**
      * Урл без файла со / на конце
      */
-    public function testGetNormalizedBasePathEmpty(): void
+    public function testNormalizedBasePathEmpty(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('/', $uri->getNormalizedBasePath());
+        $this->assertEquals('/', $uri->normalizedBasePath());
     }
 
     /**
      * Строка запроса в URI
      */
-    public function testGetQuery(): void
+    public function testQuery(): void
     {
         $uri = new Uri('https://host.ru/some/path/?foo=bar&baz[]=qux&baz[]=quz');
-        $this->assertEquals('foo=bar&baz%5B0%5D=qux&baz%5B1%5D=quz', $uri->getQuery());
+        $this->assertEquals('foo=bar&baz%5B0%5D=qux&baz%5B1%5D=quz', $uri->query());
     }
 
     /**
@@ -308,61 +308,61 @@ class UriTest extends TestCase
         $this->assertEquals(
             'foo=%D0%9E%D0%B4%D0%B8%D0%BD+%D0%B4%D0%B2%D0%B0&baz%5B0%5D=%D1%82%D1%80%D0%B8&baz'
             . '%5B1%5D=%D1%87%D0%B5%D1%82%D1%8B%D1%80%D0%B5',
-            $uri->getQuery()
+            $uri->query()
         );
     }
 
     /**
      * Строка запроса в URI
      */
-    public function testGetQueryEmptySyntaxError(): void
+    public function testQueryEmptySyntaxError(): void
     {
         $uri = new Uri('https://host.ru/some/path/?');
-        $this->assertEquals('', $uri->getQuery());
+        $this->assertEquals('', $uri->query());
     }
 
     /**
      * Строка запроса в URI
      */
-    public function testGetQueryEmpty(): void
+    public function testQueryEmpty(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals('', $uri->getQuery());
+        $this->assertEquals('', $uri->query());
     }
 
     /**
      * Массив запроса в URI
      */
-    public function testGetQueryParamsPathAccess(): void
+    public function testQueryParamsPathAccess(): void
     {
         $uri = new Uri('https://host.ru/some/path/?foo=bar&baz[]=qux&baz[]=quz');
-        $this->assertInstanceOf(PathAccessInterface::class, $uri->getQueryParams());
-        $this->assertCount(2, $uri->getQueryParams());
-        $this->assertEquals(['qux', 'quz'], $uri->getQueryParams()->get('baz'));
+        $this->assertInstanceOf(PathAccessInterface::class, $uri->queryParams());
+        $this->assertCount(2, $uri->queryParams());
+        $this->assertEquals(['qux', 'quz'], $uri->queryParams()->get('baz'));
         $uri = $uri->withQueryParams(new PathAccess(['foo' => 'bar']));
-        $this->assertCount(1, $uri->getQueryParams());
-        $this->assertEquals('bar', $uri->getQueryParams()->get('foo'));
+        $this->assertCount(1, $uri->queryParams());
+        $this->assertEquals('bar', $uri->queryParams()->get('foo'));
     }
 
     /**
      * Массив запроса в URI
      */
-    public function testGetQueryParams(): void
+    public function testQueryParams(): void
     {
         $uri = new Uri('https://host.ru/some/path/?foo=bar&baz[]=qux&baz[]=quz');
         $this->assertEquals(
             ['foo' => 'bar', 'baz' => ['qux', 'quz']],
-            $uri->getQueryParams()->getArrayCopy()
+            $uri->queryParams()->getArrayCopy()
         );
     }
 
     /**
      * Массив запроса в URI
      */
-    public function testGetQueryParamsEmpty(): void
+    public function testQueryParamsEmpty(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals([], $uri->getQueryParams()->getArrayCopy());
+        $this->assertEquals([], $uri->queryParams()->getArrayCopy());
     }
 
     /**
@@ -373,208 +373,208 @@ class UriTest extends TestCase
         $queryParams = ['foo' => 'bar', 'baz' => ['qux', 'quz']];
         $uri = new Uri('https://host.ru/some/path/');
         $uri = $uri->withQueryParams($queryParams);
-        $this->assertEquals($queryParams, $uri->getQueryParams()->getArrayCopy());
-        $this->assertEquals('foo=bar&baz%5B0%5D=qux&baz%5B1%5D=quz', $uri->getQuery());
+        $this->assertEquals($queryParams, $uri->queryParams()->getArrayCopy());
+        $this->assertEquals('foo=bar&baz%5B0%5D=qux&baz%5B1%5D=quz', $uri->query());
     }
 
     /**
      * Фрагмент URI
      */
-    public function testGetFragment(): void
+    public function testFragment(): void
     {
         $uri = new Uri('https://host.ru/some/path/#fragment');
-        $this->assertEquals('fragment', $uri->getFragment());
+        $this->assertEquals('fragment', $uri->fragment());
     }
 
     /**
      * Фрагмент URI
      */
-    public function testGetFragmentEmptyErrorSyntax(): void
+    public function testFragmentEmptyErrorSyntax(): void
     {
         $uri = new Uri('https://host.ru/some/path/#');
-        $this->assertEquals('', $uri->getFragment());
+        $this->assertEquals('', $uri->fragment());
     }
 
     /**
      * Фрагмент URI
      */
-    public function testGetFragmentEmpty(): void
+    public function testFragmentEmpty(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals('', $uri->getFragment());
+        $this->assertEquals('', $uri->fragment());
     }
 
     /**
      * URL
      */
-    public function testGetUrl(): void
+    public function testUrl(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
-        $this->assertEquals('https://username:password@host.ru:8080/some/path/', $uri->getUrl());
+        $this->assertEquals('https://username:password@host.ru:8080/some/path/', $uri->url());
     }
 
     /**
      * URL
      */
-    public function testGetUrlWithoutPort(): void
+    public function testUrlWithoutPort(): void
     {
         $uri = new Uri('https://username:password@host.ru/some/path/');
-        $this->assertEquals('https://username:password@host.ru/some/path/', $uri->getUrl());
+        $this->assertEquals('https://username:password@host.ru/some/path/', $uri->url());
     }
 
     /**
      * URL
      */
-    public function testGetUrlWithoutUserInfo(): void
+    public function testUrlWithoutUserInfo(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals('https://host.ru/some/path/', $uri->getUrl());
+        $this->assertEquals('https://host.ru/some/path/', $uri->url());
     }
 
     /**
      * URL
      */
-    public function testGetUrlWithoutPath(): void
+    public function testUrlWithoutPath(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('https://host.ru/', $uri->getUrl());
+        $this->assertEquals('https://host.ru/', $uri->url());
     }
 
     /**
      * URL
      */
-    public function testGetUrlEmpty(): void
+    public function testUrlEmpty(): void
     {
         $uri = new Uri('https');
-        $this->assertEquals('https', $uri->getUrl());
+        $this->assertEquals('https', $uri->url());
     }
 
     /**
      * URI
      */
-    public function testGetUri(): void
+    public function testUri(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
         $this->assertEquals(
             'https://username:password@host.ru:8080/some/path/?foo=bar#fragment',
-            $uri->getUri()
+            $uri->uri()
         );
     }
 
     /**
      * URI
      */
-    public function testGetUriEmpty(): void
+    public function testUriEmpty(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?');
-        $this->assertEquals('https://username:password@host.ru:8080/some/path/', $uri->getUri());
+        $this->assertEquals('https://username:password@host.ru:8080/some/path/', $uri->uri());
     }
 
     /**
      * URI
      */
-    public function testGetUriPathOtherEmpty(): void
+    public function testUriPathOtherEmpty(): void
     {
         $uri = new Uri('https');
-        $this->assertEquals('https', $uri->getUri());
+        $this->assertEquals('https', $uri->uri());
     }
 
     /**
      * URI
      */
-    public function testGetUriRelativePath(): void
+    public function testUriRelativePath(): void
     {
         $uri = new Uri('relative/path/');
-        $this->assertEquals('relative/path/', $uri->getUri());
+        $this->assertEquals('relative/path/', $uri->uri());
     }
 
     /**
      * URI
      */
-    public function testGetUriEmptyUrl(): void
+    public function testUriEmptyUrl(): void
     {
         $uri = new Uri('');
-        $this->assertEquals('/', $uri->getUri());
+        $this->assertEquals('/', $uri->uri());
     }
 
     /**
      * Возвращает путь и строку запроса
      */
-    public function testGetPathAndQuery(): void
+    public function testPathAndQuery(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
         $this->assertEquals(
             '/some/path/?foo=bar',
-            $uri->getPathAndQuery()
+            $uri->pathAndQuery()
         );
     }
 
     /**
      * Возвращает путь и строку запроса
      */
-    public function testGetPathAndQueryEmpty(): void
+    public function testPathAndQueryEmpty(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?');
-        $this->assertEquals('/some/path/', $uri->getPathAndQuery());
+        $this->assertEquals('/some/path/', $uri->pathAndQuery());
     }
 
     /**
      * Возвращает путь и строку запроса
      */
-    public function testGetPathAndQueryEmptyUrl(): void
+    public function testPathAndQueryEmptyUrl(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080');
-        $this->assertEquals('/', $uri->getPathAndQuery());
+        $this->assertEquals('/', $uri->pathAndQuery());
     }
 
     /**
      * Компонент полномочий URI
      */
-    public function testGetAuthority(): void
+    public function testAuthority(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/');
-        $this->assertEquals('username:password@host.ru:8080', $uri->getAuthority());
+        $this->assertEquals('username:password@host.ru:8080', $uri->authority());
     }
 
     /**
      * Компонент полномочий URI
      */
-    public function testGetAuthorityHost(): void
+    public function testAuthorityHost(): void
     {
         $uri = new Uri('https://host.ru/some/path/');
-        $this->assertEquals('host.ru', $uri->getAuthority());
+        $this->assertEquals('host.ru', $uri->authority());
     }
 
     /**
      * Компонент полномочий URI
      */
-    public function testGetAuthorityEmpty(): void
+    public function testAuthorityEmpty(): void
     {
         $uri = new Uri('https');
-        $this->assertEquals('', $uri->getAuthority());
+        $this->assertEquals('', $uri->authority());
     }
 
     /**
      * Возвращает URI с маской на данных авторизации
      */
-    public function testGetMaskedUri(): void
+    public function testMaskedUri(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080/some/path/?foo=bar#fragment');
         $this->assertEquals(
             'https://######:######@host.ru:8080/some/path/?foo=bar#fragment',
-            $uri->getMaskedUri()
+            $uri->maskedUri()
         );
     }
 
     /**
      * Возвращает URI с маской на данных авторизации
      */
-    public function testGetMaskedUriEmpty(): void
+    public function testMaskedUriEmpty(): void
     {
         $uri = new Uri('https');
         $this->assertEquals(
             '',
-            $uri->getMaskedUri()
+            $uri->maskedUri()
         );
     }
 
@@ -587,7 +587,7 @@ class UriTest extends TestCase
         $uri = $uri->replace('/new/path');
         $this->assertEquals(
             'https://username:password@host.ru:8080/new/path',
-            $uri->getUri()
+            $uri->uri()
         );
     }
 
@@ -600,7 +600,7 @@ class UriTest extends TestCase
         $uri = $uri->replace('/new/path?baz=qux');
         $this->assertEquals(
             'https://username:password@host.ru:8080/new/path?baz=qux',
-            $uri->getUri()
+            $uri->uri()
         );
     }
 
@@ -613,7 +613,7 @@ class UriTest extends TestCase
         $uri = $uri->replace('/new/path?baz=qux#new-fragment');
         $this->assertEquals(
             'https://username:password@host.ru:8080/new/path?baz=qux#new-fragment',
-            $uri->getUri()
+            $uri->uri()
         );
     }
 
@@ -626,7 +626,7 @@ class UriTest extends TestCase
         $uri = $uri->replace('https://new-username:new-password@new-host.ru:8181/new/path/?baz=qux#new-fragment');
         $this->assertEquals(
             'https://new-username:new-password@new-host.ru:8181/new/path/?baz=qux#new-fragment',
-            $uri->getUri()
+            $uri->uri()
         );
     }
 
@@ -638,7 +638,7 @@ class UriTest extends TestCase
         $uri = new Uri('https://host.ru/some/path/{{id}}#fragment', ['id' => 100,]);
         $this->assertEquals(
             'https://host.ru/some/path/100#fragment',
-            $uri->getUri()
+            $uri->uri()
         );
     }
 
@@ -654,7 +654,7 @@ class UriTest extends TestCase
         );
         $this->assertEquals(
             'https://new-username:new-password@new-host.ru:8181/new/path/?baz=qux#new-fragment',
-            $uri->getUri()
+            $uri->uri()
         );
     }
 
@@ -667,6 +667,6 @@ class UriTest extends TestCase
         $clone = clone $uri;
 
         $this->assertTrue($clone !== $uri);
-        $this->assertTrue($uri->getQueryParams() !== $clone->getQueryParams());
+        $this->assertTrue($uri->queryParams() !== $clone->queryParams());
     }
 }
