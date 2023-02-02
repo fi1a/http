@@ -573,7 +573,19 @@ class UriTest extends TestCase
     {
         $uri = new Uri('https');
         $this->assertEquals(
-            '',
+            'https',
+            $uri->maskedUri()
+        );
+    }
+
+    /**
+     * Возвращает URI с маской на данных авторизации (без данных автризации)
+     */
+    public function testMaskedUriPart(): void
+    {
+        $uri = new Uri('/some/path/?foo=bar#fragment');
+        $this->assertEquals(
+            '/some/path/?foo=bar#fragment',
             $uri->maskedUri()
         );
     }
