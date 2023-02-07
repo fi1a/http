@@ -221,10 +221,6 @@ class Uri implements UriInterface
     public function withPath(string $path)
     {
         $object = $this->getObject();
-
-        if (!$path) {
-            $path = '/';
-        }
         $object->path = $path;
 
         return $object;
@@ -432,5 +428,13 @@ class Uri implements UriInterface
     public function __clone()
     {
         $this->queryParams = clone $this->queryParams;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isRelative(): bool
+    {
+        return !$this->host() && mb_substr($this->path, 0, 1) !== '/';
     }
 }

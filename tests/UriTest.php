@@ -229,7 +229,16 @@ class UriTest extends TestCase
     public function testPathEmpty(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('/', $uri->path());
+        $this->assertEquals('', $uri->path());
+    }
+
+    /**
+     * Часть пути URI
+     */
+    public function testRelativePath(): void
+    {
+        $uri = new Uri('../path');
+        $this->assertEquals('../path', $uri->path());
     }
 
     /**
@@ -267,7 +276,7 @@ class UriTest extends TestCase
     public function testBasePathEmpty(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('/', $uri->basePath());
+        $this->assertEquals('', $uri->basePath());
     }
 
     /**
@@ -437,7 +446,7 @@ class UriTest extends TestCase
     public function testUrlWithoutPath(): void
     {
         $uri = new Uri('https://host.ru');
-        $this->assertEquals('https://host.ru/', $uri->url());
+        $this->assertEquals('https://host.ru', $uri->url());
     }
 
     /**
@@ -494,7 +503,7 @@ class UriTest extends TestCase
     public function testUriEmptyUrl(): void
     {
         $uri = new Uri('');
-        $this->assertEquals('/', $uri->uri());
+        $this->assertEquals('', $uri->uri());
     }
 
     /**
@@ -524,7 +533,7 @@ class UriTest extends TestCase
     public function testPathAndQueryEmptyUrl(): void
     {
         $uri = new Uri('https://username:password@host.ru:8080');
-        $this->assertEquals('/', $uri->pathAndQuery());
+        $this->assertEquals('', $uri->pathAndQuery());
     }
 
     /**
@@ -680,5 +689,59 @@ class UriTest extends TestCase
 
         $this->assertTrue($clone !== $uri);
         $this->assertTrue($uri->queryParams() !== $clone->queryParams());
+    }
+
+    /**
+     * Относительный uri или нет
+     */
+    public function testRelativeWithHostAndPath(): void
+    {
+        $uri = new Uri('https://host.ru/some/path/');
+        $this->assertFalse($uri->isRelative());
+    }
+
+    /**
+     * Относительный uri или нет
+     */
+    public function testRelativeWithPath(): void
+    {
+        $uri = new Uri('/some/path/');
+        $this->assertFalse($uri->isRelative());
+    }
+
+    /**
+     * Относительный uri или нет
+     */
+    public function testRelativeWithPathAndQuery(): void
+    {
+        $uri = new Uri('/some/path/?foo=bar');
+        $this->assertFalse($uri->isRelative());
+    }
+
+    /**
+     * Относительный uri или нет
+     */
+    public function testRelativeEmpty(): void
+    {
+        $uri = new Uri('');
+        $this->assertTrue($uri->isRelative());
+    }
+
+    /**
+     * Относительный uri или нет
+     */
+    public function testRelativeEmptyAndQuery(): void
+    {
+        $uri = new Uri('?foo=bar');
+        $this->assertTrue($uri->isRelative());
+    }
+
+    /**
+     * Относительный uri или нет
+     */
+    public function testRelative(): void
+    {
+        $uri = new Uri('../path');
+        $this->assertTrue($uri->isRelative());
     }
 }

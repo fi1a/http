@@ -453,6 +453,7 @@ $uri->path(); // "/path/"
 | authority(): string                                  | Компонент полномочий URI                      |
 | maskedUri(): string                                  | Возвращает URI с маской на данных авторизации |
 | replace(string $uri = '', array $variables = [])     | Заменить адрес переданным значением           |
+| isRelative(): bool                                   | Относительный uri или нет                     |
 
 [badge-release]: https://img.shields.io/packagist/v/fi1a/http?label=release
 [badge-license]: https://img.shields.io/github/license/fi1a/http?style=flat-square
