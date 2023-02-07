@@ -173,4 +173,9 @@ interface UriInterface
      * @return $this
      */
     public function replace(string $uri = '', array $variables = []);
+
+    /**
+     * Относительный uri или нет
+     */
+    public function isRelative(): bool;
 }
