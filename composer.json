@@ -16,7 +16,7 @@
     "ext-json": "*",
     "fi1a/format": "^2.0",
     "fi1a/collection": "^2.0",
-    "fi1a/dependency-injection": "dev-main"
+    "fi1a/dependency-injection": "^1.0"
   },
   "suggest": {
   },
