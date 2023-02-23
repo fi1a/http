@@ -210,4 +210,22 @@ class HttpTest extends TestCase
         $http->withMiddleware(new Middleware(), 600);
         $this->assertCount(1, $http->getMiddlewares());
     }
+
+    /**
+     * Промежуточное ПО
+     */
+    public function testMiddlewareHandlers(): void
+    {
+        Middleware::$callTimesRequest = 0;
+        Middleware::$callTimesResponse = 0;
+        $http = $this->getHttp();
+        $this->assertCount(0, $http->getMiddlewares());
+        $http->withMiddleware(new Middleware(), 600);
+        $http->withMiddleware(new Middleware(), 100);
+        $this->assertCount(2, $http->getMiddlewares());
+        $http->request(new Request('/'));
+        $this->assertEquals(2, Middleware::$callTimesRequest);
+        $http->response(new Response(200));
+        $this->assertEquals(2, Middleware::$callTimesResponse);
+    }
 }

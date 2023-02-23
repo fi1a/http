@@ -22,11 +22,11 @@ class JsonMiddleware extends AbstractMiddleware
     /**
      * @inheritDoc
      */
-    public function handleRequest(RequestInterface $request): RequestInterface
+    public function handleRequest(RequestInterface $request, callable $next): RequestInterface
     {
         $header = $request->headers()->getLastHeader('Content-Type');
         if (!$header || $header->getValue() !== MimeInterface::JSON) {
-            return $request;
+            return $next($request);
         }
 
         try {
@@ -41,16 +41,21 @@ class JsonMiddleware extends AbstractMiddleware
             throw new BadRequestException($exception->getMessage());
         }
 
-        return $request->withBody(is_array($body) ? new PathAccess($body) : $body);
+        $request = $request->withBody(is_array($body) ? new PathAccess($body) : $body);
+
+        return $next($request);
     }
 
     /**
      * @inheritDoc
      */
-    public function handleResponse(RequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
+    public function handleResponse(
+        RequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ): ResponseInterface {
         if (!($response instanceof JsonResponseInterface)) {
-            return $response;
+            return $next($request, $response);
         }
 
         buffer()->clear();
@@ -59,6 +64,6 @@ class JsonMiddleware extends AbstractMiddleware
         buffer()->send($response);
         $this->terminate();
 
-        return $response;
+        return $next($request, $response);
     }
 }
