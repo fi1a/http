@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fi1a\Http\Middlewares;
 
+use Fi1a\Http\RequestInterface;
+use Fi1a\Http\ResponseInterface;
 use InvalidArgumentException;
 
 /**
@@ -36,6 +38,25 @@ abstract class AbstractMiddleware implements MiddlewareInterface
         $this->sort = $sort;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function handleRequest(RequestInterface $request, callable $next): RequestInterface
+    {
+        return $next($request);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function handleResponse(
+        RequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ): ResponseInterface {
+        return $next($request, $response);
     }
 
     /**

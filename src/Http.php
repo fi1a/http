@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fi1a\Http;
 
+use Closure;
 use Fi1a\Http\Middlewares\MiddlewareCollection;
 use Fi1a\Http\Middlewares\MiddlewareCollectionInterface;
 use Fi1a\Http\Middlewares\MiddlewareInterface;
@@ -64,11 +65,7 @@ class Http implements HttpInterface
     public function request(?RequestInterface $request = null): RequestInterface
     {
         if (!is_null($request)) {
-            foreach ($this->middlewares->sortDirect() as $middleware) {
-                assert($middleware instanceof MiddlewareInterface);
-                $request = $middleware->handleRequest($request);
-            }
-            $this->request = $request;
+            $this->request = $this->nextRequestMiddleware($request, 0);
         }
 
         return $this->request;
@@ -92,11 +89,7 @@ class Http implements HttpInterface
     public function response(?ResponseInterface $response = null): ResponseInterface
     {
         if (!is_null($response)) {
-            foreach ($this->middlewares->sortBack() as $middleware) {
-                assert($middleware instanceof MiddlewareInterface);
-                $response = $middleware->handleResponse($this->request, $response);
-            }
-            $this->response = $response;
+            $this->response = $this->nextResponseMiddleware($this->request, $response, 0);
         }
 
         return $this->response;
@@ -212,7 +205,7 @@ class Http implements HttpInterface
      * @param mixed $files
      * @param mixed[] $converted
      */
-    private static function convertFileArray($files, string $path, array &$converted): void
+    protected static function convertFileArray($files, string $path, array &$converted): void
     {
         if (!is_array($files)) {
             /** @psalm-suppress MixedAssignment */
@@ -234,7 +227,7 @@ class Http implements HttpInterface
      * @param mixed[]  $options
      * @param resource $content
      */
-    private static function requestFactory(
+    protected static function requestFactory(
         string $url,
         array $query,
         array $post,
@@ -255,5 +248,53 @@ class Http implements HttpInterface
             $headers,
             $content
         );
+    }
+
+    /**
+     * Следующий middleware для запроса
+     */
+    protected function nextRequestMiddleware(RequestInterface $request, int $index): RequestInterface
+    {
+        /** @var MiddlewareInterface|null $middleware */
+        $middleware = $this->middlewares->sortDirect()->get($index);
+
+        if (!$middleware) {
+            return $request;
+        }
+
+        $next = Closure::bind(function (RequestInterface $request) use ($index): RequestInterface {
+            $index++;
+
+            return $this->nextRequestMiddleware($request, $index);
+        }, $this);
+
+        return $middleware->handleRequest($request, $next);
+    }
+
+    /**
+     * Следующий middleware для ответа
+     */
+    protected function nextResponseMiddleware(
+        RequestInterface $request,
+        ResponseInterface $response,
+        int $index
+    ): ResponseInterface {
+        /** @var MiddlewareInterface|null $middleware */
+        $middleware = $this->middlewares->sortBack()->get($index);
+
+        if (!$middleware) {
+            return $response;
+        }
+
+        $next = Closure::bind(function (
+            RequestInterface $request,
+            ResponseInterface $response
+        ) use ($index): ResponseInterface {
+            $index++;
+
+            return $this->nextResponseMiddleware($request, $response, $index);
+        }, $this);
+
+        return $middleware->handleResponse($request, $response, $next);
     }
 }

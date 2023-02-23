@@ -26,11 +26,19 @@ interface MiddlewareInterface
 
     /**
      * Обработчик для запроса
+     *
+     * @param callable(RequestInterface): RequestInterface $next
      */
-    public function handleRequest(RequestInterface $request): RequestInterface;
+    public function handleRequest(RequestInterface $request, callable $next): RequestInterface;
 
     /**
      * Обработчик для ответа
+     *
+     * @param callable(RequestInterface, ResponseInterface): ResponseInterface $next
      */
-    public function handleResponse(RequestInterface $request, ResponseInterface $response): ResponseInterface;
+    public function handleResponse(
+        RequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ): ResponseInterface;
 }

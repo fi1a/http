@@ -14,18 +14,35 @@ use Fi1a\Http\ResponseInterface;
 class Middleware extends AbstractMiddleware
 {
     /**
+     * @var int
+     */
+    public static $callTimesRequest = 0;
+
+    /**
+     * @var int
+     */
+    public static $callTimesResponse = 0;
+
+    /**
      * @inheritDoc
      */
-    public function handleRequest(RequestInterface $request): RequestInterface
+    public function handleRequest(RequestInterface $request, callable $next): RequestInterface
     {
-        return $request;
+        static::$callTimesRequest++;
+
+        return parent::handleRequest($request, $next);
     }
 
     /**
      * @inheritDoc
      */
-    public function handleResponse(RequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
-        return $response;
+    public function handleResponse(
+        RequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ): ResponseInterface {
+        static::$callTimesResponse++;
+
+        return parent::handleResponse($request, $response, $next);
     }
 }

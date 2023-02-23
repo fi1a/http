@@ -22,7 +22,7 @@ class RedirectMiddleware extends AbstractMiddleware
     /**
      * @inheritDoc
      */
-    public function handleRequest(RequestInterface $request): RequestInterface
+    public function handleRequest(RequestInterface $request, callable $next): RequestInterface
     {
         return $request;
     }
@@ -30,15 +30,19 @@ class RedirectMiddleware extends AbstractMiddleware
     /**
      * @inheritDoc
      */
-    public function handleResponse(RequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
+    public function handleResponse(
+        RequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ): ResponseInterface {
         if (!$response->isRedirection()) {
-            return $response;
+            return $next($request, $response);
         }
+
         $output = new Output(new SetCookie());
         $output->send($response);
         $this->terminate();
 
-        return $response;
+        return $next($request, $response);
     }
 }
