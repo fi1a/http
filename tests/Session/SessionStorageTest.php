@@ -37,6 +37,18 @@ class SessionStorageTest extends TestCase
     }
 
     /**
+     * Сессия уже открыта
+     */
+    public function testOpenByPhp(): void
+    {
+        session_start();
+        $session = $this->getSession();
+        $this->assertTrue($session->open());
+        $this->assertTrue($session->open());
+        $this->assertTrue($session->close());
+    }
+
+    /**
      * Исключение когда заголовки уже отправлены
      */
     public function testOpenHeadersSentException(): void
@@ -82,17 +94,6 @@ class SessionStorageTest extends TestCase
         $session = $this->getSession();
         $session->setName('som_name');
         $this->assertEquals('som_name', $session->getName());
-    }
-
-    /**
-     * Исключение когда сессия уже открыта
-     */
-    public function testOpenStartSessionException(): void
-    {
-        $this->expectException(RuntimeException::class);
-        session_start();
-        $session = $this->getSession();
-        $session->open();
     }
 
     /**

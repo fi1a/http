@@ -50,7 +50,8 @@ class SessionStorage extends AbstractSessionStorage
     protected function doOpen(): array
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
-            throw new RuntimeException('Сессия открыта php');
+            /** @psalm-suppress InvalidReturnStatement */
+            return $_SESSION;
         }
         if ($this->headersSent($file, $line)) {
             throw new RuntimeException(
